@@ -1,3 +1,2 @@
-class Circle extends Shape{
-    
+class Circle extends Shape { 
 }
