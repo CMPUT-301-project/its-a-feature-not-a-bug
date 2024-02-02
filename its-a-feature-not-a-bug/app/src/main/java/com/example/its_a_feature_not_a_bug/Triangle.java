@@ -1,3 +1,3 @@
-class Triangle extends Shape { 
-
+class Triangle extends Shape {
+    
 }
