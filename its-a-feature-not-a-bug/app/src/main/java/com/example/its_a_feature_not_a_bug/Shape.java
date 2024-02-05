@@ -3,3 +3,4 @@ abstract class Shape {
     int y;
     String color "pink";
 }
+
