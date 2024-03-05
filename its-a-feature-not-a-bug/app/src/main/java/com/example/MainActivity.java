@@ -1,4 +1,4 @@
-package com;
+package its-a-feature-not-a-bug.app.src.main.java.com;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package com;
+package its-a-feature-not-a-bug.app.src.main.java.com;
 
 public static class Attendee {
     private String name;
