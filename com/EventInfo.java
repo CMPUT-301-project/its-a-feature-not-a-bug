@@ -1,12 +1,9 @@
-package com.example.its_a_feature_not_a_bug;
+package com;
 
 import android.os.Bundle;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.media.Image;
+
 import android.widget.ImageView;
 
 
@@ -34,10 +31,10 @@ public class EventInfo {
     }
 
     public void displayInfo() {
-        name.setText(event.getName());
-        date.setText(event.getDate());
-        location.setText(event.getLocation());
-        description.setText(event.getDescription());
+        name.setText(event.getEventName());
+        date.setText(event.getEventDate());
+        location.setText(event.getEventLocation());
+        description.setText(event.getEventDescription());
         qrCode.setImageBitmap(QRCodeGenerator.generateQRCode(event));
     }
 }

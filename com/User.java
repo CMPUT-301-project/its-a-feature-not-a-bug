@@ -1,4 +1,4 @@
-package com.example.its_a_feature_not_a_bug;
+package com;
 
 import java.io.Serializable;
 
