@@ -8,26 +8,22 @@ public class Event {
     private String eventDate;
     private String eventLocation;
     private String eventDescription;
-
     private String eventQRCode;
     private List<Attendee> attendees;
 
-
-    public class Event(String eventName, String eventDate, String eventLocation, String eventDescription) {
-
-        private List<Attendee> attendees;
-        public Event(String eventName, String eventDate, String eventLocation, String eventDescription, List<Attendee> attendeeList) {
-            this.eventName = eventName;
-            this.eventDate = eventDate;
-            this.eventLocation = eventLocation;
-            this.eventDescription = eventDescription;
-            this.eventQRCode = QRCodeGenerator.generateQRCode(this);
-            this.attendees = new ArrayList<>();
-        }
+    public Event(String eventName, String eventDate, String eventLocation, String eventDescription) {
+        this.eventName = eventName;
+        this.eventDate = eventDate;
+        this.eventLocation = eventLocation;
+        this.eventDescription = eventDescription;
+        this.eventQRCode = QRCodeGenerator.generateQRCode(this);
+        this.attendees = new ArrayList<>();
     }
+
     public void addAttendee(Attendee attendee) {
         this.attendees.add(attendee);
     }
+
     public List<Attendee> getCheckedInAttendees() {
         List<Attendee> checkedInAttendees = new ArrayList<>();
         for (Attendee attendee : this.attendees) {
@@ -37,6 +33,7 @@ public class Event {
         }
         return checkedInAttendees;
     }
+
     public List<Attendee> getAttendees() {
         return this.attendees;
     }
