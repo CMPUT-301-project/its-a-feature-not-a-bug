@@ -1,7 +1,9 @@
 package com.example.its_a_feature_not_a_bug;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -23,14 +26,38 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class BrowseEventsActivity extends AppCompatActivity {
+public class BrowseEventsActivity extends AppCompatActivity implements AddEventDialogueListener{
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
     private ListView eventList;
     private EventAdapter eventAdapter;
     private ArrayList<Event> eventDataList;
+    private FloatingActionButton fab;
+
+
+    @Override
+    public void addEvent(Event event) {
+        // adds event to the firestore collection
+        Map<String, Object> data = new HashMap<>();
+        data.put("Host", event.getHost());
+        data.put("Date", event.getDate());
+        data.put("Description", event.getDescription());
+        data.put("Poster", event.getImageId());
+        eventsRef.document(event.getTitle()).set(data);
+        eventsRef
+                .document(event.getTitle())
+                .set(data)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("Firestore", "DocumentSnapshot successfully written");
+                    }
+                });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +76,12 @@ public class BrowseEventsActivity extends AppCompatActivity {
         eventAdapter = new EventAdapter(this, eventDataList);
         eventList.setAdapter(eventAdapter);
 
+        // fab
+        fab = findViewById(R.id.fab_add_event);
+        fab.setOnClickListener(v -> {
+            new AddEventFragment().show(getSupportFragmentManager(), "Add Event");
+        });
+
         eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot querySnapshots, @Nullable FirebaseFirestoreException error) {
@@ -63,8 +96,15 @@ public class BrowseEventsActivity extends AppCompatActivity {
                         String host = doc.getString("Host");
                         Date date = doc.getDate("Date");
                         String description = doc.getString("Description");
+
+                        String imageUriString = doc.getString("Poster");
+                        Uri imageUri = null;
+                        if (imageUriString != null && !imageUriString.isEmpty()) {
+                            imageUri = Uri.parse(imageUriString);
+                        }
+
                         Log.d("Firestore", String.format("Event(%s, %s) fetched", eventId, host));
-                        eventDataList.add(new Event(eventId, host, date, description));
+                        eventDataList.add(new Event(imageUri, eventId, host, date, description));
                     }
                     eventAdapter.notifyDataSetChanged();
                 }
