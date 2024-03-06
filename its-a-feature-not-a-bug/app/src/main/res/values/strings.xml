@@ -46,4 +46,6 @@
     <string name="title">Title</string>
     <string name="host">Host</string>
     <string name="date">Date</string>
+    <string name="admin">Admin</string>
+    <string name="user">User</string>
 </resources>
