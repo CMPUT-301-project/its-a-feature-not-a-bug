@@ -1,4 +1,4 @@
-package com;
+package com.example.its_a_feature_not_a_bug;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
