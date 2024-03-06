@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,11 +43,21 @@ public class EventAdapter extends ArrayAdapter<Event> {
         TextView eventID = view.findViewById(R.id.text_view_event_name);
         TextView hostName = view.findViewById(R.id.text_view_event_host);
         TextView date = view.findViewById(R.id.text_view_event_date);
+        ImageView poster = view.findViewById(R.id.image_view_event_poster);
 
 
         eventID.setText(event.getTitle());
         hostName.setText(event.getHost());
         date.setText(event.getDate().toString());
+
+        if (event.getImageId() != null) {
+            Glide.with(context)
+                    .load(event.getImageId())
+                    .into(poster);
+        } else {
+            // Set a placeholder image if no image is available
+            poster.setImageResource(R.drawable.default_poster);
+        }
 
         return view;
     }
