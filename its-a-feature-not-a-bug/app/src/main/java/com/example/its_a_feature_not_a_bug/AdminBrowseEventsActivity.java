@@ -22,6 +22,7 @@ public class AdminBrowseEventsActivity extends BrowseEventsActivity {
     }
 
 
+
 }
 
 
