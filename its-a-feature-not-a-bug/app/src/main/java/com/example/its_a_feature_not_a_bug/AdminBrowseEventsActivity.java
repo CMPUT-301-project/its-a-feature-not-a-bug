@@ -1,10 +1,27 @@
 package com.example.its_a_feature_not_a_bug;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
 
-public class AdminBrowseEventsActivity extends AppCompatActivity {
-    // this is the page where an admin can browse events
-    // TODO: add functionality for admin to see events and switch to user browse page
-    // implementing the switch as a bottom bar is good. Using fragments is most likely easier
-    // for this method.
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+// Extends BrowseEventsActivity to inherit its basic functionalities
+public class AdminBrowseEventsActivity extends BrowseEventsActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Hide the FloatingActionButton since admins won't be adding events from this screen.
+        FloatingActionButton fabAddEvent = findViewById(R.id.fab_add_event);
+        fabAddEvent.setVisibility(View.GONE);
+
+        // Implement additional customizations needed for the admin view here
+        // such as removing events.
+
+    }
+
+
 }
+
+

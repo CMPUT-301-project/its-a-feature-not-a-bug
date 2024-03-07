@@ -21,7 +21,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Navigate to the events management activity
-                Intent intent = new Intent(AdminDashboardActivity.this, BrowseEventsActivity.class);
+                Intent intent = new Intent(AdminDashboardActivity.this, AdminBrowseEventsActivity.class);
                 startActivity(intent);
             }
         });
