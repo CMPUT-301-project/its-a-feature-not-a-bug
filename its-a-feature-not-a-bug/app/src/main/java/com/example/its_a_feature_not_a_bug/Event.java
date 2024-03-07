@@ -14,6 +14,7 @@ public class Event implements Serializable {
     private String host; // user that created the event
     private Date date; // date of the event
     private ArrayList<String> attendees; // list of users attending the event
+    private ArrayList<Announcement> announcements;
     private String description; // short description of the event posted by the host
 
     public Event(Uri imageId, String title, String host, Date date, String description) {
@@ -65,8 +66,13 @@ public class Event implements Serializable {
     public void setAttendees(ArrayList<String> attendees) {
         this.attendees = attendees;
     }
-
     public void setDescription(String description) {
         this.description = description;
+    }
+    public ArrayList<Announcement> getAnnouncements() {
+        return announcements;
+    }
+    public void setAnnouncements(ArrayList<Announcement> announcements) {
+        this.announcements = announcements;
     }
 }

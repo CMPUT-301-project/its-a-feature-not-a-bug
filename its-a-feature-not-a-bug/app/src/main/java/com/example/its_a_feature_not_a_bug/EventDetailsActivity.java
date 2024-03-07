@@ -22,6 +22,8 @@ public class EventDetailsActivity extends AppCompatActivity {
     private ImageView qrCode;
     private RecyclerView attendeesRecyclerView;
     private AttendeeAdapter attendeeAdapter;
+    private RecyclerView announcementRecyclerView;
+    private AnnouncementAdapter announcementAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,8 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         attendeesRecyclerView = findViewById(R.id.attendeesRecyclerView);
         attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        announcementRecyclerView = findViewById(R.id.announcementsRecyclerView);
+        announcementRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         displayInfo();
     }
 
@@ -54,5 +58,12 @@ public class EventDetailsActivity extends AppCompatActivity {
         attendeeAdapter = new AttendeeAdapter(attendees);
         attendeeAdapter = new AttendeeAdapter(event.getAttendees());
         attendeesRecyclerView.setAdapter(attendeeAdapter);
+        List<Announcement> announcements = event.getAnnouncements();
+        if (announcements == null) {
+            announcements = new ArrayList<>();
+        }
+        announcementAdapter = new AnnouncementAdapter(announcements);
+        announcementRecyclerView.setAdapter(announcementAdapter);
     }
+
 }
