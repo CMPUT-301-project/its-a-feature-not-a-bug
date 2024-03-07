@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class EventDetailsActivity extends AppCompatActivity {
@@ -17,6 +20,8 @@ public class EventDetailsActivity extends AppCompatActivity {
     private TextView location;
     private TextView description;
     private ImageView qrCode;
+    private RecyclerView attendeesRecyclerView;
+    private AttendeeAdapter attendeeAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         event = (Event) intent.getSerializableExtra("event");
 
+
+        attendeesRecyclerView = findViewById(R.id.attendeesRecyclerView);
+        attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         displayInfo();
     }
 
@@ -39,5 +47,12 @@ public class EventDetailsActivity extends AppCompatActivity {
         date.setText(event.getDate().toString());
 
         description.setText(event.getDescription());
+        ArrayList<String> attendees = event.getAttendees();
+        if (attendees == null) {
+            attendees = new ArrayList<>();
+        }
+        attendeeAdapter = new AttendeeAdapter(attendees);
+        attendeeAdapter = new AttendeeAdapter(event.getAttendees());
+        attendeesRecyclerView.setAdapter(attendeeAdapter);
     }
 }
