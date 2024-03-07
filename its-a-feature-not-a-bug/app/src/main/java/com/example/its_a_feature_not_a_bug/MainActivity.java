@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         adminButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myIntent = new Intent(MainActivity.this, AdminBrowseEventsActivity.class);
+                Intent myIntent = new Intent(MainActivity.this, AdminDashboardActivity.class);
                 startActivity(myIntent);
                 // do not finish as this is the launch screen and the back button should bring us back here
             }
