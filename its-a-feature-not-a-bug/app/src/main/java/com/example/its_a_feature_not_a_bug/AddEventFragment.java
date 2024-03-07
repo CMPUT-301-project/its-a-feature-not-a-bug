@@ -23,10 +23,11 @@ import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
 
-
+/**
+ * This class is an extension of a DialogFragment and allows the user to create an event by entering details.
+ */
 public class AddEventFragment extends DialogFragment {
     private AddEventDialogueListener listener;
-    private static final int IMAGE_PICK_REQUEST = 1;
     private ActivityResultLauncher<String> imagePickerLauncher;
     private Uri selectedImageUri;
 
