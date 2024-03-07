@@ -89,40 +89,4 @@ public class AddEventFragment extends DialogFragment {
                 .create();
 
     }
-
-//    public void addEvent(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//
-//        setContentView(R.layout.activity_add_event);
-//        eventName = findViewById(R.id.eventName);
-//        eventDate = findViewById(R.id.eventDate);
-//        eventLocation = findViewById(R.id.eventLocation);
-//        eventDescription = findViewById(R.id.eventDescription);
-//        eventTime = findViewById(R.id.eventTime);
-//        createButton = findViewById(R.id.createButton);
-//        date.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showDatePickerDialog();
-//            }
-//        });
-//        time.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showTimePickerDialog();
-//            }
-//        });
-//        createButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                createEvent();
-//            }
-//        });
-//        public void onCreate(Bundle savedInstanceState) {
-//            View view = inflater.inflate(R.layout.fragment_add_event, container, false);
-//
-//
-//
-//        }
-//    }
 }
