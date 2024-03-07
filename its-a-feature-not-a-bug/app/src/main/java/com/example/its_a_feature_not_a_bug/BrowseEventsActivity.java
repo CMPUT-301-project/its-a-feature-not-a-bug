@@ -32,6 +32,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class is an Activity that allows a user to navigate listed events
+ */
 public class BrowseEventsActivity extends AppCompatActivity implements AddEventDialogueListener{
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
@@ -40,7 +43,10 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
     private ArrayList<Event> eventDataList;
     private FloatingActionButton fab;
 
-
+    /**
+     * This method adds an event to the Firebase Firestore
+     * @param event the event to be added
+     */
     @Override
     public void addEvent(Event event) {
         // adds event to the firestore collection
@@ -74,10 +80,10 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         eventList = findViewById(R.id.list_view_events_list);
         eventDataList = new ArrayList<>();
 
-
         // adapter
         eventAdapter = new EventAdapter(this, eventDataList);
         eventList.setAdapter(eventAdapter);
+
         // add on click listener to click event
         eventList.setOnItemClickListener((parent, view, position, id) -> {
             Event event = eventDataList.get(position);
@@ -90,9 +96,6 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         fab = findViewById(R.id.fab_add_event);
         fab.setOnClickListener(v -> {
             new AddEventFragment().show(getSupportFragmentManager(), "Add Event");
-
-
-
         });
 
         eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {

@@ -17,11 +17,18 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * This class is an adapter that populates a ListView using an ArrayList.
+ */
 public class EventAdapter extends ArrayAdapter<Event> {
     private ArrayList<Event> events;
     private Context context;
 
+    /**
+     * This is a constructor for the event adapter.
+     * @param context the context of the activity that called the adapter
+     * @param events the list of events to be adapted
+     */
     public EventAdapter(Context context, ArrayList<Event> events) {
         super(context, 0, events);
         this.events = events;
@@ -46,9 +53,23 @@ public class EventAdapter extends ArrayAdapter<Event> {
         ImageView poster = view.findViewById(R.id.image_view_event_poster);
 
 
-        eventID.setText(event.getTitle());
-        hostName.setText(event.getHost());
-        date.setText(event.getDate().toString());
+        if (event.getTitle() != null && !event.getTitle().isEmpty()) {
+            eventID.setText(event.getTitle());
+        } else {
+            eventID.setText("Title not found");
+        }
+
+        if (event.getHost() != null && !event.getHost().isEmpty()) {
+            hostName.setText(event.getHost());
+        } else {
+            hostName.setText("Organizer not found");
+        }
+
+        if (event.getDate() != null) {
+            date.setText(event.getDate().toString());
+        } else {
+            date.setText("Date not found");
+        }
 
         if (event.getImageId() != null) {
             Glide.with(context)
