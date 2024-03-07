@@ -5,6 +5,7 @@ import android.widget.ImageView;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Event implements Serializable {
@@ -12,6 +13,7 @@ public class Event implements Serializable {
     private String title; // name of the event
     private String host; // user that created the event
     private Date date; // date of the event
+    private ArrayList<String> attendees; // list of users attending the event
     private String description; // short description of the event posted by the host
 
     public Event(Uri imageId, String title, String host, Date date, String description) {
@@ -56,6 +58,12 @@ public class Event implements Serializable {
 
     public String getDescription() {
         return description;
+    }
+    public ArrayList<String> getAttendees() {
+        return attendees;
+    }
+    public void setAttendees(ArrayList<String> attendees) {
+        this.attendees = attendees;
     }
 
     public void setDescription(String description) {
