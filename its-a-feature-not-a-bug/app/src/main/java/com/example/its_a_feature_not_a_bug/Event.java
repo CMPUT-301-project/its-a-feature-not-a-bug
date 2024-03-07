@@ -3,10 +3,11 @@ package com.example.its_a_feature_not_a_bug;
 import android.net.Uri;
 import android.widget.ImageView;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Date;
 
-public class Event {
+public class Event implements Serializable {
     private Uri imageId; // event poster
     private String title; // name of the event
     private String host; // user that created the event
