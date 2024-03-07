@@ -23,6 +23,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".BrowseEventsActivity"
+            android:exported="true">
+        </activity>
+        <activity android:name=".AdminDashboardActivity">
+        </activity>
+
+        <activity
+            android:name=".AdminBrowseEventsActivity"
+            android:exported="true">
+        </activity>
+        <activity android:name=".EventDetailsActivity">
+        </activity>
+
     </application>
 
 </manifest>
