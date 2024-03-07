@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ListView;
+import android.content.Intent;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -72,14 +74,25 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         eventList = findViewById(R.id.list_view_events_list);
         eventDataList = new ArrayList<>();
 
+
         // adapter
         eventAdapter = new EventAdapter(this, eventDataList);
         eventList.setAdapter(eventAdapter);
+        // add on click listener to click event
+        eventList.setOnItemClickListener((parent, view, position, id) -> {
+            Event event = eventDataList.get(position);
+            Intent intent = new Intent(this, EventDetailsActivity.class);
+            intent.putExtra("event", event);
+            startActivity(intent);
+        });
 
         // fab
         fab = findViewById(R.id.fab_add_event);
         fab.setOnClickListener(v -> {
             new AddEventFragment().show(getSupportFragmentManager(), "Add Event");
+
+
+
         });
 
         eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
