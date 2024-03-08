@@ -37,6 +37,9 @@
         <activity android:name=".EventDetailsActivity">
         </activity>
 
+        <activity android:name=".UpdateProfileActivity">
+        </activity>
+
     </application>
 
 </manifest>
