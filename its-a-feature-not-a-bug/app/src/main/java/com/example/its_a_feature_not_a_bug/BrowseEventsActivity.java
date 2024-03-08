@@ -127,33 +127,6 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         int attendeeLimit = doc.contains("AttendeeLimit") ? doc.getLong("AttendeeLimit").intValue() : 0;
                         int attendeeCount = doc.contains("AttendeeCount") ? doc.getLong("AttendeeCount").intValue() : 0;
 
-                        List<String> attendees = new ArrayList<>();
-
-                        DocumentReference eventIdRef = eventsRef.document(eventId); // Assuming eventId is the ID of the event
-                        eventIdRef.get().addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
-                                if (document.exists()) {
-                                    ArrayList<Object> attendeesList = (ArrayList<Object>) document.get("signedAttendees");
-                                    System.out.print(attendeesList);
-//                                    if (signedAttendees != null) {
-//                                        for (Map<String, Object> attendeeData : signedAttendees) {
-//                                            String attendeeName = (String) attendeeData.get("signedAttendees");
-//                                            attendees.add(attendeeName);
-//                                        }
-//                                    }
-                                }
-                            }
-                        });
-
-//                        ArrayList<User> signedAttendees = new ArrayList<>();
-//                        if (attendees.size() > 0){
-//                            for (String attendee : attendees){
-//                                User user = new User(attendee);
-//                                signedAttendees.add(user);
-//                            }
-//                        }
-
                         String imageUriString = doc.getString("Poster");
                         Uri imageUri = null;
                         if (imageUriString != null && !imageUriString.isEmpty()) {
@@ -167,7 +140,6 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         } else {
                             event = new Event(imageUri, eventId, host, date, description);
                         }
-//                        event.setSignedAttendees(signedAttendees);
                         event.setAttendeeCount(attendeeCount);
                         eventDataList.add(event);
                     }
