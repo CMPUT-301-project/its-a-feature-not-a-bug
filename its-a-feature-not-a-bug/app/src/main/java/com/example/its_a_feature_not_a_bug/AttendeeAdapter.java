@@ -9,7 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 /**
- * This class is an adapter that populates a RecyclerView using an ArrayList.
+ * An adapter for the RecyclerView in the AttendeeListActivity.
+ * This adapter is used to display the list of attendees for an event.
  */
 public class AttendeeAdapter extends RecyclerView.Adapter<AttendeeAdapter.AttendeeViewHolder> {
 
@@ -22,8 +23,6 @@ public class AttendeeAdapter extends RecyclerView.Adapter<AttendeeAdapter.Attend
         if (attendees == null) {
             this.attendees = new ArrayList<User>();
             // populate with dummy data
-            this.attendees.add(new User("Jing"));
-            this.attendees.add(new User("Tanveer"));
         } else {
             this.attendees = attendees;
         }

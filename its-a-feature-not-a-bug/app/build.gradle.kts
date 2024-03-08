@@ -45,6 +45,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-auth:22.3.1"))
     implementation("com.google.firebase:firebase-firestore:24.10.3")
     implementation("com.google.firebase:firebase-analytics:21.5.1")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -52,7 +53,12 @@ dependencies {
     testImplementation ("org.junit.jupiter:junit-jupiter-api:5.3.2)")
     testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.3.2")
 
+    implementation("com.google.firebase:firebase-auth:22.3.1")
+    implementation("com.google.firebase:firebase-storage:20.3.0")
+
+
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.6.1")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation ("com.google.firebase:firebase-auth:21.0.1")
@@ -61,5 +67,6 @@ dependencies {
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 
     implementation("com.google.zxing:core:3.4.1")
-    implementation("com.journeyapps:zxing-android-embedded:4.2.0")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+
 }

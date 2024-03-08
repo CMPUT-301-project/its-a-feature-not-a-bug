@@ -9,23 +9,21 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * This class represents an event that a user can sign up for.
+ * A class representing an event.
  */
 public class Event implements Serializable {
-    private Uri imageId; // event poster
+    private String imageId; // event poster
     private String title; // name of the event
     private String host; // user that created the event
     private Date date; // date of the event
     private ArrayList<User> signedAttendees; // list of users signed up for the event
-
     private ArrayList<User> checkedAttendees; //list of users checked into the event
     private ArrayList<Announcement> announcements;
     private String description; // short description of the event posted by the host
     private int attendeeLimit;
-
     private int attendeeCount;
 
-    public Event(Uri imageId, String title, String host, Date date, String description, int attendeeLimit) {
+    public Event(String imageId, String title, String host, Date date, String description, int attendeeLimit) {
         this.imageId = imageId;
         this.title = title;
         this.host = host;
@@ -34,7 +32,7 @@ public class Event implements Serializable {
         this.attendeeLimit = attendeeLimit;
     }
 
-    public Event(Uri imageId, String title, String host, Date date, String description) {
+    public Event(String imageId, String title, String host, Date date, String description) {
         this.imageId = imageId;
         this.title = title;
         this.host = host;
@@ -42,11 +40,18 @@ public class Event implements Serializable {
         this.description = description;
     }
 
-    public Uri getImageId() {
+    public Event(String title, Date date, String host, String description) {
+        this.title = title;
+        this.date = date;
+        this.host = host;
+        this.description = description;
+    }
+
+    public String getImageId() {
         return this.imageId;
     }
 
-    public void setImageId(Uri imageId) {
+    public void setImageId(String imageId) {
         this.imageId = imageId;
     }
 
@@ -77,9 +82,15 @@ public class Event implements Serializable {
     public String getDescription() {
         return description;
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public ArrayList<User> getSignedAttendees() {
         return signedAttendees;
     }
+
     public void setSignedAttendees(ArrayList<User> attendees) {
         this.signedAttendees = attendees;
     }
@@ -92,12 +103,10 @@ public class Event implements Serializable {
         this.checkedAttendees = checkedAttendees;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
     public ArrayList<Announcement> getAnnouncements() {
         return announcements;
     }
+
     public void setAnnouncements(ArrayList<Announcement> announcements) {
         this.announcements = announcements;
     }
@@ -117,4 +126,6 @@ public class Event implements Serializable {
     public void setAttendeeCount(int attendeeCount) {
         this.attendeeCount = attendeeCount;
     }
+
+
 }

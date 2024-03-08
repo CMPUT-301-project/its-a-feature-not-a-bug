@@ -44,10 +44,15 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
     private ArrayList<Event> eventDataList;
     private FloatingActionButton fab;
 
+    private ArrayList<User> signedAttendees = new ArrayList<>();
+
+    private ArrayList<String> attendees = new ArrayList<String>();
+
 
     @Override
     public void addEvent(Event event) {
         // Adds event to the Firestore collection
+
         Map<String, Object> data = new HashMap<>();
         data.put("Host", event.getHost());
         data.put("Date", event.getDate());
@@ -130,23 +135,39 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         int attendeeCount = doc.contains("AttendeeCount") ? doc.getLong("AttendeeCount").intValue() : 0;
 
 
-                        String imageUriString = doc.getString("Poster");
-                        Uri imageUri = null;
-                        if (imageUriString != null && !imageUriString.isEmpty()) {
-                            imageUri = Uri.parse(imageUriString);
+                        if (doc.get("signedAttendees") != null) {
+                            attendees = (ArrayList<String>) doc.get("signedAttendees");
                         }
 
+
+
+                        String imageURLString = doc.getString("Poster");
+
                         Log.d("Firestore", String.format("Event(%s, %s) fetched", eventId, host));
+
                         Event event;
                         if (attendeeLimit > 0) {
-                            event = new Event(imageUri, eventId, host, date, description, attendeeLimit);
+                            event = new Event(imageURLString, eventId, host, date, description, attendeeLimit);
                         } else {
-                            event = new Event(imageUri, eventId, host, date, description);
+                            event = new Event(imageURLString, eventId, host, date, description);
                         }
                         event.setAttendeeCount(attendeeCount);
+                        event.setSignedAttendees(signedAttendees);
                         eventDataList.add(event);
                     }
+
+
+                    if (attendees.size() >  0) {
+                        for (String attendee : attendees) {
+                            User user = new User(attendee);
+                            signedAttendees.add(user);
+                        }
+                    }
+
+
                     eventAdapter.notifyDataSetChanged();
+                    Log.d("", "ATTENDEE LIST "  + attendees);
+
                 }
             }
         });

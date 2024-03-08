@@ -3,7 +3,7 @@ package com.example.its_a_feature_not_a_bug;
 import java.io.Serializable;
 
 /**
- * This class represents an announcement that a user can view.
+ * A class representing an announcement.
  */
 public class Announcement implements Serializable {
     private String title;

@@ -1,15 +1,14 @@
 package com.example.its_a_feature_not_a_bug;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * This class represents a user of the app.
- */
-public class User {
+
+public class User implements Serializable {
     private String name;
     private List<Event> signedEvents;
 
@@ -28,21 +27,21 @@ public class User {
         this.signedEvents.add(event);
     }
 
-    public void checkInToEvent(Event event){
-        //TODO: functionality for actually checking into event
-        String eventTitle = event.getTitle();
-
-        // Check if the event title is already in the HashMap
-        if (NumTimesCheckedIn.containsKey(eventTitle)) {
-            // If it exists, increment the value of the integer key
-            int currentCheckIns = NumTimesCheckedIn.get(eventTitle);
-            NumTimesCheckedIn.put(eventTitle, currentCheckIns + 1);
-        } else {
-            // If it doesn't exist, initialize with value 1
-            this.checkedEvents.add(event);
-            NumTimesCheckedIn.put(eventTitle, 1);
-        }
-    }
+//    public void checkInToEvent(Event event){
+//        //TODO: functionality for actually checking into event
+//        String eventTitle = event.getTitle();
+//
+//        // Check if the event title is already in the HashMap
+//        if (NumTimesCheckedIn.containsKey(eventTitle)) {
+//            // If it exists, increment the value of the integer key
+//            int currentCheckIns = NumTimesCheckedIn.get(eventTitle);
+//            NumTimesCheckedIn.put(eventTitle, currentCheckIns + 1);
+//        } else {
+//            // If it doesn't exist, initialize with value 1
+//            this.checkedEvents.add(event);
+//            NumTimesCheckedIn.put(eventTitle, 1);
+//        }
+//    }
 
 
     public List<Event> getSignedUpEvents() {

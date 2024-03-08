@@ -6,7 +6,14 @@ import android.view.View;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
- * This class is the activity that allows the admin to browse events.
+ * An activity that allows administrators to browse events.
+ * This activity extends BrowseEventsActivity to inherit its basic functionalities.
+ *
+ * <p>In this activity, the FloatingActionButton for adding new events is hidden,
+ * as administrators won't be adding events from this screen.</p>
+ *
+ * <p>Additional customizations needed for the admin view, such as removing events,
+ * can be implemented in the onCreate method.</p>
  */
 public class AdminBrowseEventsActivity extends BrowseEventsActivity {
 
@@ -23,8 +30,4 @@ public class AdminBrowseEventsActivity extends BrowseEventsActivity {
 
     }
 
-
-
 }
-
-

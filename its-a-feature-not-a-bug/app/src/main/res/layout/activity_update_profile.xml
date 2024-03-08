@@ -5,31 +5,57 @@
     android:layout_height="match_parent"
     tools:context=".UpdateProfileActivity">
 
-    <EditText
-        android:id="@+id/editTextName"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Name" />
+        android:text="UPDATE USER PROFILE"
+        android:textSize="24sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"/>
 
     <EditText
-        android:id="@+id/editTextHomepage"
+        android:id="@+id/editTextContactInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Homepage"
-        android:layout_below="@id/editTextName" />
+        android:hint="Contact Info"
+        android:layout_below="@id/textViewTitle"
+        android:layout_marginTop="32dp"/>
 
     <EditText
-        android:id="@+id/editTextContact"
+        android:id="@+id/editTextFullName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Contact Information"
-        android:layout_below="@id/editTextHomepage" />
+        android:hint="Full Name"
+        android:layout_below="@id/editTextContactInfo"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Add Switch button -->
+    <Switch
+        android:id="@+id/switchGeolocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Disable Geolocation"
+        android:layout_below="@id/editTextFullName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"/>
 
     <Button
         android:id="@+id/buttonSubmit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit"
-        android:layout_below="@id/editTextContact" />
+        android:layout_below="@id/switchGeolocation"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"/>
+
+    <Button
+        android:id="@+id/buttonBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:layout_below="@id/buttonSubmit"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"/>
 
 </RelativeLayout>
