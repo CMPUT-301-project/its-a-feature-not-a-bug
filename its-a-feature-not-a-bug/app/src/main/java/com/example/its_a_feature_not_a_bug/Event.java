@@ -17,12 +17,10 @@ public class Event implements Serializable {
     private String host; // user that created the event
     private Date date; // date of the event
     private ArrayList<User> signedAttendees; // list of users signed up for the event
-
     private ArrayList<User> checkedAttendees; //list of users checked into the event
     private ArrayList<Announcement> announcements;
     private String description; // short description of the event posted by the host
     private int attendeeLimit;
-
     private int attendeeCount;
 
     public Event(String imageId, String title, String host, Date date, String description, int attendeeLimit) {
@@ -77,9 +75,15 @@ public class Event implements Serializable {
     public String getDescription() {
         return description;
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public ArrayList<User> getSignedAttendees() {
         return signedAttendees;
     }
+
     public void setSignedAttendees(ArrayList<User> attendees) {
         this.signedAttendees = attendees;
     }
@@ -92,12 +96,10 @@ public class Event implements Serializable {
         this.checkedAttendees = checkedAttendees;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
     public ArrayList<Announcement> getAnnouncements() {
         return announcements;
     }
+
     public void setAnnouncements(ArrayList<Announcement> announcements) {
         this.announcements = announcements;
     }
