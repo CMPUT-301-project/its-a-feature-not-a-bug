@@ -1,3 +1,6 @@
+// This source code file implements the functionality for a user to update their profile data.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.os.Bundle;
@@ -21,12 +24,6 @@ import java.util.Map;
 /**
  * An activity that allows users to update their profile.
  * This activity extends AppCompatActivity to inherit its basic functionalities.
- *
- * <p>In this activity, users are presented with a form to update their profile information, including their name, homepage, and contact information.</p>
- *
- * <p>Users can submit the form to update their profile. The update functionality is implemented in the onClickListener of the submit button.</p>
- *
- * <p>The updateProfile method is used to update the user's profile with the new information.</p>
  */
 public class UpdateProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;

@@ -1,3 +1,6 @@
+// This source code file implements the adapter for a recycler view to be populated with profile data.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.content.Context;

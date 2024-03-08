@@ -1,3 +1,6 @@
+// This source code file implements the user class.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import java.io.Serializable;
@@ -7,7 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * This class implements users
+ */
 public class User implements Serializable {
     private String name;
     private List<Event> signedEvents;
