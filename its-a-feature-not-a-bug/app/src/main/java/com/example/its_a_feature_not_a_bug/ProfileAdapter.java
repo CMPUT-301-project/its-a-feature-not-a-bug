@@ -17,12 +17,17 @@ import java.util.List;
  */
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileViewHolder> {
 
+    public interface OnProfileClickListener {
+        void onProfileClick(Profile profile);
+    }
     private List<Profile> profiles;
     private Context context;
+    private OnProfileClickListener clickListener;
 
-    public ProfileAdapter(Context context, List<Profile> profiles) {
+    public ProfileAdapter(Context context, List<Profile> profiles, OnProfileClickListener clickListener) {
         this.context = context;
         this.profiles = profiles;
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -36,8 +41,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
     public void onBindViewHolder(@NonNull ProfileViewHolder holder, int position) {
         Profile profile = profiles.get(position);
         holder.profileFullName.setText(profile.getFullName());
-
-        // Assuming profilePicId is a URI or URL. If it's not, you'll need to adjust this.
         if (profile.getProfilePicId() != null) {
             Glide.with(context)
                     .load(profile.getProfilePicId())
@@ -46,6 +49,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         } else {
             holder.profileImageView.setImageResource(R.drawable.default_profile_pic);
         }
+
+        // Set click listener for the entire profile item view
+        holder.itemView.setOnClickListener(v -> clickListener.onProfileClick(profile));
     }
 
     @Override

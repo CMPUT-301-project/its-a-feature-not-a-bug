@@ -15,27 +15,29 @@
         android:layout_marginTop="32dp"/>
 
     <EditText
-        android:id="@+id/editTextName"
+        android:id="@+id/editTextContactInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Name"
+        android:hint="Contact Info"
         android:layout_below="@id/textViewTitle"
         android:layout_marginTop="32dp"/>
 
     <EditText
-        android:id="@+id/editTextHomepage"
+        android:id="@+id/editTextFullName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Homepage"
-        android:layout_below="@id/editTextName"
+        android:hint="Full Name"
+        android:layout_below="@id/editTextContactInfo"
         android:layout_marginTop="16dp"/>
 
-    <EditText
-        android:id="@+id/editTextContact"
-        android:layout_width="match_parent"
+    <!-- Add Switch button -->
+    <Switch
+        android:id="@+id/switchGeolocation"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="Contact Information"
-        android:layout_below="@id/editTextHomepage"
+        android:text="Disable Geolocation"
+        android:layout_below="@id/editTextFullName"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"/>
 
     <Button
@@ -43,7 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit"
-        android:layout_below="@id/editTextContact"
+        android:layout_below="@id/switchGeolocation"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"/>
 
