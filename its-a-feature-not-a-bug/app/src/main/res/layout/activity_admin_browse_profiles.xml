@@ -4,6 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/removeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Remove Profile"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_above="@id/profilesRecyclerView" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/profilesRecyclerView"
         android:layout_width="match_parent"
