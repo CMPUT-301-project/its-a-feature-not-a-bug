@@ -19,8 +19,6 @@ public class AttendeeAdapter extends RecyclerView.Adapter<AttendeeAdapter.Attend
         if (attendees == null) {
             this.attendees = new ArrayList<User>();
             // populate with dummy data
-            this.attendees.add(new User("Jing"));
-            this.attendees.add(new User("Tanveer"));
         } else {
             this.attendees = attendees;
         }

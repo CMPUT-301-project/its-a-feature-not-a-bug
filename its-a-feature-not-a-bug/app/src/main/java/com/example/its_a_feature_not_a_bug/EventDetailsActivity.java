@@ -65,16 +65,15 @@ public class EventDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         event = (Event) intent.getSerializableExtra("event");
 
-        attendeesRecyclerView = findViewById(R.id.attendeesRecyclerView);
-        attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        announcementRecyclerView = findViewById(R.id.announcementsRecyclerView);
-        announcementRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         attendees = event.getSignedAttendees();
         if (attendees == null) {
             attendees = new ArrayList<>();
+            attendees.add(new User("Jing"));
+            attendees.add(new User("Tanveer"));
         }
         attendeeAdapter = new AttendeeAdapter(attendees, event);
+        attendeesRecyclerView = findViewById(R.id.attendeesRecyclerView);
+        attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         attendeesRecyclerView.setAdapter(attendeeAdapter);
 
         List<Announcement> announcements = event.getAnnouncements();
@@ -82,6 +81,8 @@ public class EventDetailsActivity extends AppCompatActivity {
             announcements = new ArrayList<>();
         }
         announcementAdapter = new AnnouncementAdapter(announcements);
+        announcementRecyclerView = findViewById(R.id.announcementsRecyclerView);
+        announcementRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         announcementRecyclerView.setAdapter(announcementAdapter);
 
 
