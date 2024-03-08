@@ -13,6 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +37,12 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     private Button signUpButton;
 
+    private Button removeEventButton;
+
+    private FirebaseFirestore db;
+
+    private CollectionReference eventsRef;
+
     private User currentUser;
     private Event currentEvent;
 
@@ -39,6 +50,9 @@ public class EventDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.event_details);
+
+        db = FirebaseFirestore.getInstance();
+        eventsRef = db.collection("events");
 
         name = findViewById(R.id.eventTitle);
         date = findViewById(R.id.eventDate);
@@ -61,36 +75,60 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
         });
         displayInfo();
-    }
-        public void displayInfo() {
-            name.setText(event.getTitle());
-            // convert date to string
-            date.setText(event.getDate().toString());
 
-            description.setText(event.getDescription());
-            ArrayList<String> attendees = event.getAttendees();
-            if (attendees == null) {
-                attendees = new ArrayList<>();
+        removeEventButton = findViewById(R.id.btnRemoveEvent);
+        removeEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteEventFromDatabase(event);
             }
-            attendeeAdapter = new AttendeeAdapter(attendees);
-            attendeeAdapter = new AttendeeAdapter(event.getAttendees());
-            attendeesRecyclerView.setAdapter(attendeeAdapter);
-            List<Announcement> announcements = event.getAnnouncements();
-            if (announcements == null) {
-                announcements = new ArrayList<>();
-            }
-            announcementAdapter = new AnnouncementAdapter(announcements);
-            announcementRecyclerView.setAdapter(announcementAdapter);
-        }
-        private void signUpForEvent() {
-            if (currentUser != null) {
-                currentUser.signUpForEvent(event);
+        });
+    }
 
-                Toast.makeText(EventDetailsActivity.this, "Signed up for event", Toast.LENGTH_SHORT).show();
-                attendeeAdapter.notifyDataSetChanged();
-            }
+    public void displayInfo() {
+        name.setText(event.getTitle());
+        // convert date to string
+        date.setText(event.getDate().toString());
+
+        description.setText(event.getDescription());
+        ArrayList<String> attendees = event.getAttendees();
+        if (attendees == null) {
+            attendees = new ArrayList<>();
+        }
+        attendeeAdapter = new AttendeeAdapter(attendees);
+        attendeeAdapter = new AttendeeAdapter(event.getAttendees());
+        attendeesRecyclerView.setAdapter(attendeeAdapter);
+        List<Announcement> announcements = event.getAnnouncements();
+        if (announcements == null) {
+            announcements = new ArrayList<>();
+        }
+        announcementAdapter = new AnnouncementAdapter(announcements);
+        announcementRecyclerView.setAdapter(announcementAdapter);
+    }
+
+    private void signUpForEvent() {
+        if (currentUser != null) {
+            currentUser.signUpForEvent(event);
+
+            Toast.makeText(EventDetailsActivity.this, "Signed up for event", Toast.LENGTH_SHORT).show();
+            attendeeAdapter.notifyDataSetChanged();
         }
     }
+
+    private void deleteEventFromDatabase(Event eventToDelete) {
+        eventsRef.document(eventToDelete.getTitle())
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        // Successfully deleted the event
+                        Toast.makeText(EventDetailsActivity.this, "Event removed successfully", Toast.LENGTH_SHORT).show();
+                        // Finish the activity
+                        finish();
+                    }
+                });
+    }
+}
 
 
 
