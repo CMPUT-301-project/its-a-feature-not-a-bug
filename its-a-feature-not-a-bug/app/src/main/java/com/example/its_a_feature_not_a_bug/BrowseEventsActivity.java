@@ -119,7 +119,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         ArrayList<String> attendees = new ArrayList<>();
                         ArrayList<User> signedAttendees = new ArrayList<>();
                         if (doc.contains("signedAttendees")) {
-                            attendees = (ArrayList<String>) doc.get("SignedAttendees");
+                            attendees = (ArrayList<String>) doc.get("signedAttendees");
                             for (String attendee : attendees) {
                                 // Initialize each string in the array as a new User object
                                 User user = new User(attendee); // Assuming User constructor takes a name parameter
