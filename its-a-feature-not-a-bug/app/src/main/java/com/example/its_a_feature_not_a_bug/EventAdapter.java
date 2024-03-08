@@ -18,7 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class is an adapter that populates a ListView using an ArrayList.
+ * An adapter for the ListView in the BrowseEventsActivity.
+ * This adapter is used to display the list of events.
  */
 public class EventAdapter extends ArrayAdapter<Event> {
     private ArrayList<Event> events;

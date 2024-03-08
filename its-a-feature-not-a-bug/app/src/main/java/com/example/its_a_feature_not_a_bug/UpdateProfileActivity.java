@@ -18,6 +18,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * An activity that allows users to update their profile.
+ * This activity extends AppCompatActivity to inherit its basic functionalities.
+ *
+ * <p>In this activity, users are presented with a form to update their profile information, including their name, homepage, and contact information.</p>
+ *
+ * <p>Users can submit the form to update their profile. The update functionality is implemented in the onClickListener of the submit button.</p>
+ *
+ * <p>The updateProfile method is used to update the user's profile with the new information.</p>
+ */
 public class UpdateProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference profilesRef;

@@ -33,6 +33,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * An activity that allows users to browse events.
+ * This activity extends AppCompatActivity to inherit its basic functionalities.
+ *
+ * <p>In this activity, users are presented with a list of events that they can browse.
+ * The events are fetched from the Firestore database and displayed in a ListView.</p>
+ *
+ * <p>Users can click on an event to view its details. The navigation to the event details is handled by setting an onItemClick listener on the ListView.</p>
+ *
+ * <p>Users can also add new events by clicking the floating action button (FAB). This opens a dialog where they can input the details of the new event.</p>
+ *
+ * <p>The AddEventDialogueListener interface is implemented to handle the addition of new events.</p>
+ *
+ * @see AddEventDialogueListener
+ */
 public class BrowseEventsActivity extends AppCompatActivity implements AddEventDialogueListener{
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
