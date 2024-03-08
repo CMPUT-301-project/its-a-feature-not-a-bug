@@ -8,6 +8,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * A class representing an event.
+ */
 public class Event implements Serializable {
     private String imageId; // event poster
     private String title; // name of the event

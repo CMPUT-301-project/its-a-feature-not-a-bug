@@ -38,7 +38,27 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
-
+/**
+ * A DialogFragment that allows the user to add a new event.
+ * The user can input the event title, host, date, description, and an optional attendee limit.
+ * The user can also upload an image for the event.
+ *
+ * <p>This class implements the following functionality:</p>
+ * <ul>
+ *   <li>Image upload: The user can upload an image for the event. The image is selected using an image picker.</li>
+ *   <li>Attendee limit: The user can optionally set a limit on the number of attendees for the event.</li>
+ * </ul>
+ *
+ * <p>The dialog has two buttons:</p>
+ * <ul>
+ *   <li>OK: When the user clicks this button, the input data is validated and a new Event object is created.</li>
+ *   <li>Cancel: This button dismisses the dialog without creating a new event.</li>
+ * </ul>
+ *
+ * <p>The AddEventFragment must be attached to an activity that implements the AddEventDialogueListener interface.</p>
+ *
+ * @see AddEventDialogueListener
+ */
 public class AddEventFragment extends DialogFragment {
     private AddEventDialogueListener listener;
     private ActivityResultLauncher<Intent> imagePickerLauncher;

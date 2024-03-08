@@ -13,6 +13,16 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An activity that allows administrators to browse events.
+ * This activity extends BrowseEventsActivity to inherit its basic functionalities.
+ *
+ * <p>In this activity, the FloatingActionButton for adding new events is hidden,
+ * as administrators won't be adding events from this screen.</p>
+ *
+ * <p>Additional customizations needed for the admin view, such as removing events,
+ * can be implemented in the onCreate method.</p>
+ */
 public class AdminBrowseProfilesActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private RecyclerView profilesRecyclerView;
