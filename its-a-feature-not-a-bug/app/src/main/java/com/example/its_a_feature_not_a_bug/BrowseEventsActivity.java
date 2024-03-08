@@ -45,6 +45,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
     @Override
     public void addEvent(Event event) {
         // Adds event to the Firestore collection
+
         Map<String, Object> data = new HashMap<>();
         data.put("Host", event.getHost());
         data.put("Date", event.getDate());
@@ -125,7 +126,6 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         String description = doc.getString("Description");
                         int attendeeLimit = doc.contains("AttendeeLimit") ? doc.getLong("AttendeeLimit").intValue() : 0;
                         int attendeeCount = doc.contains("AttendeeCount") ? doc.getLong("AttendeeCount").intValue() : 0;
-
 
                         String imageUriString = doc.getString("Poster");
                         Uri imageUri = null;

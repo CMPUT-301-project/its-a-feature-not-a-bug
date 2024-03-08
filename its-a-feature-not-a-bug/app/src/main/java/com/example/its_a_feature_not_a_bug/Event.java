@@ -114,4 +114,6 @@ public class Event implements Serializable {
     public void setAttendeeCount(int attendeeCount) {
         this.attendeeCount = attendeeCount;
     }
+
+
 }
