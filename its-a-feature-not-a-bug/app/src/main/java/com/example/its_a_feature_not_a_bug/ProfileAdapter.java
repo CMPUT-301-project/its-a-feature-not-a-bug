@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -18,9 +17,11 @@ import java.util.List;
  */
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileViewHolder> {
 
+    public interface OnProfileClickListener {
+        void onProfileClick(Profile profile);
+    }
     private List<Profile> profiles;
     private Context context;
-
     private OnProfileClickListener clickListener;
 
     public ProfileAdapter(Context context, List<Profile> profiles, OnProfileClickListener clickListener) {
@@ -40,8 +41,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
     public void onBindViewHolder(@NonNull ProfileViewHolder holder, int position) {
         Profile profile = profiles.get(position);
         holder.profileFullName.setText(profile.getFullName());
-
-        // Assuming profilePicId is a URI or URL. If it's not, you'll need to adjust this.
         if (profile.getProfilePicId() != null) {
             Glide.with(context)
                     .load(profile.getProfilePicId())
@@ -50,6 +49,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         } else {
             holder.profileImageView.setImageResource(R.drawable.default_profile_pic);
         }
+
+        // Set click listener for the entire profile item view
+        holder.itemView.setOnClickListener(v -> clickListener.onProfileClick(profile));
     }
 
     @Override
@@ -57,34 +59,14 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         return profiles.size();
     }
 
-    class ProfileViewHolder extends RecyclerView.ViewHolder {
+    static class ProfileViewHolder extends RecyclerView.ViewHolder {
         ImageView profileImageView;
         TextView profileFullName;
-        Button removeButton;
 
         public ProfileViewHolder(@NonNull View itemView) {
             super(itemView);
             profileImageView = itemView.findViewById(R.id.profileImageView);
             profileFullName = itemView.findViewById(R.id.profileFullName);
-            removeButton = itemView.findViewById(R.id.removeButton);
-
-            // Set onClickListener for remove button
-            removeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) {
-                        // Pass the position to the clickListener interface
-                        clickListener.onRemoveProfile(position);
-                    }
-                }
-            });
         }
-    }
-
-    // Interface for click listener
-    public interface OnProfileClickListener {
-        void onRemoveProfile(int position);
-        void onProfileClick(int position, Profile profile);
     }
 }

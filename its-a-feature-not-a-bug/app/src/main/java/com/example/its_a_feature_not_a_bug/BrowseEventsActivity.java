@@ -158,13 +158,16 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         if (imageUriString != null && !imageUriString.isEmpty()) {
                             imageUri = Uri.parse(imageUriString);
                         }
+                        String imageURLString = doc.getString("Poster");
+
 
                         Log.d("Firestore", String.format("Event(%s, %s) fetched", eventId, host));
+
                         Event event;
                         if (attendeeLimit > 0) {
-                            event = new Event(imageUri, eventId, host, date, description, attendeeLimit);
+                            event = new Event(imageURLString, eventId, host, date, description, attendeeLimit);
                         } else {
-                            event = new Event(imageUri, eventId, host, date, description);
+                            event = new Event(imageURLString, eventId, host, date, description);
                         }
                         event.setAttendeeCount(attendeeCount);
                         event.setSignedAttendees(signedAttendees);
@@ -186,6 +189,5 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                 }
             }
         });
-
     }
 }
