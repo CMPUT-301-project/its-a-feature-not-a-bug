@@ -36,6 +36,10 @@
         </activity>
         <activity android:name=".EventDetailsActivity">
         </activity>
+        <activity android:name=".AdminBrowseProfilesActivity"/>
+
+        <activity android:name=".UpdateProfileActivity">
+        </activity>
 
     </application>
 

@@ -3,6 +3,7 @@ package com.example.its_a_feature_not_a_bug;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.content.Intent;
@@ -99,6 +100,15 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         fab.setOnClickListener(v -> {
             new AddEventFragment().show(getSupportFragmentManager(), "Add Event");
         });
+        FloatingActionButton fabUpdateProfile = findViewById(R.id.fab_update_profile);
+        fabUpdateProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(BrowseEventsActivity.this, UpdateProfileActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
