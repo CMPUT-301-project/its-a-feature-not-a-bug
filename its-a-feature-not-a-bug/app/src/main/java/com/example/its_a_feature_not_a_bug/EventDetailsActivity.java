@@ -39,6 +39,8 @@ public class EventDetailsActivity extends AppCompatActivity {
     private Button signUpButton;
 
     private Button removeEventButton;
+
+    private Button backButton;
     private User currentUser;
 
     private FirebaseFirestore db;
@@ -99,6 +101,12 @@ public class EventDetailsActivity extends AppCompatActivity {
         removeEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { deleteEventFromDatabase(event);}
+        });
+
+        backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { finish();}
         });
 
     }
