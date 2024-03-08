@@ -3,6 +3,7 @@ package com.example.its_a_feature_not_a_bug;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -23,11 +25,10 @@ import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * This class is an extension of a DialogFragment and allows the user to create an event by entering details.
- */
+
 public class AddEventFragment extends DialogFragment {
     private AddEventDialogueListener listener;
+    private static final int IMAGE_PICK_REQUEST = 1;
     private ActivityResultLauncher<String> imagePickerLauncher;
     private Uri selectedImageUri;
 
@@ -52,6 +53,8 @@ public class AddEventFragment extends DialogFragment {
         EditText editEventHost = view.findViewById(R.id.edit_tex_event_host);
         DatePicker editEventDate = view.findViewById(R.id.date_picker_event_date);
         EditText editEventDescription = view.findViewById(R.id.edit_text_event_description);
+        Switch switchAttendeeLimit = view.findViewById(R.id.switch_attendee_limit);
+        EditText editEventLimit = view.findViewById(R.id.edit_text_limit);
         ImageView eventPoster = view.findViewById(R.id.image_view_event_image);
         Button uploadButton = view.findViewById(R.id.upload_button);
 
@@ -70,24 +73,60 @@ public class AddEventFragment extends DialogFragment {
                 });
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        return builder
+        AlertDialog alertDialog = builder
                 .setView(view)
                 .setTitle("Add Event")
                 .setNegativeButton("cancel", null)
-                .setPositiveButton("ok", (dialog, which) -> {
-                    String title = editEventId.getText().toString();
-                    String host = editEventHost.getText().toString();
-                    int year = editEventDate.getYear();
-                    int month = editEventDate.getMonth();
-                    int dayOfMonth = editEventDate.getDayOfMonth();
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.set(year, month, dayOfMonth);
-                    Date date = calendar.getTime();
-                    String description = editEventDescription.getText().toString();
-
-                    listener.addEvent(new Event(selectedImageUri, title, host, date, description));
-                })
+                .setPositiveButton("ok", null) // Delaying positive button action to handle Switch change
                 .create();
 
+        alertDialog.setOnShowListener(dialog -> {
+            Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+            positiveButton.setOnClickListener(v -> {
+                String title = editEventId.getText().toString();
+                String host = editEventHost.getText().toString();
+                int year = editEventDate.getYear();
+                int month = editEventDate.getMonth();
+                int dayOfMonth = editEventDate.getDayOfMonth();
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(year, month, dayOfMonth);
+                Date date = calendar.getTime();
+                String description = editEventDescription.getText().toString();
+                int attendeeLimit = 0;
+
+                // Check if Switch is checked
+                if (switchAttendeeLimit.isChecked()) {
+                    // Parse attendee limit from EditText
+                    try {
+                        attendeeLimit = Integer.parseInt(editEventLimit.getText().toString());
+                    } catch (NumberFormatException e) {
+                        // Handle invalid input
+                        editEventLimit.setError("Invalid attendee limit");
+                        return;
+                    }
+                }
+
+                // Create Event object with appropriate constructor based on Switch state
+                if (switchAttendeeLimit.isChecked()) {
+                    listener.addEvent(new Event(selectedImageUri, title, host, date, description, attendeeLimit));
+                } else {
+                    listener.addEvent(new Event(selectedImageUri, title, host, date, description));
+                }
+
+                alertDialog.dismiss();
+            });
+        });
+
+        // Toggle visibility of attendee limit EditText based on Switch state
+        switchAttendeeLimit.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                editEventLimit.setVisibility(View.VISIBLE);
+            } else {
+                editEventLimit.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        return alertDialog;
     }
+
 }
