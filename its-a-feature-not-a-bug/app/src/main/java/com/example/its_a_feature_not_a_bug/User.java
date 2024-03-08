@@ -26,21 +26,21 @@ public class User implements Serializable {
         this.signedEvents.add(event);
     }
 
-    public void checkInToEvent(Event event){
-        //TODO: functionality for actually checking into event
-        String eventTitle = event.getTitle();
-
-        // Check if the event title is already in the HashMap
-        if (NumTimesCheckedIn.containsKey(eventTitle)) {
-            // If it exists, increment the value of the integer key
-            int currentCheckIns = NumTimesCheckedIn.get(eventTitle);
-            NumTimesCheckedIn.put(eventTitle, currentCheckIns + 1);
-        } else {
-            // If it doesn't exist, initialize with value 1
-            this.checkedEvents.add(event);
-            NumTimesCheckedIn.put(eventTitle, 1);
-        }
-    }
+//    public void checkInToEvent(Event event){
+//        //TODO: functionality for actually checking into event
+//        String eventTitle = event.getTitle();
+//
+//        // Check if the event title is already in the HashMap
+//        if (NumTimesCheckedIn.containsKey(eventTitle)) {
+//            // If it exists, increment the value of the integer key
+//            int currentCheckIns = NumTimesCheckedIn.get(eventTitle);
+//            NumTimesCheckedIn.put(eventTitle, currentCheckIns + 1);
+//        } else {
+//            // If it doesn't exist, initialize with value 1
+//            this.checkedEvents.add(event);
+//            NumTimesCheckedIn.put(eventTitle, 1);
+//        }
+//    }
 
 
     public List<Event> getSignedUpEvents() {
