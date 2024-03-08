@@ -2,11 +2,17 @@ package com.example.its_a_feature_not_a_bug;
 
 import android.net.Uri;
 
-public class Profile {
+import java.io.Serializable;
+
+public class Profile implements Serializable {
     private Uri profilePicId; // User profile pic
     // private String userId; // Unique ID for the user
     private String fullName; // Full name of the user
     private String contactInfo; // User contact info
+
+    public Profile() {
+    }
+
 
     // Constructor
     public Profile(Uri profilePicId, String userId, String fullName, String contactInfo) {
