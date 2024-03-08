@@ -9,6 +9,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+
+/**
+ * An adapter for the RecyclerView in the AnnouncementActivity.
+ * This adapter is used to display the list of announcements.
+ */
 public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapter.ViewHolder> {
     private List<Announcement> announcementList;
 

@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A class representing a user.
+ */
 public class User {
     private String name;
     private List<Event> signedEvents;
