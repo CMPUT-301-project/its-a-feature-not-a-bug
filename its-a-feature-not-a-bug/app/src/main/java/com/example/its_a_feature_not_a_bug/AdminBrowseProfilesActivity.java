@@ -1,6 +1,7 @@
 package com.example.its_a_feature_not_a_bug;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -92,16 +93,28 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
                     // Handle the error
+                    Log.e("Load Profiles", "Error fetching profiles: " + e.getMessage());
                     return;
                 }
 
                 profileList.clear();
                 for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                    Profile profile = document.toObject(Profile.class);
+                    // Retrieve profile data
+                    String fullName = document.getString("fullName");
+                    String contactInfo = document.getString("contactInfo");
+                    boolean geolocationDisabled = document.getBoolean("geolocationDisabled"); // Retrieve additional field
+
+                    // Create a new Profile object with retrieved data
+                    Profile profile = new Profile(fullName, contactInfo, geolocationDisabled); // Assuming you have a constructor for Profile class
+
+                    // Add the profile to the list
                     profileList.add(profile);
                 }
+
+                // Notify the adapter that the dataset has changed
                 profileAdapter.notifyDataSetChanged();
             }
         });
     }
+
 }

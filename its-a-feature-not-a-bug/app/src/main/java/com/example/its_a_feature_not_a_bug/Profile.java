@@ -10,7 +10,15 @@ public class Profile implements Serializable {
     private String fullName; // Full name of the user
     private String contactInfo; // User contact info
 
+    private boolean geolocationDisabled;
+
     public Profile() {
+    }
+
+    public Profile(String fullName, String contactInfo, boolean geolocationDisabled){
+        this.fullName = fullName;
+        this.contactInfo = contactInfo;
+        this.geolocationDisabled = geolocationDisabled;
     }
 
 

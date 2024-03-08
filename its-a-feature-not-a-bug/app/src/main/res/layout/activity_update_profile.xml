@@ -30,12 +30,22 @@
         android:layout_below="@id/editTextContactInfo"
         android:layout_marginTop="16dp"/>
 
+    <!-- Add Switch button -->
+    <Switch
+        android:id="@+id/switchGeolocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Disable Geolocation"
+        android:layout_below="@id/editTextFullName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"/>
+
     <Button
         android:id="@+id/buttonSubmit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit"
-        android:layout_below="@id/editTextFullName"
+        android:layout_below="@id/switchGeolocation"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"/>
 
