@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,6 +17,17 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         Button buttonEvents = findViewById(R.id.buttonEvents);
         Button buttonProfiles = findViewById(R.id.buttonProfiles);
+
+        Button backButton = findViewById(R.id.buttonBack);
+
+        // Set OnClickListener for the back button
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Call finish() to close the current activity
+                finish();
+            }
+        });
 
         buttonEvents.setOnClickListener(new View.OnClickListener() {
             @Override
