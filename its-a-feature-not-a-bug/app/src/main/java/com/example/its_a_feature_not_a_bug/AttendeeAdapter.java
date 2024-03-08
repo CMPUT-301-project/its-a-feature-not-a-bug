@@ -1,3 +1,7 @@
+// This source code file implements the adapter for a recycler view to be populated with data,
+// Specifically attendees.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.view.LayoutInflater;
@@ -18,6 +22,11 @@ public class AttendeeAdapter extends RecyclerView.Adapter<AttendeeAdapter.Attend
 
     private Event event;
 
+    /**
+     * This is a constructor for the class.
+     * @param attendees the list of attendees
+     * @param event the event to be attended
+     */
     public AttendeeAdapter(ArrayList<User> attendees, Event event) {
         this.event = event;
         if (attendees == null) {
@@ -45,13 +54,25 @@ public class AttendeeAdapter extends RecyclerView.Adapter<AttendeeAdapter.Attend
         holder.attendeeInfo.setText(name);
     }
 
+    /**
+     * This returns the number of attendees of the event.
+     * @return the number of attendees
+     */
     @Override
     public int getItemCount() {
         return attendees.size();
     }
 
+    /**
+     * This class implements the view holder needed for adapting to a recycler view.
+     */
     static class AttendeeViewHolder extends RecyclerView.ViewHolder {
         TextView attendeeInfo;
+
+        /**
+         * This is the constructor for this class.
+         * @param itemView the view
+         */
         AttendeeViewHolder(View itemView) {
             super(itemView);
             attendeeInfo = itemView.findViewById(android.R.id.text1);

@@ -1,3 +1,6 @@
+// This source code file implements the functionality for a user to view event details.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.content.Intent;
@@ -27,16 +30,6 @@ import java.util.List;
 /**
  * An activity that allows users to view the details of an event.
  * This activity extends AppCompatActivity to inherit its basic functionalities.
- *
- * <p>In this activity, users are presented with the details of an event, including the event name, date, location, description, and a QR code.</p>
- *
- * <p>Users can also sign up for the event by clicking the "Sign Up" button. The sign-up functionality is implemented in the signUpForEvent method.</p>
- *
- * <p>Users can also remove the event by clicking the "Remove Event" button. The remove event functionality is implemented in the deleteEventFromDatabase method.</p>
- *
- * <p>The navigation to this activity is handled by setting an onItemClick listener on the ListView in the BrowseEventsActivity.</p>
- *
- * @see BrowseEventsActivity
  */
 public class EventDetailsActivity extends AppCompatActivity {
     private Event event;
@@ -124,6 +117,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
 
     }
+    
     public void displayInfo() {
         name.setText(event.getTitle());
         // convert date to string

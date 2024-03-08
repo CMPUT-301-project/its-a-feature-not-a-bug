@@ -1,3 +1,6 @@
+// This source code file implements the functionality for a user to browse events as an admin.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.os.Bundle;
@@ -8,12 +11,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 /**
  * An activity that allows administrators to browse events.
  * This activity extends BrowseEventsActivity to inherit its basic functionalities.
- *
- * <p>In this activity, the FloatingActionButton for adding new events is hidden,
- * as administrators won't be adding events from this screen.</p>
- *
- * <p>Additional customizations needed for the admin view, such as removing events,
- * can be implemented in the onCreate method.</p>
  */
 public class AdminBrowseEventsActivity extends BrowseEventsActivity {
 
