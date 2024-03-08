@@ -1,3 +1,7 @@
+// This source code file implements the functionality of adding an event to a list of events
+// for the user to browse and upload it to the database.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.app.Activity;
@@ -40,25 +44,7 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * A DialogFragment that allows the user to add a new event.
- * The user can input the event title, host, date, description, and an optional attendee limit.
- * The user can also upload an image for the event.
- *
- * <p>This class implements the following functionality:</p>
- * <ul>
- *   <li>Image upload: The user can upload an image for the event. The image is selected using an image picker.</li>
- *   <li>Attendee limit: The user can optionally set a limit on the number of attendees for the event.</li>
- * </ul>
- *
- * <p>The dialog has two buttons:</p>
- * <ul>
- *   <li>OK: When the user clicks this button, the input data is validated and a new Event object is created.</li>
- *   <li>Cancel: This button dismisses the dialog without creating a new event.</li>
- * </ul>
- *
- * <p>The AddEventFragment must be attached to an activity that implements the AddEventDialogueListener interface.</p>
- *
- * @see AddEventDialogueListener
+ * This class is an extension of a DialogFragment and allows the user to create an event by entering details.
  */
 public class AddEventFragment extends DialogFragment {
     private AddEventDialogueListener listener;
@@ -167,7 +153,12 @@ public class AddEventFragment extends DialogFragment {
     }
 
     /**
-     * this uploads an image the Firebase Storage.
+     * This uploads an image to the Firestore
+     * @param title the title of the new Event
+     * @param host the organizer of the new Event
+     * @param date the date of the new event
+     * @param description the description of the new event
+     * @param attendeeLimit the max number of attendees for the new event
      */
     private void uploadImageToFirebaseStorage(String title, String host, Date date, String description, int attendeeLimit) {
         if (selectedImageUri != null) {

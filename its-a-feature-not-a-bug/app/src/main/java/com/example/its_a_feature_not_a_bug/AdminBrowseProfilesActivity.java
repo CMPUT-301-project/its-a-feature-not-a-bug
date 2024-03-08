@@ -1,3 +1,6 @@
+// This source code file implements the fuctionality for a user to browse profiles as an admin.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.app.AlertDialog;
@@ -18,13 +21,6 @@ import java.util.List;
 
 /**
  * An activity that allows administrators to browse events.
- * This activity extends BrowseEventsActivity to inherit its basic functionalities.
- *
- * <p>In this activity, the FloatingActionButton for adding new events is hidden,
- * as administrators won't be adding events from this screen.</p>
- *
- * <p>Additional customizations needed for the admin view, such as removing events,
- * can be implemented in the onCreate method.</p>
  */
 public class AdminBrowseProfilesActivity extends AppCompatActivity implements ProfileAdapter.OnProfileClickListener {
     private FirebaseFirestore db;
@@ -52,6 +48,9 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
         profilesRecyclerView.setAdapter(profileAdapter);
     }
 
+    /**
+     * Loads the profiles from the database and adds them to a list.
+     */
     private void loadProfiles() {
         db.collection("profiles").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -73,6 +72,10 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
         });
     }
 
+    /**
+     * Allows the user to select a profile to be deleted by clicking on it.
+     * @param profile the profile to be deleted
+     */
     @Override
     public void onProfileClick(Profile profile) {
         new AlertDialog.Builder(this)
@@ -83,6 +86,10 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
                 .create().show();
     }
 
+    /**
+     * Deletes a profile from the database.
+     * @param profile the profile to be deleted.
+     */
     private void deleteProfile(Profile profile) {
         // Here you should use a unique identifier for the profile to delete.
         // This could be a userID or any unique field in your Profile model.

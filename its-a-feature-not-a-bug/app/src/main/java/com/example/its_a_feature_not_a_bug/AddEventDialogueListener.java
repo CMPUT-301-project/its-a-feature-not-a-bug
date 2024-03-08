@@ -1,3 +1,7 @@
+// This source code file implements the interface for the dialogue listener that handles adding an
+// event to an array of events.
+// No current outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 /**

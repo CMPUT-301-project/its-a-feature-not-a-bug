@@ -1,3 +1,6 @@
+// This source code file implements the functionality for a user to browse and event page.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.net.Uri;
@@ -34,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class is the activity that allows the user to browse events.
+ * This class is an Activity that allows a user to navigate listed events
  */
 public class BrowseEventsActivity extends AppCompatActivity implements AddEventDialogueListener{
     private FirebaseFirestore db;
@@ -48,7 +51,10 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
 
     private ArrayList<String> attendees = new ArrayList<String>();
 
-
+    /**
+     * This method adds an event to the Firebase Firestore
+     * @param event the event to be added
+     */
     @Override
     public void addEvent(Event event) {
         // Adds event to the Firestore collection
