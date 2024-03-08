@@ -2,14 +2,17 @@ package com.example.its_a_feature_not_a_bug;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.its_a_feature_not_a_bug.Profile;
+import com.example.its_a_feature_not_a_bug.ProfileAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -21,13 +24,18 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdminBrowseProfilesActivity extends AppCompatActivity implements ProfileAdapter.OnProfileClickListener{
+public class AdminBrowseProfilesActivity extends AppCompatActivity {
     private FirebaseFirestore db;
-
     private CollectionReference profilesRef;
-    private RecyclerView profilesRecyclerView;
-    private ProfileAdapter profileAdapter;
+    private ListView profilesListView; // Change RecyclerView to ListView
+    private ArrayAdapter<String> profileAdapter;
     private List<Profile> profileList;
+
+    private List<String> profileNames;
+
+    private Button removeButton;
+
+    private int position = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,57 +45,19 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
         // Connect to database
         db = FirebaseFirestore.getInstance();
         profilesRef = db.collection("profiles");
-        profilesRecyclerView = findViewById(R.id.profilesRecyclerView);
+        profilesListView = findViewById(R.id.profilesListView); // Change to ListView
         profileList = new ArrayList<>();
+        profileList = loadProfiles(profileList);
 
-        setupRecyclerView();
-        loadProfiles();
+        profileNames = new ArrayList<>();
+
+        for(Profile profile: profileList){
+            profileNames.add(profile.getFullName());
+        }
 
     }
 
-    @Override
-    public void onProfileClick(int position, Profile profile) {
-        // Handle the click event with the position
-        Toast.makeText(this, "Clicked profile at position " + position + ": " + profile.getFullName(), Toast.LENGTH_SHORT).show();
-    }
-
-
-    @Override
-    public void onRemoveProfile(int position) {
-        // Remove the profile at the specified position
-        Profile removedProfile = profileList.remove(position);
-
-        // Get the ID of the profile document to be deleted
-        String profileIdToDelete = removedProfile.getFullName();
-
-        // Delete the profile document from the Firestore database
-        profilesRef.document(profileIdToDelete)
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // Profile successfully deleted from the database
-                        profileAdapter.notifyItemRemoved(position);
-                        Toast.makeText(AdminBrowseProfilesActivity.this, "Profile removed successfully", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Failed to delete the profile from the database
-                        Toast.makeText(AdminBrowseProfilesActivity.this, "Failed to remove profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-
-    private void setupRecyclerView() {
-        profilesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        profileAdapter = new ProfileAdapter(this, profileList, this); // Pass the click listener
-        profilesRecyclerView.setAdapter(profileAdapter);
-    }
-
-    private void loadProfiles() {
+    private List<Profile> loadProfiles(List<Profile> profileList) {
         db.collection("profiles").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -110,11 +80,8 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
                     // Add the profile to the list
                     profileList.add(profile);
                 }
-
-                // Notify the adapter that the dataset has changed
-                profileAdapter.notifyDataSetChanged();
             }
         });
+        return profileList;
     }
-
 }
