@@ -22,6 +22,8 @@ public class Event implements Serializable {
 
     private int attendeeCount;
 
+    private String creatorDeviceId;
+
     public Event(Uri imageId, String title, String host, Date date, String description, int attendeeLimit) {
         this.imageId = imageId;
         this.title = title;
@@ -113,5 +115,13 @@ public class Event implements Serializable {
 
     public void setAttendeeCount(int attendeeCount) {
         this.attendeeCount = attendeeCount;
+    }
+
+    public String getCreatorDeviceId() {
+        return creatorDeviceId;
+    }
+
+    public void setCreatorDeviceId(String creatorDeviceId) {
+        this.creatorDeviceId = creatorDeviceId;
     }
 }

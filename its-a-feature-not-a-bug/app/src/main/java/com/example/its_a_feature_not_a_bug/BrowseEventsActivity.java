@@ -44,12 +44,15 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
     @Override
     public void addEvent(Event event) {
         // Adds event to the Firestore collection
+        event.setCreatorDeviceId(android.os.Build.SERIAL);
+
         Map<String, Object> data = new HashMap<>();
         data.put("Host", event.getHost());
         data.put("Date", event.getDate());
         data.put("Description", event.getDescription());
         data.put("Poster", event.getImageId());
         data.put("AttendeeCount", event.getAttendeeCount());
+        data.put("CreatorDeviceID", event.getCreatorDeviceId());
 
         // Include attendee limit if available
         if (event.getAttendeeLimit() > 0) {
@@ -115,17 +118,18 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         String description = doc.getString("Description");
                         int attendeeLimit = doc.contains("AttendeeLimit") ? doc.getLong("AttendeeLimit").intValue() : 0;
                         int attendeeCount = doc.contains("AttendeeCount") ? doc.getLong("AttendeeCount").intValue() : 0;
+                        String creatorDeviceId = doc.getString("CreatorDeviceID");
 
-                        ArrayList<Object> attendees = new ArrayList<>();
-                        ArrayList<User> signedAttendees = new ArrayList<>();
-                        if (doc.contains("signedAttendees")) {
-                                attendees = (ArrayList<Object>) doc.get("signedAttendees");
-                            for (Object attendeeName : attendees) {
-                                // Initialize each string in the array as a new User object
-                                User user = new User(attendeeName.toString()); // Assuming User constructor takes a name parameter
-                                signedAttendees.add(user);
-                            }
-                        }
+//                        ArrayList<Object> attendees = new ArrayList<>();
+//                        ArrayList<User> signedAttendees = new ArrayList<>();
+//                        if (doc.contains("signedAttendees")) {
+//                                attendees = (ArrayList<Object>) doc.get("signedAttendees");
+//                            for (Object attendeeName : attendees) {
+//                                // Initialize each string in the array as a new User object
+//                                User user = new User(attendeeName.toString()); // Assuming User constructor takes a name parameter
+//                                signedAttendees.add(user);
+//                            }
+//                        }
 
                         String imageUriString = doc.getString("Poster");
                         Uri imageUri = null;
@@ -140,8 +144,9 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         } else {
                             event = new Event(imageUri, eventId, host, date, description);
                         }
-                        event.setSignedAttendees(signedAttendees);
+//                        event.setSignedAttendees(signedAttendees);
                         event.setAttendeeCount(attendeeCount);
+                        event.setCreatorDeviceId(creatorDeviceId);
                         eventDataList.add(event);
                     }
                     eventAdapter.notifyDataSetChanged();
