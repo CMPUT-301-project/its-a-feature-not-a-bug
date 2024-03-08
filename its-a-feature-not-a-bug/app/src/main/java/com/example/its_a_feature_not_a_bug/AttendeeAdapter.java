@@ -8,6 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
+/**
+ * An adapter for the RecyclerView in the AttendeeListActivity.
+ * This adapter is used to display the list of attendees for an event.
+ */
 public class AttendeeAdapter extends RecyclerView.Adapter<AttendeeAdapter.AttendeeViewHolder> {
 
     private ArrayList<User> attendees;

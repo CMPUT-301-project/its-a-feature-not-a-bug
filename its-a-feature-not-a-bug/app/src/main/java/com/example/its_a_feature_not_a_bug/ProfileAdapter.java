@@ -11,6 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import java.util.List;
 
+/**
+ * An adapter for the RecyclerView in the ProfileActivity.
+ * This adapter is used to display the list of profiles.
+ */
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileViewHolder> {
 
     private List<Profile> profiles;

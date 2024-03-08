@@ -4,6 +4,9 @@ import android.net.Uri;
 
 import java.io.Serializable;
 
+/**
+ * A class representing a user's profile.
+ */
 public class Profile implements Serializable {
     private Uri profilePicId; // User profile pic
     // private String userId; // Unique ID for the user
