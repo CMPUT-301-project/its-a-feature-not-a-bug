@@ -5,31 +5,55 @@
     android:layout_height="match_parent"
     tools:context=".UpdateProfileActivity">
 
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="UPDATE USER PROFILE"
+        android:textSize="24sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"/>
+
     <EditText
         android:id="@+id/editTextName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Name" />
+        android:hint="Name"
+        android:layout_below="@id/textViewTitle"
+        android:layout_marginTop="32dp"/>
 
     <EditText
         android:id="@+id/editTextHomepage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Homepage"
-        android:layout_below="@id/editTextName" />
+        android:layout_below="@id/editTextName"
+        android:layout_marginTop="16dp"/>
 
     <EditText
         android:id="@+id/editTextContact"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Contact Information"
-        android:layout_below="@id/editTextHomepage" />
+        android:layout_below="@id/editTextHomepage"
+        android:layout_marginTop="16dp"/>
 
     <Button
         android:id="@+id/buttonSubmit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Submit"
-        android:layout_below="@id/editTextContact" />
+        android:layout_below="@id/editTextContact"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"/>
+
+    <Button
+        android:id="@+id/buttonBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:layout_below="@id/buttonSubmit"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"/>
 
 </RelativeLayout>

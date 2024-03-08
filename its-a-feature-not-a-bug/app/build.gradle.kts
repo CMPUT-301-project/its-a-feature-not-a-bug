@@ -56,4 +56,6 @@ dependencies {
 
     implementation("com.google.zxing:core:3.4.1")
     implementation("com.journeyapps:zxing-android-embedded:4.2.0")
+    implementation ("com.google.firebase:firebase-auth:21.0.1")
+
 }
