@@ -93,7 +93,8 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
                 .delete()
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(AdminBrowseProfilesActivity.this, "Profile deleted successfully", Toast.LENGTH_SHORT).show();
-                    loadProfiles(); // Re-load the profiles to refresh the list
+                    profileList.remove(profile);
+                    profileAdapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> Toast.makeText(AdminBrowseProfilesActivity.this, "Error deleting profile", Toast.LENGTH_SHORT).show());
     }
