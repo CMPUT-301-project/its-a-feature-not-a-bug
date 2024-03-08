@@ -3,6 +3,7 @@ package com.example.its_a_feature_not_a_bug;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.content.Intent;
@@ -32,9 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * This class is an Activity that allows a user to navigate listed events
- */
 public class BrowseEventsActivity extends AppCompatActivity implements AddEventDialogueListener{
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
@@ -43,21 +41,23 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
     private ArrayList<Event> eventDataList;
     private FloatingActionButton fab;
 
-    /**
-     * This method adds an event to the Firebase Firestore
-     * @param event the event to be added
-     */
+
     @Override
     public void addEvent(Event event) {
-        // adds event to the firestore collection
+        // Adds event to the Firestore collection
         Map<String, Object> data = new HashMap<>();
         data.put("Host", event.getHost());
         data.put("Date", event.getDate());
         data.put("Description", event.getDescription());
         data.put("Poster", event.getImageId());
-        eventsRef.document(event.getTitle()).set(data);
-        eventsRef
-                .document(event.getTitle())
+        data.put("AttendeeCount", event.getAttendeeCount());
+
+        // Include attendee limit if available
+        if (event.getAttendeeLimit() > 0) {
+            data.put("AttendeeLimit", event.getAttendeeLimit());
+        }
+
+        eventsRef.document(event.getTitle())
                 .set(data)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -66,6 +66,8 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                     }
                 });
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +82,10 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         eventList = findViewById(R.id.list_view_events_list);
         eventDataList = new ArrayList<>();
 
+
         // adapter
         eventAdapter = new EventAdapter(this, eventDataList);
         eventList.setAdapter(eventAdapter);
-
         // add on click listener to click event
         eventList.setOnItemClickListener((parent, view, position, id) -> {
             Event event = eventDataList.get(position);
@@ -97,6 +99,15 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         fab.setOnClickListener(v -> {
             new AddEventFragment().show(getSupportFragmentManager(), "Add Event");
         });
+        FloatingActionButton fabUpdateProfile = findViewById(R.id.fab_update_profile);
+        fabUpdateProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(BrowseEventsActivity.this, UpdateProfileActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -112,6 +123,9 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         String host = doc.getString("Host");
                         Date date = doc.getDate("Date");
                         String description = doc.getString("Description");
+                        int attendeeLimit = doc.contains("AttendeeLimit") ? doc.getLong("AttendeeLimit").intValue() : 0;
+                        int attendeeCount = doc.contains("AttendeeCount") ? doc.getLong("AttendeeCount").intValue() : 0;
+
 
                         String imageUriString = doc.getString("Poster");
                         Uri imageUri = null;
@@ -120,11 +134,19 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         }
 
                         Log.d("Firestore", String.format("Event(%s, %s) fetched", eventId, host));
-                        eventDataList.add(new Event(imageUri, eventId, host, date, description));
+                        Event event;
+                        if (attendeeLimit > 0) {
+                            event = new Event(imageUri, eventId, host, date, description, attendeeLimit);
+                        } else {
+                            event = new Event(imageUri, eventId, host, date, description);
+                        }
+                        event.setAttendeeCount(attendeeCount);
+                        eventDataList.add(event);
                     }
                     eventAdapter.notifyDataSetChanged();
                 }
             }
         });
+
     }
 }
