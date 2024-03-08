@@ -40,6 +40,13 @@ public class Event implements Serializable {
         this.description = description;
     }
 
+    public Event(String title, Date date, String host, String description) {
+        this.title = title;
+        this.date = date;
+        this.host = host;
+        this.description = description;
+    }
+
     public String getImageId() {
         return this.imageId;
     }
