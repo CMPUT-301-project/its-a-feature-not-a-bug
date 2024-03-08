@@ -36,6 +36,7 @@
         </activity>
         <activity android:name=".EventDetailsActivity">
         </activity>
+        <activity android:name=".AdminBrowseProfilesActivity"/>
 
     </application>
 
