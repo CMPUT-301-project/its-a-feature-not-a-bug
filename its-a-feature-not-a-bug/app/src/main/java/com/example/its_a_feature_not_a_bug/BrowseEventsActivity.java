@@ -124,7 +124,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                             if (task.isSuccessful()) {
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
-                                    String attendeesList = (String) document.get("signedAttendees");
+                                    ArrayList<Object> attendeesList = (ArrayList<Object>) document.get("signedAttendees");
                                     System.out.print(attendeesList);
 //                                    if (signedAttendees != null) {
 //                                        for (Map<String, Object> attendeeData : signedAttendees) {
