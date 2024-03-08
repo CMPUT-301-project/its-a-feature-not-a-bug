@@ -13,7 +13,7 @@ import java.util.Date;
  * it, view it on the browsing page, or view its details.
  */
 public class Event implements Serializable {
-    private Uri imageId; // event poster
+    private String imageId; // event poster
     private String title; // name of the event
     private String host; // user that created the event
     private Date date; // date of the event
@@ -29,7 +29,7 @@ public class Event implements Serializable {
      * @param date the date the event will take place
      * @param description a short description describing the event
      */
-    public Event(Uri imageId, String title, String host, Date date, String description) {
+    public Event(String imageId, String title, String host, Date date, String description) {
         this.imageId = imageId;
         this.title = title;
         this.host = host;
@@ -41,7 +41,7 @@ public class Event implements Serializable {
      * This returns the uri of the event image.
      * @return the event uri
      */
-    public Uri getImageId() {
+    public String getImageId() {
         return this.imageId;
     }
 
@@ -49,7 +49,7 @@ public class Event implements Serializable {
      * This sets the image of the event to a new value.
      * @param imageId the new image
      */
-    public void setImageId(Uri imageId) {
+    public void setImageId(String imageId) {
         this.imageId = imageId;
     }
 

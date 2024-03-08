@@ -74,6 +74,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
         if (event.getImageId() != null) {
             Glide.with(context)
                     .load(event.getImageId())
+                    .centerCrop()
                     .into(poster);
         } else {
             // Set a placeholder image if no image is available

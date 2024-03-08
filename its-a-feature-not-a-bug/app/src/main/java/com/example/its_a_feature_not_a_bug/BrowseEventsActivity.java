@@ -113,14 +113,14 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         Date date = doc.getDate("Date");
                         String description = doc.getString("Description");
 
-                        String imageUriString = doc.getString("Poster");
-                        Uri imageUri = null;
-                        if (imageUriString != null && !imageUriString.isEmpty()) {
-                            imageUri = Uri.parse(imageUriString);
-                        }
+                        String imageURLString = doc.getString("Poster");
+//                        Uri imageUri = null;
+//                        if (imageUriString != null && !imageUriString.isEmpty()) {
+//                            imageUri = Uri.parse(imageUriString);
+//                        }
 
                         Log.d("Firestore", String.format("Event(%s, %s) fetched", eventId, host));
-                        eventDataList.add(new Event(imageUri, eventId, host, date, description));
+                        eventDataList.add(new Event(imageURLString, eventId, host, date, description));
                     }
                     eventAdapter.notifyDataSetChanged();
                 }
