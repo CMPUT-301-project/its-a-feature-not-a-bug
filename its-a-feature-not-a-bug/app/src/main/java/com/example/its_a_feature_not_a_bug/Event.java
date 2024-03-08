@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Event implements Serializable {
-    private Uri imageId; // event poster
+    private String imageId; // event poster
     private String title; // name of the event
     private String host; // user that created the event
     private Date date; // date of the event
@@ -22,7 +22,7 @@ public class Event implements Serializable {
 
     private int attendeeCount;
 
-    public Event(Uri imageId, String title, String host, Date date, String description, int attendeeLimit) {
+    public Event(String imageId, String title, String host, Date date, String description, int attendeeLimit) {
         this.imageId = imageId;
         this.title = title;
         this.host = host;
@@ -31,7 +31,7 @@ public class Event implements Serializable {
         this.attendeeLimit = attendeeLimit;
     }
 
-    public Event(Uri imageId, String title, String host, Date date, String description) {
+    public Event(String imageId, String title, String host, Date date, String description) {
         this.imageId = imageId;
         this.title = title;
         this.host = host;
@@ -39,11 +39,11 @@ public class Event implements Serializable {
         this.description = description;
     }
 
-    public Uri getImageId() {
+    public String getImageId() {
         return this.imageId;
     }
 
-    public void setImageId(Uri imageId) {
+    public void setImageId(String imageId) {
         this.imageId = imageId;
     }
 

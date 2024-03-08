@@ -127,18 +127,15 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         int attendeeLimit = doc.contains("AttendeeLimit") ? doc.getLong("AttendeeLimit").intValue() : 0;
                         int attendeeCount = doc.contains("AttendeeCount") ? doc.getLong("AttendeeCount").intValue() : 0;
 
-                        String imageUriString = doc.getString("Poster");
-                        Uri imageUri = null;
-                        if (imageUriString != null && !imageUriString.isEmpty()) {
-                            imageUri = Uri.parse(imageUriString);
-                        }
+                        String imageURLString = doc.getString("Poster");
 
                         Log.d("Firestore", String.format("Event(%s, %s) fetched", eventId, host));
+
                         Event event;
                         if (attendeeLimit > 0) {
-                            event = new Event(imageUri, eventId, host, date, description, attendeeLimit);
+                            event = new Event(imageURLString, eventId, host, date, description, attendeeLimit);
                         } else {
-                            event = new Event(imageUri, eventId, host, date, description);
+                            event = new Event(imageURLString, eventId, host, date, description);
                         }
                         event.setAttendeeCount(attendeeCount);
                         eventDataList.add(event);
@@ -147,6 +144,5 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                 }
             }
         });
-
     }
 }
