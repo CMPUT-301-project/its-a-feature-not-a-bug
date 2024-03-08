@@ -124,24 +124,25 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                             if (task.isSuccessful()) {
                                 DocumentSnapshot document = task.getResult();
                                 if (document.exists()) {
-                                    List<Map<String, Object>> signedAttendees = (List<Map<String, Object>>) document.get("signedAttendees");
-                                    if (signedAttendees != null) {
-                                        for (Map<String, Object> attendeeData : signedAttendees) {
-                                            String attendeeName = (String) attendeeData.get("signedAttendees");
-                                            attendees.add(attendeeName);
-                                        }
-                                    }
+                                    String attendeesList = (String) document.get("signedAttendees");
+                                    System.out.print(attendeesList);
+//                                    if (signedAttendees != null) {
+//                                        for (Map<String, Object> attendeeData : signedAttendees) {
+//                                            String attendeeName = (String) attendeeData.get("signedAttendees");
+//                                            attendees.add(attendeeName);
+//                                        }
+//                                    }
                                 }
                             }
                         });
 
-                        ArrayList<User> signedAttendees = new ArrayList<>();
-                        if (attendees.size() > 0){
-                            for (String attendee : attendees){
-                                User user = new User(attendee);
-                                signedAttendees.add(user);
-                            }
-                        }
+//                        ArrayList<User> signedAttendees = new ArrayList<>();
+//                        if (attendees.size() > 0){
+//                            for (String attendee : attendees){
+//                                User user = new User(attendee);
+//                                signedAttendees.add(user);
+//                            }
+//                        }
 
                         String imageUriString = doc.getString("Poster");
                         Uri imageUri = null;
@@ -156,7 +157,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         } else {
                             event = new Event(imageUri, eventId, host, date, description);
                         }
-                        event.setSignedAttendees(signedAttendees);
+//                        event.setSignedAttendees(signedAttendees);
                         event.setAttendeeCount(attendeeCount);
                         eventDataList.add(event);
                     }
