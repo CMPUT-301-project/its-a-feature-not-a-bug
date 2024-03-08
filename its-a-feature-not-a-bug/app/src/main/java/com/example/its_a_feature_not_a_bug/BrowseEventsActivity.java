@@ -41,6 +41,10 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
     private ArrayList<Event> eventDataList;
     private FloatingActionButton fab;
 
+    private ArrayList<User> signedAttendees = new ArrayList<>();
+
+    private ArrayList<String> attendees = new ArrayList<String>();
+
 
     @Override
     public void addEvent(Event event) {
@@ -127,15 +131,9 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         int attendeeLimit = doc.contains("AttendeeLimit") ? doc.getLong("AttendeeLimit").intValue() : 0;
                         int attendeeCount = doc.contains("AttendeeCount") ? doc.getLong("AttendeeCount").intValue() : 0;
 
-                        ArrayList<String> attendees = new ArrayList<>();
-                        ArrayList<User> signedAttendees = new ArrayList<>();
 
-                        if(doc.contains("signedAttendees")){
+                        if (doc.get("signedAttendees") != null) {
                             attendees = (ArrayList<String>) doc.get("signedAttendees");
-                            for(String attendee: attendees){
-                                User user = new User(attendee);
-                                signedAttendees.add(user);
-                            }
                         }
 
 
@@ -157,7 +155,19 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         event.setSignedAttendees(signedAttendees);
                         eventDataList.add(event);
                     }
+
+
+                    if (attendees.size() >  0) {
+                        for (String attendee : attendees) {
+                            User user = new User(attendee);
+                            signedAttendees.add(user);
+                        }
+                    }
+
+
                     eventAdapter.notifyDataSetChanged();
+                    Log.d("", "ATTENDEE LIST "  + attendees);
+
                 }
             }
         });
