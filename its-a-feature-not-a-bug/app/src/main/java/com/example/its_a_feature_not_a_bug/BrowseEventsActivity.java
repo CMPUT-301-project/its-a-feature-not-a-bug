@@ -116,6 +116,16 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         int attendeeLimit = doc.contains("AttendeeLimit") ? doc.getLong("AttendeeLimit").intValue() : 0;
                         int attendeeCount = doc.contains("AttendeeCount") ? doc.getLong("AttendeeCount").intValue() : 0;
 
+                        ArrayList<String> attendees = new ArrayList<>();
+                        ArrayList<User> signedAttendees = new ArrayList<>();
+                        if (doc.contains("SignedAttendees")) {
+                            attendees = (ArrayList<String>) doc.get("SignedAttendees");
+                            for (String attendee : attendees) {
+                                // Initialize each string in the array as a new User object
+                                User user = new User(attendee); // Assuming User constructor takes a name parameter
+                                signedAttendees.add(user);
+                            }
+                        }
 
                         String imageUriString = doc.getString("Poster");
                         Uri imageUri = null;
@@ -130,6 +140,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         } else {
                             event = new Event(imageUri, eventId, host, date, description);
                         }
+                        event.setSignedAttendees(signedAttendees);
                         event.setAttendeeCount(attendeeCount);
                         eventDataList.add(event);
                     }
