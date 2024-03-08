@@ -110,16 +110,43 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
     private void signUpForEvent() {
         if (currentUser != null) {
-            // Successfully updated attendee count in the database
-            currentUser.signUpForEvent(event);
-            Toast.makeText(EventDetailsActivity.this, "Signed up for event", Toast.LENGTH_SHORT).show();
+            // Add the current user's name to the list of attendees
             attendees.add(currentUser);
+            // Set the updated list of attendees to the event
             event.setSignedAttendees(attendees);
-            attendeeAdapter.notifyDataSetChanged();
+
+            // Extract names from the attendees list
+            ArrayList<String> attendeeNames = new ArrayList<>();
+            for (User user : attendees) {
+                attendeeNames.add(user.getName());
+            }
+
+            // Update the Firestore document for the event with the names of attendees
+            eventsRef.document(event.getTitle())
+                    .update("signedAttendees", attendeeNames)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            currentUser.signUpForEvent(event);
+
+                            // Successfully updated the list of attendees in the database
+                            Toast.makeText(EventDetailsActivity.this, "Signed up for event", Toast.LENGTH_SHORT).show();
+                            // Notify the adapter of the data change
+                            attendeeAdapter.notifyDataSetChanged();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Failed to update the list of attendees in the database
+                            Toast.makeText(EventDetailsActivity.this, "Failed to sign up for event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
     }
 
-        private void deleteEventFromDatabase (Event eventToDelete){
+
+    private void deleteEventFromDatabase (Event eventToDelete){
             eventsRef.document(eventToDelete.getTitle())
                     .delete()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
