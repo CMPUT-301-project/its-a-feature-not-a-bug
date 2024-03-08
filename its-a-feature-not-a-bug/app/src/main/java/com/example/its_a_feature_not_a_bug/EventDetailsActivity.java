@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -38,13 +39,13 @@ public class EventDetailsActivity extends AppCompatActivity {
     private Button signUpButton;
 
     private Button removeEventButton;
+    private User currentUser;
 
     private FirebaseFirestore db;
 
     private CollectionReference eventsRef;
 
-    private User currentUser;
-    private Event currentEvent;
+    private ArrayList<User> attendees;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +63,25 @@ public class EventDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         event = (Event) intent.getSerializableExtra("event");
 
+        ArrayList<User> attendees = event.getAttendees();
+        if (attendees == null) {
+            attendees = new ArrayList<>();
+        }
+        attendeeAdapter = new AttendeeAdapter(attendees, event);
+        attendeesRecyclerView.setAdapter(attendeeAdapter);
+        List<Announcement> announcements = event.getAnnouncements();
+        if (announcements == null) {
+            announcements = new ArrayList<>();
+        }
+        announcementAdapter = new AnnouncementAdapter(announcements);
+        announcementRecyclerView.setAdapter(announcementAdapter);
+
 
         attendeesRecyclerView = findViewById(R.id.attendeesRecyclerView);
         attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         announcementRecyclerView = findViewById(R.id.announcementsRecyclerView);
         announcementRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         signUpButton = findViewById(R.id.signup_button);
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,39 +94,40 @@ public class EventDetailsActivity extends AppCompatActivity {
         removeEventButton = findViewById(R.id.btnRemoveEvent);
         removeEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                deleteEventFromDatabase(event);
-            }
+            public void onClick(View v) { deleteEventFromDatabase(event);}
         });
-    }
 
+    }
     public void displayInfo() {
         name.setText(event.getTitle());
         // convert date to string
         date.setText(event.getDate().toString());
-
         description.setText(event.getDescription());
-        ArrayList<String> attendees = event.getAttendees();
-        if (attendees == null) {
-            attendees = new ArrayList<>();
-        }
-        attendeeAdapter = new AttendeeAdapter(attendees);
-        attendeeAdapter = new AttendeeAdapter(event.getAttendees());
-        attendeesRecyclerView.setAdapter(attendeeAdapter);
-        List<Announcement> announcements = event.getAnnouncements();
-        if (announcements == null) {
-            announcements = new ArrayList<>();
-        }
-        announcementAdapter = new AnnouncementAdapter(announcements);
-        announcementRecyclerView.setAdapter(announcementAdapter);
     }
-
     private void signUpForEvent() {
         if (currentUser != null) {
-            currentUser.signUpForEvent(event);
+            if (event.getAttendeeCount() < event.getAttendeeLimit()) {
+                // Increment attendee count locally
+                int newAttendeeCount = event.getAttendeeCount() + 1;
+                event.setAttendeeCount(newAttendeeCount);
 
-            Toast.makeText(EventDetailsActivity.this, "Signed up for event", Toast.LENGTH_SHORT).show();
-            attendeeAdapter.notifyDataSetChanged();
+                // Update attendee count in the database
+                eventsRef.document(event.getTitle())
+                        .update("AttendeeCount", newAttendeeCount)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                // Successfully updated attendee count in the database
+                                currentUser.signUpForEvent(event);
+                                Toast.makeText(EventDetailsActivity.this, "Signed up for event", Toast.LENGTH_SHORT).show();
+                                attendees.add(currentUser);
+                                event.setAttendees(attendees);
+                                attendeeAdapter.notifyDataSetChanged();
+                            }
+                        });
+            } else {
+                Toast.makeText(EventDetailsActivity.this, "Attendee limit for " + event.getTitle() + " reached", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -126,9 +142,16 @@ public class EventDetailsActivity extends AppCompatActivity {
                         // Finish the activity
                         finish();
                     }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Failed to delete the event
+                        Toast.makeText(EventDetailsActivity.this, "Failed to remove event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 });
     }
-}
 
+}
 
 
