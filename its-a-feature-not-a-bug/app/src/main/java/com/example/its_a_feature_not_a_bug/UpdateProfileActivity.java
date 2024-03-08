@@ -26,9 +26,8 @@ import java.util.Map;
 public class UpdateProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference profilesRef;
-    private EditText editTextName;
-    private EditText editTextHomepage;
-    private EditText editTextContact;
+    private EditText editTextContactInfo;
+    private EditText editTextFullName;
     private Button buttonSubmit;
 
     @Override
@@ -36,9 +35,8 @@ public class UpdateProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_profile);
 
-        editTextName = findViewById(R.id.editTextName);
-        editTextHomepage = findViewById(R.id.editTextHomepage);
-        editTextContact = findViewById(R.id.editTextContact);
+        editTextContactInfo = findViewById(R.id.editTextContactInfo);
+        editTextFullName = findViewById(R.id.editTextFullName);
         buttonSubmit = findViewById(R.id.buttonSubmit);
 
         Button backButton = findViewById(R.id.buttonBack);
@@ -58,11 +56,10 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 profilesRef = db.collection("profiles");
 
                 Map<String,Object> data = new HashMap<>();
-                data.put("name", editTextName.getText().toString());
-                data.put("homepage", editTextHomepage.getText().toString());
-                data.put("contact", editTextContact.getText().toString());
+                data.put("contactInfo", editTextContactInfo.getText().toString());
+                data.put("fullName", editTextFullName.getText().toString());
 
-                profilesRef.document(editTextName.getText().toString()).set(data)
+                profilesRef.document(editTextFullName.getText().toString()).set(data)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
