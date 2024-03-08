@@ -13,7 +13,9 @@ public class Event implements Serializable {
     private String title; // name of the event
     private String host; // user that created the event
     private Date date; // date of the event
-    private ArrayList<User> attendees; // list of users attending the event
+    private ArrayList<User> signedAttendees; // list of users signed up for the event
+
+    private ArrayList<User> checkedAttendees; //list of users checked into the event
     private ArrayList<Announcement> announcements;
     private String description; // short description of the event posted by the host
     private int attendeeLimit;
@@ -72,12 +74,21 @@ public class Event implements Serializable {
     public String getDescription() {
         return description;
     }
-    public ArrayList<User> getAttendees() {
-        return attendees;
+    public ArrayList<User> getSignedAttendees() {
+        return signedAttendees;
     }
-    public void setAttendees(ArrayList<User> attendees) {
-        this.attendees = attendees;
+    public void setSignedAttendees(ArrayList<User> attendees) {
+        this.signedAttendees = attendees;
     }
+
+    public ArrayList<User> getCheckedAttendees() {
+        return checkedAttendees;
+    }
+
+    public void setCheckedAttendees(ArrayList<User> checkedAttendees) {
+        this.checkedAttendees = checkedAttendees;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }

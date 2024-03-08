@@ -8,17 +8,25 @@ import java.util.Map;
 
 public class User {
     private String name;
-    private List<Event> events;
+    private List<Event> signedEvents;
+
+    private List<Event> checkedEvents;
 
     private Map<String, Integer> NumTimesCheckedIn;
 
     public User(String name) {
         this.name = name;
-        this.events = new ArrayList<>();
+        this.signedEvents = new ArrayList<>();
+        this.checkedEvents = new ArrayList<>();
         NumTimesCheckedIn = new HashMap<String, Integer>();
     }
 
     public void signUpForEvent(Event event) {
+        this.signedEvents.add(event);
+    }
+
+    public void checkInToEvent(Event event){
+        //TODO: functionality for actually checking into event
         String eventTitle = event.getTitle();
 
         // Check if the event title is already in the HashMap
@@ -28,20 +36,20 @@ public class User {
             NumTimesCheckedIn.put(eventTitle, currentCheckIns + 1);
         } else {
             // If it doesn't exist, initialize with value 1
-            this.events.add(event);
+            this.checkedEvents.add(event);
             NumTimesCheckedIn.put(eventTitle, 1);
         }
     }
 
 
     public List<Event> getSignedUpEvents() {
-        return events;
+        return signedEvents;
     }
 
     public List<Event> getCurrentEvents() {
         List<Event> currentEvents = new ArrayList<>();
         Date now = new Date();
-        for (Event event : events) {
+        for (Event event : signedEvents) {
             if (event.getDate().equals(now)) {
                 currentEvents.add(event);
             }
@@ -53,7 +61,7 @@ public class User {
     public List<Event> getFutureEvents() {
         List<Event> futureEvents = new ArrayList<>();
         Date now = new Date();
-        for (Event event : events) {
+        for (Event event : signedEvents) {
             if (event.getDate().after(now)) {
                 futureEvents.add(event);
             }
@@ -69,12 +77,20 @@ public class User {
         this.name = name;
     }
 
-    public List<Event> getEvents() {
-        return events;
+    public List<Event> getSignedEvents() {
+        return signedEvents;
     }
 
-    public void setEvents(List<Event> events) {
-        this.events = events;
+    public void setSignedEvents(List<Event> signedEvents) {
+        this.signedEvents = signedEvents;
+    }
+
+    public List<Event> getCheckedEvents() {
+        return checkedEvents;
+    }
+
+    public void setCheckedEvents(List<Event> checkedEvents) {
+        this.checkedEvents = checkedEvents;
     }
 
     public int getNumTimesCheckedIn(Event event){
