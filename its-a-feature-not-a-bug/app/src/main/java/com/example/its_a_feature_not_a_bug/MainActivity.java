@@ -9,7 +9,6 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-
 /**
  * The main activity of the app.
  * This activity extends AppCompatActivity to inherit its basic functionalities.

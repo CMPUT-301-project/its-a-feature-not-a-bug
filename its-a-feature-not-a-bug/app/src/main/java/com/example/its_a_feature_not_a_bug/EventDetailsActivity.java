@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 /**
  * An activity that allows users to view the details of an event.
  * This activity extends AppCompatActivity to inherit its basic functionalities.
