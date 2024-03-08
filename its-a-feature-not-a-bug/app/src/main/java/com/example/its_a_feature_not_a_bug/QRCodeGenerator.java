@@ -6,6 +6,9 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+/**
+ * This class is a utility for generating QR codes.
+ */
 public class QRCodeGenerator {
 
     /**

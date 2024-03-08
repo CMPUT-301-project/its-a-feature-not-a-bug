@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
+/**
+ * This class is the activity that displays the details of an event.
+ */
 public class EventDetailsActivity extends AppCompatActivity {
     private Event event;
     private TextView name;

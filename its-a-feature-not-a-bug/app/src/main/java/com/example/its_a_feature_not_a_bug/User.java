@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class represents a user of the app.
+ */
 public class User {
     private String name;
     private List<Event> signedEvents;

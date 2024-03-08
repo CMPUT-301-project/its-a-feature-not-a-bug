@@ -5,7 +5,9 @@ import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-// Extends BrowseEventsActivity to inherit its basic functionalities
+/**
+ * This class is the activity that allows the admin to browse events.
+ */
 public class AdminBrowseEventsActivity extends BrowseEventsActivity {
 
     @Override

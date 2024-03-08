@@ -19,6 +19,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is the activity that allows the user to update their profile.
+ */
 public class UpdateProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference profilesRef;

@@ -25,7 +25,9 @@ import java.net.URI;
 import java.util.Calendar;
 import java.util.Date;
 
-
+/**
+ * This class is a fragment that allows the user to add an event to the list of events.
+ */
 public class AddEventFragment extends DialogFragment {
     private AddEventDialogueListener listener;
     private static final int IMAGE_PICK_REQUEST = 1;

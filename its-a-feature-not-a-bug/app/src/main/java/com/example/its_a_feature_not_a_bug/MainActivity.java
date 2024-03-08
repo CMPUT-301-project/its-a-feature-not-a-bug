@@ -9,6 +9,9 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+/**
+ * This class is the main activity of the app. It is the first screen that the user sees when they open the app.
+ */
 public class MainActivity extends AppCompatActivity {
     private Button adminButton;
     private Button userButton;
