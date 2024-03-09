@@ -150,42 +150,82 @@ public class Event implements Serializable {
         this.description = description;
     }
 
+    /**
+     * This gets the list of attendees signed up for the event.
+     * @return the list of attendees
+     */
     public ArrayList<User> getSignedAttendees() {
         return signedAttendees;
     }
 
+    /**
+     * This sets the list of attendees signed up for the event.
+     * @param attendees the new list of attendees
+     */
     public void setSignedAttendees(ArrayList<User> attendees) {
         this.signedAttendees = attendees;
     }
 
+    /**
+     * This returns the list of attendees that are checked in.
+     * @return the list of attendees
+     */
     public ArrayList<User> getCheckedAttendees() {
         return checkedAttendees;
     }
 
+    /**
+     * This sets the list of attendees that are checked in to a new value.
+     * @param checkedAttendees the new list of attendees
+     */
     public void setCheckedAttendees(ArrayList<User> checkedAttendees) {
         this.checkedAttendees = checkedAttendees;
     }
 
+    /**
+     * This returns the list of announcements for an event.
+     * @return the list of announcements
+     */
     public ArrayList<Announcement> getAnnouncements() {
         return announcements;
     }
 
+    /**
+     * This sets the list of announcements to a new value.
+     * @param announcements the new announcements
+     */
     public void setAnnouncements(ArrayList<Announcement> announcements) {
         this.announcements = announcements;
     }
 
+    /**
+     * This returns the maximum number of attendees for an event.
+     * @return the number of attendees
+     */
     public int getAttendeeLimit() {
         return attendeeLimit;
     }
 
+    /**
+     * This sets the maximum number of attendees to a new value.
+     * @param attendeeLimit the new number of attendees
+     */
     public void setAttendeeLimit(int attendeeLimit) {
         this.attendeeLimit = attendeeLimit;
     }
 
+    /**
+     * The returns the number of attendees currently signed up for the event.
+     * @return the number of attendees
+     */
     public int getAttendeeCount() {
         return attendeeCount;
     }
 
+    /**
+     * This sets the number of attendees currently signed up for the event.
+     * @param attendeeCount the new number of attendees
+     */
     public void setAttendeeCount(int attendeeCount) {
         this.attendeeCount = attendeeCount;
     }

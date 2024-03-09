@@ -177,7 +177,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     /**
      * This deletes a selected event from the database.
-     * @param eventToDelete
+     * @param eventToDelete the event to be deleted
      */
     private void deleteEventFromDatabase (Event eventToDelete){
             eventsRef.document(eventToDelete.getTitle())

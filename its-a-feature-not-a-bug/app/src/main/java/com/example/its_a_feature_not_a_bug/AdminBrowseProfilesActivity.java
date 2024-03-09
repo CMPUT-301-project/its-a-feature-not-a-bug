@@ -42,6 +42,9 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
         loadProfiles();
     }
 
+    /**
+     * This sets up a recycler view.
+     */
     private void setupRecyclerView() {
         profilesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         profileAdapter = new ProfileAdapter(this, profileList, this); // Passing 'this' as the OnProfileClickListener
@@ -49,7 +52,7 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
     }
 
     /**
-     * Loads the profiles from the database and adds them to a list.
+     * This loads the profiles from the database and adds them to a list.
      */
     private void loadProfiles() {
         db.collection("profiles").addSnapshotListener(new EventListener<QuerySnapshot>() {

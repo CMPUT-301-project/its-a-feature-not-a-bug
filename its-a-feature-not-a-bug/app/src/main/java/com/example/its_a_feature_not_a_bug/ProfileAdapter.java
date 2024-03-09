@@ -20,6 +20,9 @@ import java.util.List;
  */
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileViewHolder> {
 
+    /**
+     * This is an interface that ensures implementing classes can click on a profile
+     */
     public interface OnProfileClickListener {
         void onProfileClick(Profile profile);
     }
@@ -27,6 +30,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
     private Context context;
     private OnProfileClickListener clickListener;
 
+    /**
+     * This is a constructor for the class.
+     * @param context the context of the calling activity
+     * @param profiles the list of profiles
+     * @param clickListener the click listener
+     */
     public ProfileAdapter(Context context, List<Profile> profiles, OnProfileClickListener clickListener) {
         this.context = context;
         this.profiles = profiles;
@@ -62,10 +71,17 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         return profiles.size();
     }
 
+    /**
+     * This class implements the view holder for the recycler view.
+     */
     static class ProfileViewHolder extends RecyclerView.ViewHolder {
         ImageView profileImageView;
         TextView profileFullName;
 
+        /**
+         * This is a constructor for the class.
+         * @param itemView the item view
+         */
         public ProfileViewHolder(@NonNull View itemView) {
             super(itemView);
             profileImageView = itemView.findViewById(R.id.profileImageView);
