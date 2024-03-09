@@ -116,13 +116,20 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
 
     }
-    
+
+    /**
+     * This displays the information of the event.
+     */
     public void displayInfo() {
         name.setText(event.getTitle());
         // convert date to string
         date.setText(event.getDate().toString());
         description.setText(event.getDescription());
     }
+
+    /**
+     * This allows a user to sign up for an event.
+     */
     private void signUpForEvent() {
         if (currentUser != null) {
             if (event.getAttendeeCount() < event.getAttendeeLimit()) {
@@ -168,7 +175,10 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
 
-
+    /**
+     * This deletes a selected event from the database.
+     * @param eventToDelete the event to be deleted
+     */
     private void deleteEventFromDatabase (Event eventToDelete){
             eventsRef.document(eventToDelete.getTitle())
                     .delete()

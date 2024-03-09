@@ -1,3 +1,6 @@
+// This class implements the functionality for the creation of QR codes.
+// Issues: not integrated into app yet.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.graphics.Bitmap;

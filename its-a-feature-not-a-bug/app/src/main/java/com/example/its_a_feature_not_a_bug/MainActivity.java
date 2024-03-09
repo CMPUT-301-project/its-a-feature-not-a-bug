@@ -1,3 +1,6 @@
+// This is the entry point into the program. It acts as a startup screen for the user.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.content.Intent;
@@ -12,11 +15,6 @@ import androidx.core.app.ActivityCompat;
 /**
  * The main activity of the app.
  * This activity extends AppCompatActivity to inherit its basic functionalities.
- *
- * <p>In this activity, users are presented with two buttons: Admin Login and User Login.</p>
- * <p>Clicking the Admin Login button navigates to the AdminDashboardActivity where administrators can manage events and profiles.</p>
- * <p>Clicking the User Login button navigates to the BrowseEventsActivity where users can browse events and sign up for them.</p>
- * <p>The navigation is handled by setting onClickListeners on the buttons and starting the appropriate activity using intents.</p>
  */
 public class MainActivity extends AppCompatActivity {
     private Button adminButton;
