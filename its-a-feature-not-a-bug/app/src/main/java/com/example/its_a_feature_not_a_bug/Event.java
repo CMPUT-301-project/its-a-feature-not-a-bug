@@ -3,11 +3,7 @@
 
 package com.example.its_a_feature_not_a_bug;
 
-import android.net.Uri;
-import android.widget.ImageView;
-
 import java.io.Serializable;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 
