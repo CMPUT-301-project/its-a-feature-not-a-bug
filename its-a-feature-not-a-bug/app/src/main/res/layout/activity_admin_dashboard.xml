@@ -10,25 +10,20 @@
 
     <Button
         android:id="@+id/buttonEvents"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
         android:text="Events"
-        android:layout_marginBottom="16dp"/>
+        android:textSize="22sp"
+        android:backgroundTint="#368C6E"
+        android:layout_marginBottom="20dp"/>
 
     <Button
         android:id="@+id/buttonProfiles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
         android:text="Profiles"
-        android:layout_marginBottom="16dp"
-        />
-
-    <!-- Back button -->
-    <Button
-        android:id="@+id/buttonBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Back"
-        android:layout_marginBottom="16dp"/>
+        android:textSize="22sp"
+        android:backgroundTint="#368C6E"
+        android:layout_marginBottom="20dp"/>
 
 </LinearLayout>
