@@ -27,16 +27,19 @@
             android:name=".BrowseEventsActivity"
             android:exported="true">
         </activity>
-        <activity android:name=".AdminDashboardActivity">
+        <activity android:name=".AdminDashboardActivity"
+            android:parentActivityName=".MainActivity">
         </activity>
 
         <activity
             android:name=".AdminBrowseEventsActivity"
+            android:parentActivityName=".AdminDashboardActivity"
             android:exported="true">
         </activity>
         <activity android:name=".EventDetailsActivity">
         </activity>
-        <activity android:name=".AdminBrowseProfilesActivity"/>
+        <activity android:name=".AdminBrowseProfilesActivity"
+            android:parentActivityName=".AdminDashboardActivity"/>
 
         <activity android:name=".UpdateProfileActivity">
         </activity>
