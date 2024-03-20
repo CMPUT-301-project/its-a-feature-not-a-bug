@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -96,12 +97,13 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("EVENTS"); // Set the title for the action bar
+            actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
+//            actionBar.setTitle("EVENTS"); // Set the title for the action bar
+            ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
+            actionBar.setBackgroundDrawable(colorDrawable);
+            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\">" + "EVENTS" + "</font>"));
+
         }
-
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
-
-        actionBar.setBackgroundDrawable(colorDrawable);
 
         // connect to database
         db = FirebaseFirestore.getInstance();

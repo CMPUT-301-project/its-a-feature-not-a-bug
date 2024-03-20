@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -41,12 +42,13 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("PROFILES"); // Set the title for the action bar
+            actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
+            ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
+            actionBar.setBackgroundDrawable(colorDrawable);
+            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\">" + "PROFILES" + "</font>"));
+//            actionBar.setTitle("PROFILES"); // Set the title for the action bar
         }
 
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
-
-        actionBar.setBackgroundDrawable(colorDrawable);
 
         // Connect to the database
         db = FirebaseFirestore.getInstance();

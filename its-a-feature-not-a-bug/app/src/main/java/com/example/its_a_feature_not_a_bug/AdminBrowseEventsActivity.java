@@ -6,6 +6,7 @@ package com.example.its_a_feature_not_a_bug;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -27,12 +28,11 @@ public class AdminBrowseEventsActivity extends BrowseEventsActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("EVENTS"); // Set the title for the action bar
+            actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
+            ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
+            actionBar.setBackgroundDrawable(colorDrawable);
+            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\">" + "EVENTS" + "</font>"));
         }
-
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
-
-        actionBar.setBackgroundDrawable(colorDrawable);
 
         // Hide the FloatingActionButton since admins won't be adding events from this screen.
         FloatingActionButton fabAddEvent = findViewById(R.id.fab_add_event);
