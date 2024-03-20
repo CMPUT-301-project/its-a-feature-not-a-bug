@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 
@@ -40,12 +41,13 @@ public class MainActivity extends AppCompatActivity {
         // Set action bar title
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("QRCHECKIN");
+//            actionBar.setTitle("QRCHECKIN");
+            ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
+            actionBar.setBackgroundDrawable(colorDrawable);
+            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\">" + "QRCHECKIN" + "</font>"));
         }
 
-        ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
 
-        actionBar.setBackgroundDrawable(colorDrawable);
 
         // set button listeners
         adminButton.setOnClickListener(new View.OnClickListener() {
