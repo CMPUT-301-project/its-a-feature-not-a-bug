@@ -101,7 +101,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
 //            actionBar.setTitle("EVENTS"); // Set the title for the action bar
             ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
             actionBar.setBackgroundDrawable(colorDrawable);
-            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\">" + "EVENTS" + "</font>"));
+            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "EVENTS" + "</b></font>"));
 
         }
 

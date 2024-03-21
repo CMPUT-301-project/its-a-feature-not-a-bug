@@ -41,10 +41,9 @@ public class MainActivity extends AppCompatActivity {
         // Set action bar title
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-//            actionBar.setTitle("QRCHECKIN");
             ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
             actionBar.setBackgroundDrawable(colorDrawable);
-            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\">" + "QRCHECKIN" + "</font>"));
+            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "QRCHECKIN" + "</b></font>"));
         }
 
 
