@@ -37,7 +37,7 @@ public class AdminBrowseEventsActivity extends BrowseEventsActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
             ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
             actionBar.setBackgroundDrawable(colorDrawable);
-            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\">" + "EVENTS" + "</font>"));
+            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "EVENTS" + "</b></font>"));
         }
 
         // Hide add event fab

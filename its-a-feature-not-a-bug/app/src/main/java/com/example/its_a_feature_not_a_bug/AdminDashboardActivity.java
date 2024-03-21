@@ -34,7 +34,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
             actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
             ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
             actionBar.setBackgroundDrawable(colorDrawable);
-            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\">" + "ADMIN" + "</font>"));
+            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "ADMIN" + "</b></font>"));
         }
 
         Button buttonEvents = findViewById(R.id.buttonEvents);

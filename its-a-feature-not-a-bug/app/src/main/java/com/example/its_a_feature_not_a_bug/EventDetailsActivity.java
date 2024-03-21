@@ -73,7 +73,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 //            actionBar.setTitle("EVENTS"); // Set the title for the action bar
             ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
             actionBar.setBackgroundDrawable(colorDrawable);
-            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\">" + "EVENT DETAILS" + "</font>"));
+            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "EVENT DETAILS" + "</b></font>"));
 
         }
 
