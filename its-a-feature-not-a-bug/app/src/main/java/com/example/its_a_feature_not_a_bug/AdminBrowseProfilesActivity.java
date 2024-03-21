@@ -45,8 +45,7 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
             actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
             ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
             actionBar.setBackgroundDrawable(colorDrawable);
-            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\">" + "PROFILES" + "</font>"));
-//            actionBar.setTitle("PROFILES"); // Set the title for the action bar
+            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "PROFILES" + "</b></font>"));
         }
 
 
