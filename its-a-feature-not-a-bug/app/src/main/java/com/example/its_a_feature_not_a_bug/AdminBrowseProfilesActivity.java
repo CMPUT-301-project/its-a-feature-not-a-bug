@@ -4,6 +4,7 @@
 package com.example.its_a_feature_not_a_bug;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -97,12 +98,16 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
      */
     @Override
     public void onProfileClick(Profile profile) {
-        new AlertDialog.Builder(this)
-                .setTitle("Delete Profile")
-                .setMessage("Are you sure you want to delete this profile?")
-                .setPositiveButton("Yes", (dialog, which) -> deleteProfile(profile))
-                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
-                .create().show();
+        // Start ProfileDetailsActivity and pass the profile details
+        Intent intent = new Intent(AdminBrowseProfilesActivity.this, ProfileDetailsActivity.class);
+        intent.putExtra("profile", profile);
+        startActivity(intent);
+//        new AlertDialog.Builder(this)
+//                .setTitle("Delete Profile")
+//                .setMessage("Are you sure you want to delete this profile?")
+//                .setPositiveButton("Yes", (dialog, which) -> deleteProfile(profile))
+//                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+//                .create().show();
     }
 
     /**

@@ -34,12 +34,15 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
      * This is a constructor for the class.
      * @param context the context of the calling activity
      * @param profiles the list of profiles
-     * @param clickListener the click listener
      */
-    public ProfileAdapter(Context context, List<Profile> profiles, OnProfileClickListener clickListener) {
+    public ProfileAdapter(Context context, List<Profile> profiles,OnProfileClickListener clickListener) {
         this.context = context;
         this.profiles = profiles;
         this.clickListener = clickListener;
+    }
+
+    public void setOnProfileClickListener(OnProfileClickListener listener) {
+        this.clickListener = listener;
     }
 
     @NonNull
@@ -63,7 +66,12 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         }
 
         // Set click listener for the entire profile item view
-        holder.itemView.setOnClickListener(v -> clickListener.onProfileClick(profile));
+//        holder.itemView.setOnClickListener(v -> clickListener.onProfileClick(profile));
+        holder.itemView.setOnClickListener(v -> {
+            if (clickListener != null) {
+                clickListener.onProfileClick(profile);
+            }
+        });
     }
 
     @Override

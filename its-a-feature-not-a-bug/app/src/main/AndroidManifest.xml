@@ -43,6 +43,9 @@
 
         <activity android:name=".UpdateProfileActivity">
         </activity>
+        <activity android:name=".ProfileDetailsActivity">
+
+        </activity>
 
     </application>
 
