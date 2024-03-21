@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.Image;
 import android.net.Uri;
@@ -35,6 +36,8 @@ import com.google.firebase.Firebase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.DocumentReference;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
@@ -42,6 +45,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 import java.util.UUID;
+import com.google.zxing.WriterException;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 /**
  * This class is an extension of a DialogFragment and allows the user to create an event by entering details.
@@ -180,18 +187,37 @@ public class AddEventFragment extends DialogFragment {
                 if (task.isSuccessful()) {
                     Uri downloadUri = task.getResult();
                     String selectedImageURL = downloadUri.toString();
-                    Log.d("TAG", "Image URL: " + selectedImageURL);
+                    Event newEvent; // Declare the variable here
                     if (attendeeLimit != 0) {
-                        listener.addEvent(new Event(selectedImageURL, title, host, date, description, attendeeLimit));
+                        newEvent = new Event(selectedImageURL, title, host, date, description, attendeeLimit);
                     } else {
-                        listener.addEvent(new Event(selectedImageURL, title, host, date, description));
+                        newEvent = new Event(selectedImageURL, title, host, date, description);
                     }
+                    listener.addEvent(newEvent); // Ensure this is correctly adding the event
+
+                    // Add the event to Firestore
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("events").add(newEvent)
+                            .addOnSuccessListener(documentReference -> {
+                                Log.d("Firestore", "Event added with ID: " + documentReference.getId());
+                                Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(newEvent, 512);
+                                displayQRCode(qrCodeBitmap); // Call a method to handle QR code display
+                            })
+                            .addOnFailureListener(e -> Log.w("Firestore", "Error adding event", e));
                 } else {
-                    // Handle failures
                     Log.e("TAG", "Failed to upload image to Firebase Storage: " + task.getException());
                 }
             });
         }
     }
 
+    private void displayQRCode(Bitmap qrCodeBitmap) {
+        getActivity().runOnUiThread(() -> {
+            ImageView qrCodeImageView = getActivity().findViewById(R.id.qrCodeImageView);
+            if (qrCodeImageView != null) {
+                qrCodeImageView.setImageBitmap(qrCodeBitmap);
+                qrCodeImageView.setVisibility(View.VISIBLE);
+            }
+        });
+    }
 }

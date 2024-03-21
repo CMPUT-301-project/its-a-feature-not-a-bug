@@ -4,8 +4,12 @@
 package com.example.its_a_feature_not_a_bug;
 
 import android.content.Intent;
+
+import android.graphics.Bitmap;
+
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+
 import android.os.Bundle;
 import android.text.Html;
 import android.view.MenuItem;
@@ -60,6 +64,8 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     private ArrayList<User> attendees;
 
+    private ImageView qrCodeImageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +92,8 @@ public class EventDetailsActivity extends AppCompatActivity {
         description = findViewById(R.id.eventDescription);
         currentUser = new User("YourName");
 
+
+
         Intent intent = getIntent();
         event = (Event) intent.getSerializableExtra("event");
 
@@ -108,6 +116,25 @@ public class EventDetailsActivity extends AppCompatActivity {
         announcementRecyclerView = findViewById(R.id.announcementsRecyclerView);
         announcementRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         announcementRecyclerView.setAdapter(announcementAdapter);
+
+        // Initialize the ImageView and Button for QR code
+        qrCodeImageView = findViewById(R.id.qrCodeImageView);
+        // Initialize and set OnClickListener for the Show QR Code button
+        Button btnShowQRCode = findViewById(R.id.btnShowQRCode);
+        btnShowQRCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (qrCodeImageView.getVisibility() == View.GONE) {
+                    // Generate and show the QR code if it's not already visible
+                    Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(event, 200); // Adjust size as needed
+                    qrCodeImageView.setImageBitmap(qrCodeBitmap);
+                    qrCodeImageView.setVisibility(View.VISIBLE);
+                } else {
+                    // Hide the QR code if it's already visible
+                    qrCodeImageView.setVisibility(View.GONE);
+                }
+            }
+        });
 
 
         signUpButton = findViewById(R.id.signup_button);
