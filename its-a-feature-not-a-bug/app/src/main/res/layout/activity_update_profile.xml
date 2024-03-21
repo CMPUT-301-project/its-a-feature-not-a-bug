@@ -5,38 +5,35 @@
     android:layout_height="match_parent"
     tools:context=".UpdateProfileActivity">
 
-    <TextView
-        android:id="@+id/textViewTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="UPDATE USER PROFILE"
-        android:textSize="24sp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"/>
-
-    <EditText
-        android:id="@+id/editTextContactInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Contact Info"
-        android:layout_below="@id/textViewTitle"
-        android:layout_marginTop="32dp"/>
-
     <EditText
         android:id="@+id/editTextFullName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Full Name"
-        android:layout_below="@id/editTextContactInfo"
         android:layout_marginTop="16dp"/>
 
-    <!-- Add Switch button -->
+    <EditText
+        android:id="@+id/editTextEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:layout_below="@+id/editTextFullName"
+        android:layout_marginTop="32dp"/>
+
+    <EditText
+        android:id="@+id/editTextPhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Phone Number"
+        android:layout_below="@+id/editTextEmail"
+        android:layout_marginTop="32dp"/>
+
     <Switch
         android:id="@+id/switchGeolocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Disable Geolocation"
-        android:layout_below="@id/editTextFullName"
+        android:layout_below="@id/editTextPhoneNumber"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"/>
 
@@ -48,14 +45,5 @@
         android:layout_below="@id/switchGeolocation"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="32dp"/>
-
-    <Button
-        android:id="@+id/buttonBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Back"
-        android:layout_below="@id/buttonSubmit"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"/>
 
 </RelativeLayout>
