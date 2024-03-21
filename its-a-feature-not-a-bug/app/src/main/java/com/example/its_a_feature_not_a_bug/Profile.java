@@ -12,10 +12,9 @@ import java.io.Serializable;
  */
 public class Profile implements Serializable {
     private Uri profilePicId; // User profile pic
-    // private String userId; // Unique ID for the user
     private String fullName; // Full name of the user
-    private String contactInfo; // User contact info
-
+    private String email; // User email
+    private String phoneNumber; // User phone number
     private boolean geolocationDisabled;
 
     /**
@@ -32,7 +31,8 @@ public class Profile implements Serializable {
      */
     public Profile(String fullName, String contactInfo, boolean geolocationDisabled){
         this.fullName = fullName;
-        this.contactInfo = contactInfo;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
         this.geolocationDisabled = geolocationDisabled;
     }
 
@@ -40,15 +40,15 @@ public class Profile implements Serializable {
     /**
      * This is a constructor for the class
      * @param profilePicId the profile image
-     * @param userId the user's id
      * @param fullName the profile name
-     * @param contactInfo the user's contact info
+     * @param email the users email address
+     * @param phoneNumber the users phone number
      */
-    public Profile(Uri profilePicId, String userId, String fullName, String contactInfo) {
+    public Profile(Uri profilePicId, String fullName, String email, String phoneNumber) {
         this.profilePicId = profilePicId;
-        // this.userId = userId;
         this.fullName = fullName;
-        this.contactInfo = contactInfo;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
     }
 
     /**
@@ -67,14 +67,6 @@ public class Profile implements Serializable {
         this.profilePicId = profilePicId;
     }
 
-//    public String getUserId() {
-//        return userId;
-//    }
-
-//    public void setUserId(String userId) {
-//        this.userId = userId;
-//    }
-
     /**
      * This returns the profile name.
      * @return the profile name
@@ -92,20 +84,37 @@ public class Profile implements Serializable {
     }
 
     /**
-     * This returns the contact info of the profile.
-     * @return the contact info
+     * This returns the users email address
+     * @return the email
      */
-    public String getContactInfo() {
-        return contactInfo;
+    public String getEmail() {
+        return email;
     }
 
     /**
-     * This sets the contact info to a new value.
-     * @param contactInfo the new contact info
+     * This sets the email address to a new value.
+     * @param email the new email address
      */
-    public void setContactInfo(String contactInfo) {
-        this.contactInfo = contactInfo;
+    public void setEmail(String email) {
+        this.email = email;
     }
+
+    /**
+     * This returns the users phone number
+     * @return the phone number
+     */
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    /**
+     * This sets the phone number to a new value.
+     * @param phoneNumber the new phone number
+     */
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
 }
 
 
