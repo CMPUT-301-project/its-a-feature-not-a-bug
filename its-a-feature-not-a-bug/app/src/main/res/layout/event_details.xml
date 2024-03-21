@@ -78,6 +78,24 @@
         android:layout_marginTop="16dp"/>
 
     <Button
+        android:id="@+id/btnShowQRCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show QR Code"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/btnRemoveEvent"
+        android:layout_marginTop="16dp"/>
+
+    <!-- QR Code ImageView -->
+    <ImageView
+        android:id="@+id/qrCodeImageView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="16dp"/>
+
+    <Button
         android:id="@+id/btnRemoveEvent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -95,5 +113,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"/>
+
+
 
 </RelativeLayout>

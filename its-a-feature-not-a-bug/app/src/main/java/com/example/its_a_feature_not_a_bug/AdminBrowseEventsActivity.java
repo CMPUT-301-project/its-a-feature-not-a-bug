@@ -14,6 +14,7 @@ import androidx.appcompat.app.ActionBar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+
 /**
  * An activity that allows administrators to browse events.
  * This activity extends BrowseEventsActivity to inherit its basic functionalities.
