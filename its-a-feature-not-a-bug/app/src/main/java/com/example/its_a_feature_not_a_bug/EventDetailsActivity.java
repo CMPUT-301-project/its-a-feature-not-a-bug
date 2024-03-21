@@ -55,7 +55,6 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     private Button removeEventButton;
 
-    private Button backButton;
     private User currentUser;
 
     private FirebaseFirestore db;
@@ -91,7 +90,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         date = findViewById(R.id.eventDate);
         description = findViewById(R.id.eventDescription);
         currentUser = new User("YourName");
-
 
 
         Intent intent = getIntent();
