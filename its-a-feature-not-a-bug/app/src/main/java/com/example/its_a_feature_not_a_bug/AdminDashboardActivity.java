@@ -31,13 +31,11 @@ public class AdminDashboardActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-//            actionBar.setTitle("ADMIN"); // Set the title for the action bar
             actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
             ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
             actionBar.setBackgroundDrawable(colorDrawable);
             actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\">" + "ADMIN" + "</font>"));
         }
-
 
         Button buttonEvents = findViewById(R.id.buttonEvents);
         Button buttonProfiles = findViewById(R.id.buttonProfiles);
