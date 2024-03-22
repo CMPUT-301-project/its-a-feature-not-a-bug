@@ -208,6 +208,15 @@ public class AddEventFragment extends DialogFragment {
                     Log.e("TAG", "Failed to upload image to Firebase Storage: " + task.getException());
                 }
             });
+        } else {
+            Event newEvent;
+            if (attendeeLimit != 0) {
+                newEvent = new Event(Uri.parse("android.resource://"+R.class.getPackage().getName()+"/" + R.drawable.default_poster).toString(), title, host, date, description, attendeeLimit);
+            } else {
+                newEvent = new Event(Uri.parse("android.resource://"+R.class.getPackage().getName()+"/" + R.drawable.default_poster).toString(), title, host, date, description);
+
+            }
+            listener.addEvent(newEvent);
         }
     }
 
