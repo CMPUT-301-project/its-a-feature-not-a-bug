@@ -112,23 +112,23 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
 
     /**
      * Deletes a profile from the database.
-     * @param profile the profile to be deleted.
+//     * @param profile the profile to be deleted.
      */
-    private void deleteProfile(Profile profile) {
-        // Here you should use a unique identifier for the profile to delete.
-        // This could be a userID or any unique field in your Profile model.
-        // For demonstration purposes, let's assume you have a unique ID and it's accessible via profile.getId()
-        String profileId = profile.getFullName(); // Adjust according to your unique identifier
-
-        db.collection("profiles").document(profileId)
-                .delete()
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(AdminBrowseProfilesActivity.this, "Profile deleted successfully", Toast.LENGTH_SHORT).show();
-                    profileList.remove(profile);
-                    profileAdapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(e -> Toast.makeText(AdminBrowseProfilesActivity.this, "Error deleting profile", Toast.LENGTH_SHORT).show());
-    }
+//    private void deleteProfile(Profile profile) {
+//        // Here you should use a unique identifier for the profile to delete.
+//        // This could be a userID or any unique field in your Profile model.
+//        // For demonstration purposes, let's assume you have a unique ID and it's accessible via profile.getId()
+//        String profileId = profile.getFullName(); // Adjust according to your unique identifier
+//
+//        db.collection("profiles").document(profileId)
+//                .delete()
+//                .addOnSuccessListener(aVoid -> {
+//                    Toast.makeText(AdminBrowseProfilesActivity.this, "Profile deleted successfully", Toast.LENGTH_SHORT).show();
+//                    profileList.remove(profile);
+//                    profileAdapter.notifyDataSetChanged();
+//                })
+//                .addOnFailureListener(e -> Toast.makeText(AdminBrowseProfilesActivity.this, "Error deleting profile", Toast.LENGTH_SHORT).show());
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
