@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
+        android:background="@drawable/rounded_background" />
 
     <ImageView
         android:id="@+id/deleteProfileButton"
@@ -14,41 +20,87 @@
         android:clickable="true"
         android:focusable="true" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImageView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="25dp"
         android:src="@drawable/default_profile_pic"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:background="@drawable/circular_background" />
 
     <TextView
         android:id="@+id/fullNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
         android:layout_below="@id/profileImageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+        android:layout_marginTop="12dp" />
+
+    <ImageView
+        android:id="@+id/emailIcon"
+        android:layout_width="37dp"
+        android:layout_height="30dp"
+        android:layout_below="@id/fullNameTextView"
+        android:layout_marginTop="75dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/email" />
+
+    <TextView
+        android:id="@+id/emailLabelTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EMAIL\n"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@id/emailIcon"
+        android:layout_alignTop="@id/emailIcon"
+        android:layout_marginStart="8dp" />
 
     <TextView
         android:id="@+id/emailTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/fullNameTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:layout_below="@id/emailLabelTextView"
+        android:layout_alignStart="@id/emailLabelTextView"
+        android:layout_marginTop="2dp" />
+
+    <ImageView
+        android:id="@+id/phoneIcon"
+        android:layout_width="37dp"
+        android:layout_height="30dp"
+        android:layout_below="@id/emailTextView"
+        android:layout_marginTop="58dp"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/phone" />
+
+    <TextView
+        android:id="@+id/phoneNumberLabelTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PHONE NUMBER\n"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_toRightOf="@id/phoneIcon"
+        android:layout_alignTop="@id/phoneIcon"
+        android:layout_marginStart="8dp" />
 
     <TextView
         android:id="@+id/phoneNumberTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/emailTextView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:layout_below="@id/phoneNumberLabelTextView"
+        android:layout_alignStart="@id/phoneNumberLabelTextView"
+        android:layout_marginTop="2dp" />
 
 </RelativeLayout>
+
+
+
+
