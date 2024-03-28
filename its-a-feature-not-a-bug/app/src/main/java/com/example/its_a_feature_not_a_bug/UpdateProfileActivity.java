@@ -3,17 +3,27 @@
 
 package com.example.its_a_feature_not_a_bug;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Html;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,9 +32,15 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * An activity that allows users to update their profile.
@@ -33,7 +49,11 @@ import java.util.Map;
 public class UpdateProfileActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference profilesRef;
+    private StorageReference storageRef;
 //    private EditText editTextContactInfo;
+    private ImageView profilePicture;
+    private ActivityResultLauncher<Intent> imagePickerLauncher;
+    private Uri selectedImageUri;
     private EditText editTextEmail;
     private EditText editTextFullName;
     private EditText editTextPhoneNumber;
@@ -56,6 +76,10 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
         }
 
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
+
+        profilePicture = findViewById(R.id.image_view_profile_picture);
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPhoneNumber = findViewById(R.id.editTextPhoneNumber);
         editTextFullName = findViewById(R.id.editTextFullName);
@@ -66,37 +90,30 @@ public class UpdateProfileActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         profilesRef = db.collection("profiles");
 
+        profilePicture.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            imagePickerLauncher.launch(intent);
+        });
+
+        imagePickerLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        selectedImageUri = result.getData().getData();
+                        profilePicture.setImageURI(selectedImageUri);
+                    }
+                });
+
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 // Get values from EditText fields
                 String email = editTextEmail.getText().toString();
                 String phoneNumber = editTextPhoneNumber.getText().toString();
                 String fullName = editTextFullName.getText().toString();
                 boolean geolocationDisabled = switchGeolocation.isChecked(); // Get Switch state
 
-                // Create a map to store data
-                Map<String, Object> data = new HashMap<>();
-                data.put("fullName", fullName);
-                data.put("email", email);
-                data.put("phoneNumber", phoneNumber);
-                data.put("geolocationDisabled", geolocationDisabled); // Store Switch state
-
-                // Add data to the database
-                profilesRef.document(fullName).set(data)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                Toast.makeText(UpdateProfileActivity.this, "Submit successful", Toast.LENGTH_SHORT).show();
-                                finish();
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(UpdateProfileActivity.this, "Failed to submit: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                uploadImageToFirebaseStorage(email, phoneNumber, fullName, geolocationDisabled);
             }
         });
     }
@@ -114,5 +131,59 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void uploadImageToFirebaseStorage(String email, String phoneNumber, String fullName, boolean geolocationDisabled) {
+        // Create a map to store data
+        Map<String, Object> data = new HashMap<>();
+        data.put("fullName", fullName);
+        data.put("email", email);
+        data.put("phoneNumber", phoneNumber);
+        data.put("geolocationDisabled", geolocationDisabled); // Store Switch state
+
+        if (selectedImageUri != null) {
+            StorageReference storageReference = storageRef.child("profile_pics/" + UUID.randomUUID().toString() + ".jpg");
+            profilePicture.setDrawingCacheEnabled(true);
+            profilePicture.buildDrawingCache();
+            Bitmap bitmap = ((BitmapDrawable) profilePicture.getDrawable()).getBitmap();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] image_data = baos.toByteArray();
+
+            UploadTask uploadTask = storageReference.putBytes(image_data);
+            uploadTask.continueWithTask(task -> {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+                return storageReference.getDownloadUrl();
+            }).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    String selectedImageURL = downloadUri.toString();
+                    data.put("profilePicture", selectedImageURL);
+                } else {
+                    Log.e("TAG", "Failed to upload image to Firebase Storage: " + task.getException());
+                }
+            });
+        } else {
+            data.put("profilePicture", Uri.parse("android.resource://"+R.class.getPackage().getName()+"/" + R.drawable.default_poster).toString());
+        }
+
+        // Add data to the database
+        profilesRef.document(fullName).set(data)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(UpdateProfileActivity.this, "Submit successful", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(UpdateProfileActivity.this, "Failed to submit: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
     }
 }
