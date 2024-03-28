@@ -67,14 +67,6 @@
             android:calendarViewShown="false"
             android:datePickerMode="spinner"/>
 
-        <Button
-            android:id="@+id/upload_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/upload_image"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"/>
-
         <ImageView
             android:id="@+id/image_view_event_image"
             android:layout_width="match_parent"
