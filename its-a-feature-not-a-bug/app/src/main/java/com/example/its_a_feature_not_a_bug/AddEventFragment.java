@@ -87,9 +87,8 @@ public class AddEventFragment extends DialogFragment {
         Switch switchAttendeeLimit = view.findViewById(R.id.switch_attendee_limit);
         EditText editEventLimit = view.findViewById(R.id.edit_text_limit);
         eventPoster = view.findViewById(R.id.image_view_event_image);
-        Button uploadButton = view.findViewById(R.id.upload_button);
 
-        uploadButton.setOnClickListener(v -> {
+        eventPoster.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             imagePickerLauncher.launch(intent);
         });
