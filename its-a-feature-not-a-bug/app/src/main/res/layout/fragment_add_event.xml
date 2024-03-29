@@ -76,7 +76,6 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"/>
 
-
         <ImageView
             android:id="@+id/qrCodeImageView"
             android:layout_width="200dp"
