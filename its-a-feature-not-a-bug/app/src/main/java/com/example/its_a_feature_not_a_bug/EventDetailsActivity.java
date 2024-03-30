@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -56,6 +57,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private TextView location;
     private TextView description;
     private ImageView qrCode;
+    private ImageView eventPoster;
     private RecyclerView attendeesRecyclerView;
     private AttendeeAdapter attendeeAdapter;
     private RecyclerView announcementRecyclerView;
@@ -98,6 +100,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
 
+        eventPoster = findViewById(R.id.eventImage);
         name = findViewById(R.id.eventTitle);
         date = findViewById(R.id.eventDate);
         description = findViewById(R.id.eventDescription);
@@ -161,7 +164,18 @@ public class EventDetailsActivity extends AppCompatActivity {
                 signUpForEvent();
             }
         });
+
         displayInfo();
+
+        if (event.getImageId() != null) {
+            Glide.with(this)
+                    .load(event.getImageId())
+                    .centerCrop()
+                    .into(eventPoster);
+        } else {
+            // Set a placeholder image if no image is available
+            eventPoster.setImageResource(R.drawable.default_poster);
+        }
 
         removeEventButton = findViewById(R.id.btnRemoveEvent);
         removeEventButton.setOnClickListener(new View.OnClickListener() {
