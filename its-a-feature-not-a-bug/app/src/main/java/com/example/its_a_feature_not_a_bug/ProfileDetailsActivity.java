@@ -5,22 +5,29 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class ProfileDetailsActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
+    private StorageReference storageRef;
     private RecyclerView profilesRecyclerView;
     private ProfileAdapter profileAdapter;
     private Profile profile;
@@ -55,9 +62,9 @@ public class ProfileDetailsActivity extends AppCompatActivity {
         // Populate views with profile data
         if (profile != null) {
             // Load profile picture using Glide
-            if (profile.getProfilePicId() != null) {
+            if (profile.getProfilePic() != null) {
                 Glide.with(this)
-                        .load(profile.getProfilePicId())
+                        .load(profile.getProfilePic())
                         .placeholder(R.drawable.default_profile_pic)
                         .into(profileImageView);
             } else {
@@ -103,6 +110,24 @@ public class ProfileDetailsActivity extends AppCompatActivity {
     private void deleteProfile() {
         // Assuming profile's full name is the unique identifier; please replace with a more suitable ID.
         String profileIdentifier = profile.getFullName(); // Ideally, use profile.getId() if you have an ID field.
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        if (profile.getProfilePic() != null) {
+            storageRef = storage.getReferenceFromUrl(profile.getProfilePic());
+            storageRef.delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Log.d("Firestore", "Image Deleted");
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Log.e("Firestore", "Error deleting image", exception);
+                        }
+                    });
+        }
 
         db.collection("profiles").document(profileIdentifier)
                 .delete()
