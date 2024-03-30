@@ -3,6 +3,10 @@
 
 package com.example.its_a_feature_not_a_bug;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 
 import android.graphics.Bitmap;
@@ -11,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -23,6 +28,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -58,6 +64,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private Button signUpButton;
 
     private Button removeEventButton;
+    private Button sendNotificationButton;
 
     private User currentUser;
 
@@ -96,6 +103,13 @@ public class EventDetailsActivity extends AppCompatActivity {
         description = findViewById(R.id.eventDescription);
         currentUser = new User("YourName");
 
+        sendNotificationButton = findViewById(R.id.button_send_notification);
+        sendNotificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeNotification();
+            }
+        });
 
         Intent intent = getIntent();
         event = (Event) intent.getSerializableExtra("event");
@@ -269,5 +283,38 @@ public class EventDetailsActivity extends AppCompatActivity {
                         Toast.makeText(EventDetailsActivity.this, "Failed to remove event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+        }
+
+        public void makeNotification() {
+            String channelId = "CHANNEL_ID_NOTIFICATION";
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), channelId);
+            builder.setSmallIcon(R.drawable.ic_notifications)
+                    .setContentTitle("Notification Title")
+                    .setContentText("Some text for notification here")
+                    .setAutoCancel(true)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            Intent intent = new Intent(getApplicationContext(), NotificationActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    .putExtra("data", "Some value to be passed here");
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_MUTABLE);
+            builder.setContentIntent(pendingIntent);
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel notificationChannel = notificationManager.getNotificationChannel(channelId);
+
+                if (notificationChannel == null) {
+                    int importance = NotificationManager.IMPORTANCE_HIGH;
+                    notificationChannel = new NotificationChannel(channelId, "Some description", importance);
+                    notificationChannel.setLightColor(Color.GREEN);
+                    notificationChannel.enableVibration(true);
+                    notificationManager.createNotificationChannel(notificationChannel);
+                }
+            }
+
+            notificationManager.notify(0, builder.build());
         }
 }

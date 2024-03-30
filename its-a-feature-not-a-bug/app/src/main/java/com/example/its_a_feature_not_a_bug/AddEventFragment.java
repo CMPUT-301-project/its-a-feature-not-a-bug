@@ -168,7 +168,7 @@ public class AddEventFragment extends DialogFragment {
      */
     private void uploadImageToFirebaseStorage(String title, String host, Date date, String description, int attendeeLimit) {
         if (selectedImageUri != null) {
-            StorageReference storageReference = storageRef.child("images/" + UUID.randomUUID().toString() + ".jpg");
+            StorageReference storageReference = storageRef.child("event_posters/" + UUID.randomUUID().toString() + ".jpg");
             eventPoster.setDrawingCacheEnabled(true);
             eventPoster.buildDrawingCache();
             Bitmap bitmap = ((BitmapDrawable) eventPoster.getDrawable()).getBitmap();
