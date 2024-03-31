@@ -10,30 +10,76 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.its_a_feature_not_a_bug.databinding.ActivityMainBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 
 /**
  * The main activity of the app.
  * This activity extends AppCompatActivity to inherit its basic functionalities.
  */
 public class MainActivity extends AppCompatActivity {
+    private FirebaseFirestore db;
     private Button adminButton;
     private Button userButton;
+    private String androidId;
+    private CollectionReference usersRef;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
+        // Initialize Database and Reference
+        db = FirebaseFirestore.getInstance();
+        usersRef = db.collection("profiles");
+
+        // Fetch android ID and log it
+        androidId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.d("Brayden", androidId);
+
+        // Fetch document IDs
+        ArrayList<String> docIDs = new ArrayList<>();
+        usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        // fetch ID, log it, and store it in array
+                        String docId = document.getId();
+                        Log.d("Document ID", docId);
+                        docIDs.add(docId);
+                    }
+                } else {
+                    Log.d("Firestore", "Error getting documents: ", task.getException());
+                }
+            }
+        });
+
+        if (!docIDs.contains(androidId)) { // not a new user
+            new NewUserFragment().show(getSupportFragmentManager(), "New User");
+        }
 
         // set buttons
         adminButton = findViewById(R.id.button_admin_login);

@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import androidx.appcompat.app.ActionBar;
@@ -47,6 +48,10 @@ public class AdminBrowseEventsActivity extends BrowseEventsActivity {
         // Hide update profile fab
         FloatingActionButton fabUpdateProfile = findViewById(R.id.fab_update_profile);
         fabUpdateProfile.setVisibility(View.GONE);
+
+        // Hide camera Button
+        Button cameraButton = findViewById(R.id.button_camera);
+        cameraButton.setVisibility(View.GONE);
 
     }
 
