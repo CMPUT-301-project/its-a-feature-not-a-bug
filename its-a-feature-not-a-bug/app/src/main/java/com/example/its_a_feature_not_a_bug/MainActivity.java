@@ -10,27 +10,77 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.example.its_a_feature_not_a_bug.databinding.ActivityMainBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 
 /**
  * The main activity of the app.
  * This activity extends AppCompatActivity to inherit its basic functionalities.
  */
 public class MainActivity extends AppCompatActivity {
+    private FirebaseFirestore db;
     private Button adminButton;
     private Button userButton;
+    private String androidId;
+    private CollectionReference usersRef;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        // Initialize Database and Reference
+        db = FirebaseFirestore.getInstance();
+        usersRef = db.collection("profiles");
+
+        // Fetch android ID and log it
+        androidId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.d("Brayden", androidId);
+
+        // Fetch document IDs
+        usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<String> docIDs = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        // fetch ID, log it, and store it in array
+                        String docId = document.getId();
+                        Log.d("Document ID", docId);
+                        docIDs.add(docId);
+                    }
+
+                    if (!docIDs.contains(androidId)) { // not a new user
+                        new NewUserFragment().show(getSupportFragmentManager(), "New User");
+                    }
+
+                } else {
+                    Log.d("Firestore", "Error getting documents: ", task.getException());
+                }
+            }
+        });
 
         // set buttons
         adminButton = findViewById(R.id.button_admin_login);
@@ -81,65 +131,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-//    public void scanQRCode() {
-//        IntentIntegrator integrator = new IntentIntegrator(this);
-//        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-//        integrator.setPrompt("Scan a QR code");
-//        integrator.setCameraId(0);
-//        integrator.setBeepEnabled(false);
-//        integrator.setBarcodeImageEnabled(true);
-//        integrator.initiateScan();
-//    }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-//        if (result != null) {
-//            if (result.getContents() == null) {
-//                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-//            } else {
-//                // Use the scanned QR code to check the attendee into the event
-//                String scannedQRCode = result.getContents();
-//                checkInAttendee(scannedQRCode);
-//            }
-//        } else {
-//            super.onActivityResult(requestCode, resultCode, data);
-//        }
-//    }
-
-//    private void checkInAttendee(String qrCode) {
-//        // Use the QR code to find the corresponding event and check the attendee in
-//        // This will depend on how your events and attendees are stored
-//    }
-//    private static final int PICK_IMAGE = 1;
-
-//    public void uploadProfilePicture() {
-//        Intent intent = new Intent();
-//        intent.setType("image/*");
-//        intent.setAction(Intent.ACTION_GET_CONTENT);
-//        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-//    }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == PICK_IMAGE) {
-//            Uri imageUri = data.getData();
-//            // Upload the image to a server and get the image URL
-//            String imageUrl = uploadImage(imageUri);
-//            // Set the image URL as the profile picture of the attendee
-//            attendee.setProfilePicture(imageUrl);
-//        } else {
-//            // Handle other activity results
-//        }
-//    }
-
-//    private String uploadImage(Uri imageUri) {
-//        // This method should handle the image upload and return the image URL
-//        // The implementation will depend on your server and how you handle file uploads
-//        return null;
-//    }
-
 }

@@ -3,15 +3,13 @@
 
 package com.example.its_a_feature_not_a_bug;
 
-import android.net.Uri;
-
 import java.io.Serializable;
 
 /**
  * A class representing a user's profile.
  */
 public class Profile implements Serializable {
-    private Uri profilePicId; // User profile pic
+    private String profilePic; // User profile pic
     private String fullName; // Full name of the user
     private String email; // User email
     private String phoneNumber; // User phone number
@@ -39,13 +37,13 @@ public class Profile implements Serializable {
 
     /**
      * This is a constructor for the class
-     * @param profilePicId the profile image
+     * @param profilePic the profile image
      * @param fullName the profile name
      * @param email the users email address
      * @param phoneNumber the users phone number
      */
-    public Profile(Uri profilePicId, String fullName, String email, String phoneNumber) {
-        this.profilePicId = profilePicId;
+    public Profile(String profilePic, String fullName, String email, String phoneNumber) {
+        this.profilePic = profilePic;
         this.fullName = fullName;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -55,16 +53,16 @@ public class Profile implements Serializable {
      * This returns the Uri of the profile image.
      * @return the image Uri
      */
-    public Uri getProfilePicId() {
-        return profilePicId;
+    public String getProfilePic() {
+        return profilePic;
     }
 
     /**
      * This sets the Uri of the profile image to a new value.
-     * @param profilePicId the new Uri
+     * @param profilePic the new Uri
      */
-    public void setProfilePicId(Uri profilePicId) {
-        this.profilePicId = profilePicId;
+    public void setProfilePic(String profilePic) {
+        this.profilePic = profilePic;
     }
 
     /**

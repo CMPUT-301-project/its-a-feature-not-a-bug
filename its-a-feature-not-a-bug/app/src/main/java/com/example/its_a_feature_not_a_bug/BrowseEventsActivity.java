@@ -3,6 +3,7 @@
 
 package com.example.its_a_feature_not_a_bug;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -16,15 +17,18 @@ import android.widget.ListView;
 import android.content.Intent;
 
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -34,6 +38,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -51,6 +57,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
     private EventAdapter eventAdapter;
     private ArrayList<Event> eventDataList;
     private FloatingActionButton fab;
+    private Button cameraButton;
 
     private ArrayList<User> signedAttendees = new ArrayList<>();
 
@@ -83,6 +90,11 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                     public void onSuccess(Void unused) {
                         Log.d("Firestore", "DocumentSnapshot successfully written");
                     }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Firestore", "Failed to upload event", e);
+                    }
                 });
     }
 
@@ -113,6 +125,16 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         eventList = findViewById(R.id.list_view_events_list);
         eventDataList = new ArrayList<>();
 
+        cameraButton = findViewById(R.id.button_camera);
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ScanOptions options = new ScanOptions();
+                options.setOrientationLocked(true);
+                options.setCaptureActivity(QRCodeScanner.class);
+                barLauncher.launch(options);
+            }
+        });
 
         // adapter
         eventAdapter = new EventAdapter(this, eventDataList);
@@ -209,4 +231,19 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         }
         return super.onOptionsItemSelected(item);
     }
+
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
+        if (result.getContents() != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(BrowseEventsActivity.this);
+            builder.setTitle("Result")
+                    .setMessage(result.getContents())
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).show();
+        }
+    });
+
 }

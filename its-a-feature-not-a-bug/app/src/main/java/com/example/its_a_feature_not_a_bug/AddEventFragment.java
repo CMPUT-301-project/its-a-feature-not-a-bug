@@ -135,14 +135,21 @@ public class AddEventFragment extends DialogFragment {
                     }
                 }
 
-                // Create Event object with appropriate constructor based on Switch state
-                if (switchAttendeeLimit.isChecked()) {
-                    uploadImageToFirebaseStorage(title, host, date, description, attendeeLimit);
-                } else {
-                    uploadImageToFirebaseStorage(title, host, date, description, 0);
-                }
+                Event newEvent = new Event(title, date, host, description, attendeeLimit);
+                uploadImageToFirebaseStorage(newEvent, new OnImageUploadListener() {
+                    @Override
+                    public void onImageUploadSuccess(String imageURL) {
+                        newEvent.setImageId(imageURL);
+                        listener.addEvent(newEvent);
+                        alertDialog.dismiss();
+                    }
 
-                alertDialog.dismiss();
+                    @Override
+                    public void onImageUploadFailure(String errorMessage) {
+                        // Handle upload failure with error message
+                    }
+                });
+
             });
         });
 
@@ -160,13 +167,9 @@ public class AddEventFragment extends DialogFragment {
 
     /**
      * This uploads an image to the Firestore
-     * @param title the title of the new Event
-     * @param host the organizer of the new Event
-     * @param date the date of the new event
-     * @param description the description of the new event
-     * @param attendeeLimit the max number of attendees for the new event
+     * @param newEvent the event that the image belongs to
      */
-    private void uploadImageToFirebaseStorage(String title, String host, Date date, String description, int attendeeLimit) {
+    private void uploadImageToFirebaseStorage(Event newEvent, OnImageUploadListener uploadListener) {
         if (selectedImageUri != null) {
             StorageReference storageReference = storageRef.child("event_posters/" + UUID.randomUUID().toString() + ".jpg");
             eventPoster.setDrawingCacheEnabled(true);
@@ -186,36 +189,11 @@ public class AddEventFragment extends DialogFragment {
                 if (task.isSuccessful()) {
                     Uri downloadUri = task.getResult();
                     String selectedImageURL = downloadUri.toString();
-                    Event newEvent; // Declare the variable here
-                    if (attendeeLimit != 0) {
-                        newEvent = new Event(selectedImageURL, title, host, date, description, attendeeLimit);
-                    } else {
-                        newEvent = new Event(selectedImageURL, title, host, date, description);
-                    }
-                    listener.addEvent(newEvent); // Ensure this is correctly adding the event
-
-                    // Add the event to Firestore
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    db.collection("events").add(newEvent)
-                            .addOnSuccessListener(documentReference -> {
-                                Log.d("Firestore", "Event added with ID: " + documentReference.getId());
-                                Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(newEvent, 512);
-                                displayQRCode(qrCodeBitmap); // Call a method to handle QR code display
-                            })
-                            .addOnFailureListener(e -> Log.w("Firestore", "Error adding event", e));
+                    uploadListener.onImageUploadSuccess(selectedImageURL); // Callback with URL
                 } else {
-                    Log.e("TAG", "Failed to upload image to Firebase Storage: " + task.getException());
+                    uploadListener.onImageUploadFailure(task.getException().getMessage());
                 }
             });
-        } else {
-            Event newEvent;
-            if (attendeeLimit != 0) {
-                newEvent = new Event(Uri.parse("android.resource://"+R.class.getPackage().getName()+"/" + R.drawable.default_poster).toString(), title, host, date, description, attendeeLimit);
-            } else {
-                newEvent = new Event(Uri.parse("android.resource://"+R.class.getPackage().getName()+"/" + R.drawable.default_poster).toString(), title, host, date, description);
-
-            }
-            listener.addEvent(newEvent);
         }
     }
 
@@ -227,5 +205,10 @@ public class AddEventFragment extends DialogFragment {
                 qrCodeImageView.setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    interface OnImageUploadListener {
+        void onImageUploadSuccess(String imageURL);
+        void onImageUploadFailure(String errorMessage);
     }
 }

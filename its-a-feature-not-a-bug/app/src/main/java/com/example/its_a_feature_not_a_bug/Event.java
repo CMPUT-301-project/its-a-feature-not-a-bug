@@ -3,6 +3,8 @@
 
 package com.example.its_a_feature_not_a_bug;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +23,7 @@ public class Event implements Serializable {
     private String description; // short description of the event posted by the host
     private int attendeeLimit;
     private int attendeeCount;
+    private Bitmap checkInQRCode;
 
     /**
      * This is a constructor for the Event class.
@@ -68,6 +71,16 @@ public class Event implements Serializable {
         this.date = date;
         this.host = host;
         this.description = description;
+    }
+
+    public Event(String title, Date date, String host, String description, int attendeeLimit) {
+        this.title = title;
+        this.date = date;
+        this.host = host;
+        this.description = description;
+        if (attendeeLimit != 0) {
+            this.attendeeLimit = attendeeLimit;
+        }
     }
 
     /**
@@ -229,6 +242,4 @@ public class Event implements Serializable {
     public void setAttendeeCount(int attendeeCount) {
         this.attendeeCount = attendeeCount;
     }
-
-
 }

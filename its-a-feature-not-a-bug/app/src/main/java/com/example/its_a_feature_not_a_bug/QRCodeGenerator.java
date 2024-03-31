@@ -42,7 +42,7 @@ public class QRCodeGenerator {
      */
     public static Bitmap generatePromotionalQRCode(Event event, int size) {
         // Example deep link or URL that directs users to the event details in the app
-        String content = "app://events/" + event.getTitle(); // Adjust based on URL scheme
+        String content = "app://EventDetailsActivity?eventId=" + event.getTitle(); // Adjust based on URL scheme
         return generateQR(content, size);
     }
 

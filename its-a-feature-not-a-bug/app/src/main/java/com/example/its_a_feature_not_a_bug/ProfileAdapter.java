@@ -56,9 +56,9 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
     public void onBindViewHolder(@NonNull ProfileViewHolder holder, int position) {
         Profile profile = profiles.get(position);
         holder.profileFullName.setText(profile.getFullName());
-        if (profile.getProfilePicId() != null) {
+        if (profile.getProfilePic() != null) {
             Glide.with(context)
-                    .load(profile.getProfilePicId())
+                    .load(profile.getProfilePic())
                     .placeholder(R.drawable.default_profile_pic)
                     .into(holder.profileImageView);
         } else {

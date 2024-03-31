@@ -134,13 +134,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
     }
 
     private void uploadImageToFirebaseStorage(String email, String phoneNumber, String fullName, boolean geolocationDisabled) {
-        // Create a map to store data
-        Map<String, Object> data = new HashMap<>();
-        data.put("fullName", fullName);
-        data.put("email", email);
-        data.put("phoneNumber", phoneNumber);
-        data.put("geolocationDisabled", geolocationDisabled); // Store Switch state
-
         if (selectedImageUri != null) {
             StorageReference storageReference = storageRef.child("profile_pics/" + UUID.randomUUID().toString() + ".jpg");
             profilePicture.setDrawingCacheEnabled(true);
@@ -160,14 +153,25 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     Uri downloadUri = task.getResult();
                     String selectedImageURL = downloadUri.toString();
-                    data.put("profilePicture", selectedImageURL);
+                    addProfile(email, phoneNumber, fullName, geolocationDisabled, selectedImageURL);
                 } else {
                     Log.e("TAG", "Failed to upload image to Firebase Storage: " + task.getException());
                 }
             });
         } else {
-            data.put("profilePicture", Uri.parse("android.resource://"+R.class.getPackage().getName()+"/" + R.drawable.default_poster).toString());
+            String selectedImageURL = Uri.parse("android.resource://"+R.class.getPackage().getName()+"/" + R.drawable.default_poster).toString();
+            addProfile(email, phoneNumber, fullName, geolocationDisabled, selectedImageURL);
         }
+    }
+
+    public void addProfile(String email, String phoneNumber, String fullName, boolean geolocationDisabled, String profilePic) {
+        // Create a map to store data
+        Map<String, Object> data = new HashMap<>();
+        data.put("fullName", fullName);
+        data.put("email", email);
+        data.put("phoneNumber", phoneNumber);
+        data.put("geolocationDisabled", geolocationDisabled); // Store Switch state
+        data.put("profilePic", profilePic);
 
         // Add data to the database
         profilesRef.document(fullName).set(data)
@@ -184,6 +188,5 @@ public class UpdateProfileActivity extends AppCompatActivity {
                         Toast.makeText(UpdateProfileActivity.this, "Failed to submit: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-
     }
 }
