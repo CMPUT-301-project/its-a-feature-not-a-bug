@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NewUserFragment extends DialogFragment {
-    private AddEventDialogueListener listener;
     private FirebaseFirestore db;
     private CollectionReference usersRef;
 
