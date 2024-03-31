@@ -60,26 +60,27 @@ public class MainActivity extends AppCompatActivity {
         Log.d("Brayden", androidId);
 
         // Fetch document IDs
-        ArrayList<String> docIDs = new ArrayList<>();
         usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
+                    ArrayList<String> docIDs = new ArrayList<>();
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         // fetch ID, log it, and store it in array
                         String docId = document.getId();
                         Log.d("Document ID", docId);
                         docIDs.add(docId);
                     }
+
+                    if (!docIDs.contains(androidId)) { // not a new user
+                        new NewUserFragment().show(getSupportFragmentManager(), "New User");
+                    }
+
                 } else {
                     Log.d("Firestore", "Error getting documents: ", task.getException());
                 }
             }
         });
-
-        if (!docIDs.contains(androidId)) { // not a new user
-            new NewUserFragment().show(getSupportFragmentManager(), "New User");
-        }
 
         // set buttons
         adminButton = findViewById(R.id.button_admin_login);
