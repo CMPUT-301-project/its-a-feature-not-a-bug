@@ -67,6 +67,12 @@
             android:calendarViewShown="false"
             android:datePickerMode="spinner"/>
 
+        <TimePicker
+            android:id="@+id/time_picker_event_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:timePickerMode="spinner"/>
+
         <ImageView
             android:id="@+id/image_view_event_image"
             android:layout_width="match_parent"

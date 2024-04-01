@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TimePicker;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -72,6 +74,7 @@ public class AddEventFragment extends DialogFragment {
         EditText editEventId = view.findViewById(R.id.edit_text_event_title);
         EditText editEventHost = view.findViewById(R.id.edit_tex_event_host);
         DatePicker editEventDate = view.findViewById(R.id.date_picker_event_date);
+        TimePicker editEventTime = (TimePicker) view.findViewById(R.id.time_picker_event_time);
         EditText editEventDescription = view.findViewById(R.id.edit_text_event_description);
         Switch switchAttendeeLimit = view.findViewById(R.id.switch_attendee_limit);
         EditText editEventLimit = view.findViewById(R.id.edit_text_limit);
@@ -108,6 +111,17 @@ public class AddEventFragment extends DialogFragment {
                 int dayOfMonth = editEventDate.getDayOfMonth();
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(year, month, dayOfMonth);
+
+                // Now, handle time from TimePicker
+                int hour, minute;
+                if (Build.VERSION.SDK_INT >= 23) {
+                    hour = editEventTime.getHour();
+                    minute = editEventTime.getMinute();
+                } else {
+                    hour = editEventTime.getCurrentHour(); // Deprecated in API 23
+                    minute = editEventTime.getCurrentMinute(); // Deprecated in API 23
+                }
+
                 Date date = calendar.getTime();
                 String description = editEventDescription.getText().toString();
                 int attendeeLimit = 0;
