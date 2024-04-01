@@ -25,6 +25,8 @@ public class Event implements Serializable {
     private int attendeeCount;
     private Bitmap checkInQRCode;
 
+    public Event() {}
+
     /**
      * This is a constructor for the Event class.
      * @param imageId the image (event poster)

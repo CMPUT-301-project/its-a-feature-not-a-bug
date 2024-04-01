@@ -6,6 +6,7 @@ package com.example.its_a_feature_not_a_bug;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -65,15 +66,15 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         // Adds event to the Firestore collection
 
         Map<String, Object> data = new HashMap<>();
-        data.put("Host", event.getHost());
-        data.put("Date", event.getDate());
-        data.put("Description", event.getDescription());
-        data.put("Poster", event.getImageId());
-        data.put("AttendeeCount", event.getAttendeeCount());
+        data.put("host", event.getHost());
+        data.put("date", event.getDate());
+        data.put("description", event.getDescription());
+        data.put("imageId", event.getImageId());
+        data.put("attendeeCount", event.getAttendeeCount());
 
         // Include attendee limit if available
         if (event.getAttendeeLimit() > 0) {
-            data.put("AttendeeLimit", event.getAttendeeLimit());
+            data.put("attendeeLimit", event.getAttendeeLimit());
         }
 
         eventsRef.document(event.getTitle())
@@ -132,7 +133,10 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         // get list of event names
         barLauncher = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() != null) {
-
+                Intent intent = new Intent(this, HandleDeepLinkActivity.class);
+                Uri uri = Uri.parse(result.getContents());
+                intent.setData(uri);
+                startActivity(intent);
             }
         });
 
@@ -173,11 +177,11 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                     eventDataList.clear();
                     for (QueryDocumentSnapshot doc: querySnapshots) {
                         String eventId = doc.getId();
-                        String host = doc.getString("Host");
-                        Date date = doc.getDate("Date");
-                        String description = doc.getString("Description");
-                        int attendeeLimit = doc.contains("AttendeeLimit") ? doc.getLong("AttendeeLimit").intValue() : 0;
-                        int attendeeCount = doc.contains("AttendeeCount") ? doc.getLong("AttendeeCount").intValue() : 0;
+                        String host = doc.getString("host");
+                        Date date = doc.getDate("date");
+                        String description = doc.getString("description");
+                        int attendeeLimit = doc.contains("attendeeLimit") ? doc.getLong("attendeeLimit").intValue() : 0;
+                        int attendeeCount = doc.contains("attendeeCount") ? doc.getLong("attendeeCount").intValue() : 0;
 
 
                         if (doc.get("signedAttendees") != null) {
@@ -186,7 +190,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
 
 
 
-                        String imageURLString = doc.getString("Poster");
+                        String imageURLString = doc.getString("imageId");
 
                         Log.d("Firestore", String.format("Event(%s, %s) fetched", eventId, host));
 
