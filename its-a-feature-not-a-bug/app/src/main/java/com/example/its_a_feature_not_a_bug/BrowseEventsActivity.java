@@ -23,16 +23,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -44,7 +39,6 @@ import com.journeyapps.barcodescanner.ScanOptions;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -58,7 +52,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
     private ArrayList<Event> eventDataList;
     private FloatingActionButton fab;
     private Button cameraButton;
-
+    ActivityResultLauncher<ScanOptions> barLauncher;
     private ArrayList<User> signedAttendees = new ArrayList<>();
 
     private ArrayList<String> attendees = new ArrayList<String>();
@@ -72,15 +66,15 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         // Adds event to the Firestore collection
 
         Map<String, Object> data = new HashMap<>();
-        data.put("Host", event.getHost());
-        data.put("Date", event.getDate());
-        data.put("Description", event.getDescription());
-        data.put("Poster", event.getImageId());
-        data.put("AttendeeCount", event.getAttendeeCount());
+        data.put("host", event.getHost());
+        data.put("date", event.getDate());
+        data.put("description", event.getDescription());
+        data.put("imageId", event.getImageId());
+        data.put("attendeeCount", event.getAttendeeCount());
 
         // Include attendee limit if available
         if (event.getAttendeeLimit() > 0) {
-            data.put("AttendeeLimit", event.getAttendeeLimit());
+            data.put("attendeeLimit", event.getAttendeeLimit());
         }
 
         eventsRef.document(event.getTitle())
@@ -136,6 +130,16 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
             }
         });
 
+        // get list of event names
+        barLauncher = registerForActivityResult(new ScanContract(), result -> {
+            if (result.getContents() != null) {
+                Intent intent = new Intent(this, HandleDeepLinkActivity.class);
+                Uri uri = Uri.parse(result.getContents());
+                intent.setData(uri);
+                startActivity(intent);
+            }
+        });
+
         // adapter
         eventAdapter = new EventAdapter(this, eventDataList);
         eventList.setAdapter(eventAdapter);
@@ -152,8 +156,8 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         fab.setOnClickListener(v -> {
             new AddEventFragment().show(getSupportFragmentManager(), "Add Event");
         });
-        FloatingActionButton fabUpdateProfile = findViewById(R.id.fab_update_profile);
-        fabUpdateProfile.setOnClickListener(new View.OnClickListener() {
+        Button profileButton = findViewById(R.id.button_profile);
+        profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(BrowseEventsActivity.this, UpdateProfileActivity.class);
@@ -173,11 +177,11 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                     eventDataList.clear();
                     for (QueryDocumentSnapshot doc: querySnapshots) {
                         String eventId = doc.getId();
-                        String host = doc.getString("Host");
-                        Date date = doc.getDate("Date");
-                        String description = doc.getString("Description");
-                        int attendeeLimit = doc.contains("AttendeeLimit") ? doc.getLong("AttendeeLimit").intValue() : 0;
-                        int attendeeCount = doc.contains("AttendeeCount") ? doc.getLong("AttendeeCount").intValue() : 0;
+                        String host = doc.getString("host");
+                        Date date = doc.getDate("date");
+                        String description = doc.getString("description");
+                        int attendeeLimit = doc.contains("attendeeLimit") ? doc.getLong("attendeeLimit").intValue() : 0;
+                        int attendeeCount = doc.contains("attendeeCount") ? doc.getLong("attendeeCount").intValue() : 0;
 
 
                         if (doc.get("signedAttendees") != null) {
@@ -186,7 +190,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
 
 
 
-                        String imageURLString = doc.getString("Poster");
+                        String imageURLString = doc.getString("imageId");
 
                         Log.d("Firestore", String.format("Event(%s, %s) fetched", eventId, host));
 
@@ -231,19 +235,4 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         }
         return super.onOptionsItemSelected(item);
     }
-
-    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result -> {
-        if (result.getContents() != null) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(BrowseEventsActivity.this);
-            builder.setTitle("Result")
-                    .setMessage(result.getContents())
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }).show();
-        }
-    });
-
 }

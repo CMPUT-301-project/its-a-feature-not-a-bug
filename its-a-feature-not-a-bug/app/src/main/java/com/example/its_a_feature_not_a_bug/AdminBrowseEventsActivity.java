@@ -3,23 +3,17 @@
 
 package com.example.its_a_feature_not_a_bug;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 
 import androidx.appcompat.app.ActionBar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
 
 /**
  * An activity that allows administrators to browse events.
@@ -46,8 +40,8 @@ public class AdminBrowseEventsActivity extends BrowseEventsActivity {
         fabAddEvent.setVisibility(View.GONE);
 
         // Hide update profile fab
-        FloatingActionButton fabUpdateProfile = findViewById(R.id.fab_update_profile);
-        fabUpdateProfile.setVisibility(View.GONE);
+        Button profileButton = findViewById(R.id.button_profile);
+        profileButton.setVisibility(View.GONE);
 
         // Hide camera Button
         Button cameraButton = findViewById(R.id.button_camera);
