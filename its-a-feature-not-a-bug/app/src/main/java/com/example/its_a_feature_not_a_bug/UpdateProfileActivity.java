@@ -225,7 +225,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         data.put("fullName", newUser.getFullName());
         data.put("email", newUser.getEmail());
         data.put("phoneNumber", newUser.getPhoneNumber());
-        data.put("geolocationDisabled", newUser.isGeoLocationDisabled()); // Store Switch state
+        data.put("geoLocationDisabled", newUser.isGeoLocationDisabled()); // Store Switch state
         data.put("imageId", newUser.getImageId());
 
         // Add data to the database
