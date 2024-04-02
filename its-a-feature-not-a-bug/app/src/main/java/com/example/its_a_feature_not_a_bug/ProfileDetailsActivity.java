@@ -1,6 +1,7 @@
 package com.example.its_a_feature_not_a_bug;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -51,7 +52,9 @@ public class ProfileDetailsActivity extends AppCompatActivity {
         }
 
         // Get the Profile object from the intent extra
+
         profile = (UserRefactored) getIntent().getSerializableExtra("profile");
+
 
         // Initialize views
         ImageView profileImageView = findViewById(R.id.profileImageView);
@@ -80,7 +83,8 @@ public class ProfileDetailsActivity extends AppCompatActivity {
         ImageView deleteProfileButton = findViewById(R.id.deleteProfileButton);
 
         // Set click listener for the delete profile button
-        deleteProfileButton.setOnClickListener(v -> showDeleteConfirmationDialog());
+//        deleteProfileButton.setOnClickListener(v -> showDeleteConfirmationDialog());
+        deleteProfileButton.setOnClickListener(v -> showDeleteOptionsDialog());
     }
 
     @Override
@@ -98,7 +102,42 @@ public class ProfileDetailsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void showDeleteConfirmationDialog() {
+//    private void showDeleteConfirmationDialog() {
+//        new AlertDialog.Builder(this)
+//                .setTitle("Delete Profile")
+//                .setMessage("Are you sure you want to delete this profile?")
+//                .setPositiveButton("OK", (dialog, which) -> deleteProfile())
+//                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+//                .show();
+//    }
+
+    private void showDeleteOptionsDialog() {
+        final CharSequence[] options = {"Profile Picture", "Profile"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("What would you like to delete?");
+        builder.setItems(options, (dialog, which) -> {
+            if (which == 0) {
+                // "Profile Picture" was clicked
+                showConfirmDeleteProfilePictureDialog();
+            } else if (which == 1) {
+                // "Profile" was clicked
+                showConfirmDeleteProfileDialog();
+            }
+        });
+        builder.show();
+    }
+
+    private void showConfirmDeleteProfilePictureDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Profile Picture")
+                .setMessage("Are you sure you want to delete this profile picture?")
+                .setPositiveButton("OK", (dialog, which) -> removeProfilePicture())
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    private void showConfirmDeleteProfileDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Profile")
                 .setMessage("Are you sure you want to delete this profile?")
@@ -107,9 +146,29 @@ public class ProfileDetailsActivity extends AppCompatActivity {
                 .show();
     }
 
+    private void removeProfilePicture() {
+        // Assuming you're setting the profile picture to a default in your database,
+        // add the logic here. For now, we'll just update the ImageView.
+        ImageView profileImageView = findViewById(R.id.profileImageView);
+        profileImageView.setImageResource(R.drawable.default_profile_pic);
+
+        // Remove the profile picture from Firebase Storage
+        if (profile.getImageId() != null && !profile.getImageId().isEmpty()) {
+            StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(profile.getImageId());
+            photoRef.delete().addOnSuccessListener(aVoid -> {
+                Log.d("ProfileDetailsActivity", "Profile picture deleted successfully.");
+                // Update the user's profile in Firestore to reflect the removal of the profile picture.
+                db.collection("users").document(profile.getUserId())
+                        .update("imageId", null)
+                        .addOnSuccessListener(aVoid1 -> Log.d("ProfileDetailsActivity", "User profile updated."))
+                        .addOnFailureListener(e -> Log.e("ProfileDetailsActivity", "Error updating user profile.", e));
+            }).addOnFailureListener(e -> Log.e("ProfileDetailsActivity", "Error deleting profile picture.", e));
+        }
+    }
+
+
     private void deleteProfile() {
-        // Assuming profile's full name is the unique identifier; please replace with a more suitable ID.
-        String profileIdentifier = profile.getUserId(); // Ideally, use profile.getId() if you have an ID field.
+        String profileIdentifier = profile.getUserId();
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
@@ -144,5 +203,3 @@ public class ProfileDetailsActivity extends AppCompatActivity {
     }
 
 }
-
-
