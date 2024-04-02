@@ -30,7 +30,7 @@ public class ProfileDetailsActivity extends AppCompatActivity {
     private StorageReference storageRef;
     private RecyclerView profilesRecyclerView;
     private ProfileAdapter profileAdapter;
-    private Profile profile;
+    private UserRefactored profile;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,7 +51,7 @@ public class ProfileDetailsActivity extends AppCompatActivity {
         }
 
         // Get the Profile object from the intent extra
-        profile = (Profile) getIntent().getSerializableExtra("profile");
+        profile = (UserRefactored) getIntent().getSerializableExtra("profile");
 
         // Initialize views
         ImageView profileImageView = findViewById(R.id.profileImageView);
@@ -62,9 +62,9 @@ public class ProfileDetailsActivity extends AppCompatActivity {
         // Populate views with profile data
         if (profile != null) {
             // Load profile picture using Glide
-            if (profile.getProfilePic() != null) {
+            if (profile.getImageId() != null) {
                 Glide.with(this)
-                        .load(profile.getProfilePic())
+                        .load(profile.getImageId())
                         .placeholder(R.drawable.default_profile_pic)
                         .into(profileImageView);
             } else {
@@ -109,12 +109,12 @@ public class ProfileDetailsActivity extends AppCompatActivity {
 
     private void deleteProfile() {
         // Assuming profile's full name is the unique identifier; please replace with a more suitable ID.
-        String profileIdentifier = profile.getFullName(); // Ideally, use profile.getId() if you have an ID field.
+        String profileIdentifier = profile.getUserId(); // Ideally, use profile.getId() if you have an ID field.
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
-        if (profile.getProfilePic() != null) {
-            storageRef = storage.getReferenceFromUrl(profile.getProfilePic());
+        if (profile.getImageId() != null) {
+            storageRef = storage.getReferenceFromUrl(profile.getImageId());
             storageRef.delete()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -129,7 +129,7 @@ public class ProfileDetailsActivity extends AppCompatActivity {
                     });
         }
 
-        db.collection("profiles").document(profileIdentifier)
+        db.collection("users").document(profileIdentifier)
                 .delete()
                 .addOnSuccessListener(aVoid -> {
                     // Handle successful deletion

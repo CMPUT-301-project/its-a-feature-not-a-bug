@@ -45,6 +45,7 @@ public class HandleDeepLinkActivity extends AppCompatActivity {
                         if (document.exists()) {
                             Log.d("Brayden", "DocumentSnapshot data: " + document.getData());
                             event = document.toObject(Event.class);
+                            event.setTitle(document.getId());
                             Intent intent = new Intent(HandleDeepLinkActivity.this, EventDetailsActivity.class);
                             intent.putExtra("event", event);
                             startActivity(intent);

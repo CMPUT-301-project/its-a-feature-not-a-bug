@@ -31,6 +31,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The main activity of the app.
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize Database and Reference
         db = FirebaseFirestore.getInstance();
-        usersRef = db.collection("profiles");
+        usersRef = db.collection("users");
 
         // Fetch android ID and log it
         androidId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -71,8 +73,14 @@ public class MainActivity extends AppCompatActivity {
                         docIDs.add(docId);
                     }
 
-                    if (!docIDs.contains(androidId)) { // not a new user
-                        new NewUserFragment().show(getSupportFragmentManager(), "New User");
+                    if (!docIDs.contains(androidId)) { // this is a new user
+                        UserRefactored currentUser = new UserRefactored();
+                        currentUser.setUserId(androidId);
+
+                        Map<String, Object> data = new HashMap<>();
+                        data.put("userId", androidId);
+
+                        usersRef.document(androidId).set(data);
                     }
 
                 } else {

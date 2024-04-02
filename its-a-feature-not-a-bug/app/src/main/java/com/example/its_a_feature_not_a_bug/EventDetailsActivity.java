@@ -17,6 +17,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
@@ -35,13 +36,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -68,16 +74,18 @@ public class EventDetailsActivity extends AppCompatActivity {
     private Button removeEventButton;
     private Button sendNotificationButton;
 
-    private User currentUser;
+    private UserRefactored currentUser;
 
     private FirebaseFirestore db;
 
     private CollectionReference eventsRef;
+    private CollectionReference usersRef;
     private StorageReference storageRef;
 
-    private ArrayList<User> attendees;
+    private ArrayList<UserRefactored> attendees;
 
     private ImageView qrCodeImageView;
+    private String androidId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,16 +103,46 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         }
 
-        System.out.print("reached this point");
+        // System.out.print("reached this point");
+        androidId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        Intent intent = getIntent();
+        event = (Event) intent.getSerializableExtra("event");
+        if (event.getTitle() != null) {
+            Log.d("Brayden", event.getTitle());
+        }
 
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
+        usersRef = db.collection("users");
 
         eventPoster = findViewById(R.id.eventImage);
         name = findViewById(R.id.eventTitle);
         date = findViewById(R.id.eventDate);
         description = findViewById(R.id.eventDescription);
-        currentUser = new User("YourName");
+
+        // get user data from database
+        usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        if (androidId.equals(document.getId())) {
+                            currentUser = document.toObject(UserRefactored.class);
+                            Log.d("Brayden", "currentUser: " + currentUser.getUserId());
+                            break;
+                        }
+                    }
+                } else {
+                    Log.d("Firestore", "Error getting documents: ", task.getException());
+                }
+            }
+        });
+
+        // get attendees
+        if (event.getSignedAttendees() != null) {
+            populateSignedAttendees();
+        }
 
         sendNotificationButton = findViewById(R.id.button_send_notification);
         sendNotificationButton.setOnClickListener(new View.OnClickListener() {
@@ -114,15 +152,6 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
         });
 
-        Intent intent = getIntent();
-        event = (Event) intent.getSerializableExtra("event");
-
-        attendees = event.getSignedAttendees();
-        if (attendees == null) {
-            attendees = new ArrayList<>();
-            attendees.add(new User("Jing"));
-            attendees.add(new User("Tanveer"));
-        }
         attendeeAdapter = new AttendeeAdapter(attendees, event);
         attendeesRecyclerView = findViewById(R.id.attendeesRecyclerView);
         attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -221,12 +250,16 @@ public class EventDetailsActivity extends AppCompatActivity {
                 // Increment the attendee count
                 event.setAttendeeCount(event.getAttendeeCount() + 1);
                 // Set the updated list of attendees to the event
-                event.setSignedAttendees(attendees);
+                ArrayList<String> formattedAttendees = new ArrayList<>();
+                for (UserRefactored user : attendees) {
+                    formattedAttendees.add(user.getFullName());
+                }
+                event.setSignedAttendees(formattedAttendees);
 
                 // Extract names from the attendees list
                 ArrayList<String> attendeeNames = new ArrayList<>();
-                for (User user : attendees) {
-                    attendeeNames.add(user.getName());
+                for (UserRefactored user : attendees) {
+                    attendeeNames.add(user.getFullName());
                 }
 
                 // Update the Firestore document for the event with the names of attendees and attendee count
@@ -265,19 +298,21 @@ public class EventDetailsActivity extends AppCompatActivity {
     private void deleteEventFromDatabase (Event eventToDelete){
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
-        storageRef = storage.getReferenceFromUrl(eventToDelete.getImageId());
-        storageRef.delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Log.d("Firestore", "Image Deleted");
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Log.e("Firestore", "Error deleting image", exception);
-                    }
-                });
+        if (eventToDelete.getImageId() != null) {
+            storageRef = storage.getReferenceFromUrl(eventToDelete.getImageId());
+            storageRef.delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Log.d("Firestore", "Image Deleted");
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Log.e("Firestore", "Error deleting image", exception);
+                        }
+                    });
+        }
 
         eventsRef.document(eventToDelete.getTitle())
                 .delete()
@@ -330,5 +365,24 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
 
             notificationManager.notify(0, builder.build());
+        }
+
+        public void populateSignedAttendees() {
+            ArrayList<String> attendeesData = event.getSignedAttendees();
+            usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            UserRefactored user = document.toObject(UserRefactored.class);
+                            if (attendeesData.contains(document.getId())) {
+                                attendees.add(user);
+                            }
+                        }
+                    } else {
+                        Log.d("Firestore", "Error getting documents: ", task.getException());
+                    }
+                }
+            });
         }
 }

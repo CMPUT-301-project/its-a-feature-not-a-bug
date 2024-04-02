@@ -63,7 +63,7 @@ public class NewUserFragment extends DialogFragment {
 
         // connect to database
         db = FirebaseFirestore.getInstance();
-        usersRef = db.collection("profiles");
+        usersRef = db.collection("users");
 
         // put data in hash map
         Map<String, Object> data = new HashMap<>();

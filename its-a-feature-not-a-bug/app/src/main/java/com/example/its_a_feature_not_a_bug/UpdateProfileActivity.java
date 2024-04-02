@@ -12,6 +12,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
@@ -28,15 +29,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +66,8 @@ public class UpdateProfileActivity extends AppCompatActivity {
     private EditText editTextPhoneNumber;
     private Button buttonSubmit;
     private Switch switchGeolocation; // Add Switch reference
+    private UserRefactored currentUser;
+    private String androidId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +88,8 @@ public class UpdateProfileActivity extends AppCompatActivity {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
 
+        androidId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
         profilePicture = findViewById(R.id.image_view_profile_picture);
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPhoneNumber = findViewById(R.id.editTextPhoneNumber);
@@ -88,7 +99,28 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
         // Database initialization
         db = FirebaseFirestore.getInstance();
-        profilesRef = db.collection("profiles");
+        profilesRef = db.collection("users");
+
+        // fetch current user's data
+        profilesRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        if (androidId.equals(document.getId())) {
+                            currentUser = document.toObject(UserRefactored.class);
+                            Log.d("Brayden", "currentUser: " + currentUser.getFullName());
+                            break;
+                        }
+                    }
+
+                    populateData();
+
+                } else {
+                    Log.d("Firestore", "Error getting documents: ", task.getException());
+                }
+            }
+        });
 
         profilePicture.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -113,7 +145,29 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 String fullName = editTextFullName.getText().toString();
                 boolean geolocationDisabled = switchGeolocation.isChecked(); // Get Switch state
 
-                uploadImageToFirebaseStorage(email, phoneNumber, fullName, geolocationDisabled);
+                // create new user
+                UserRefactored newUser = new UserRefactored();
+                newUser.setFullName(fullName);
+                newUser.setEmail(email);
+                newUser.setPhoneNumber(phoneNumber);
+                newUser.setGeoLocationDisabled(geolocationDisabled);
+
+                if (selectedImageUri != null) {
+                    uploadImageToFirebaseStorage(newUser, new OnImageUploadListener() {
+                        @Override
+                        public void onImageUploadSuccess(String imageURL) {
+                            newUser.setImageId(imageURL);
+                            updateProfile(newUser);
+                        }
+
+                        @Override
+                        public void onImageUploadFailure(String errorMessage) {
+                            // handle upload failure with error message
+                        }
+                    });
+                } else {
+                    updateProfile(newUser);
+                }
             }
         });
     }
@@ -133,48 +187,44 @@ public class UpdateProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void uploadImageToFirebaseStorage(String email, String phoneNumber, String fullName, boolean geolocationDisabled) {
-        if (selectedImageUri != null) {
-            StorageReference storageReference = storageRef.child("profile_pics/" + UUID.randomUUID().toString() + ".jpg");
-            profilePicture.setDrawingCacheEnabled(true);
-            profilePicture.buildDrawingCache();
-            Bitmap bitmap = ((BitmapDrawable) profilePicture.getDrawable()).getBitmap();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] image_data = baos.toByteArray();
+    private void uploadImageToFirebaseStorage(UserRefactored newUser, OnImageUploadListener uploadListener) {
+        StorageReference storageReference = storageRef.child("profile_pics/" + UUID.randomUUID().toString() + ".jpg");
+        profilePicture.setDrawingCacheEnabled(true);
+        profilePicture.buildDrawingCache();
+        Bitmap bitmap = ((BitmapDrawable) profilePicture.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] image_data = baos.toByteArray();
 
-            UploadTask uploadTask = storageReference.putBytes(image_data);
-            uploadTask.continueWithTask(task -> {
-                if (!task.isSuccessful()) {
-                    throw task.getException();
-                }
-                return storageReference.getDownloadUrl();
-            }).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Uri downloadUri = task.getResult();
-                    String selectedImageURL = downloadUri.toString();
-                    addProfile(email, phoneNumber, fullName, geolocationDisabled, selectedImageURL);
-                } else {
-                    Log.e("TAG", "Failed to upload image to Firebase Storage: " + task.getException());
-                }
-            });
-        } else {
-            String selectedImageURL = Uri.parse("android.resource://"+R.class.getPackage().getName()+"/" + R.drawable.default_poster).toString();
-            addProfile(email, phoneNumber, fullName, geolocationDisabled, selectedImageURL);
-        }
+        UploadTask uploadTask = storageReference.putBytes(image_data);
+        uploadTask.continueWithTask(task -> {
+            if (!task.isSuccessful()) {
+                throw task.getException();
+            }
+            return storageReference.getDownloadUrl();
+        }).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Uri downloadUri = task.getResult();
+                String selectedImageURL = downloadUri.toString();
+                uploadListener.onImageUploadSuccess(selectedImageURL);
+            } else {
+                Log.e("TAG", "Failed to upload image to Firebase Storage: " + task.getException());
+                uploadListener.onImageUploadFailure(task.getException().getMessage());
+            }
+        });
     }
 
-    public void addProfile(String email, String phoneNumber, String fullName, boolean geolocationDisabled, String profilePic) {
+    public void updateProfile(UserRefactored newUser) {
         // Create a map to store data
         Map<String, Object> data = new HashMap<>();
-        data.put("fullName", fullName);
-        data.put("email", email);
-        data.put("phoneNumber", phoneNumber);
-        data.put("geolocationDisabled", geolocationDisabled); // Store Switch state
-        data.put("profilePic", profilePic);
+        data.put("fullName", newUser.getFullName());
+        data.put("email", newUser.getEmail());
+        data.put("phoneNumber", newUser.getPhoneNumber());
+        data.put("geolocationDisabled", newUser.isGeoLocationDisabled()); // Store Switch state
+        data.put("imageId", newUser.getImageId());
 
         // Add data to the database
-        profilesRef.document(fullName).set(data)
+        profilesRef.document(androidId).update(data)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
@@ -188,5 +238,36 @@ public class UpdateProfileActivity extends AppCompatActivity {
                         Toast.makeText(UpdateProfileActivity.this, "Failed to submit: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public void populateData() {
+        // fill views with user's data
+        if (currentUser.getFullName() != null && !currentUser.getFullName().isEmpty()) {
+            editTextFullName.setText(currentUser.getFullName());
+        }
+        if (currentUser.getEmail() != null && !currentUser.getEmail().isEmpty()) {
+            editTextEmail.setText(currentUser.getEmail());
+        }
+        if (currentUser.getPhoneNumber() != null && !currentUser.getPhoneNumber().isEmpty()) {
+            editTextPhoneNumber.setText(currentUser.getPhoneNumber());
+        }
+        if (currentUser.getImageId() == null) {
+            Log.d("Brayden", "no image");
+        }
+
+        if (currentUser.getImageId() != null && !currentUser.getImageId().isEmpty()) {
+            Glide.with(getApplicationContext())
+                    .load(currentUser.getImageId())
+                    .centerCrop()
+                    .into(profilePicture);
+        }
+        if (currentUser.isGeoLocationDisabled()) {
+            switchGeolocation.setChecked(true);
+        }
+    }
+
+    interface OnImageUploadListener {
+        void onImageUploadSuccess(String imageURL);
+        void onImageUploadFailure(String errorMessage);
     }
 }

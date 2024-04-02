@@ -17,8 +17,8 @@ public class Event implements Serializable {
     private String title; // name of the event
     private String host; // user that created the event
     private Date date; // date of the event
-    private ArrayList<User> signedAttendees; // list of users signed up for the event
-    private ArrayList<User> checkedAttendees; //list of users checked into the event
+    private ArrayList<String> signedAttendees; // list of users signed up for the event
+    private ArrayList<String> checkedAttendees; //list of users checked into the event
     private ArrayList<Announcement> announcements;
     private String description; // short description of the event posted by the host
     private int attendeeLimit;
@@ -169,7 +169,7 @@ public class Event implements Serializable {
      * This gets the list of attendees signed up for the event.
      * @return the list of attendees
      */
-    public ArrayList<User> getSignedAttendees() {
+    public ArrayList<String> getSignedAttendees() {
         return signedAttendees;
     }
 
@@ -177,7 +177,7 @@ public class Event implements Serializable {
      * This sets the list of attendees signed up for the event.
      * @param attendees the new list of attendees
      */
-    public void setSignedAttendees(ArrayList<User> attendees) {
+    public void setSignedAttendees(ArrayList<String> attendees) {
         this.signedAttendees = attendees;
     }
 
@@ -185,7 +185,7 @@ public class Event implements Serializable {
      * This returns the list of attendees that are checked in.
      * @return the list of attendees
      */
-    public ArrayList<User> getCheckedAttendees() {
+    public ArrayList<String> getCheckedAttendees() {
         return checkedAttendees;
     }
 
@@ -193,7 +193,7 @@ public class Event implements Serializable {
      * This sets the list of attendees that are checked in to a new value.
      * @param checkedAttendees the new list of attendees
      */
-    public void setCheckedAttendees(ArrayList<User> checkedAttendees) {
+    public void setCheckedAttendees(ArrayList<String> checkedAttendees) {
         this.checkedAttendees = checkedAttendees;
     }
 
