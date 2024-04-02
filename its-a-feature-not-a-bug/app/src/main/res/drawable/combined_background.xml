@@ -1,0 +1,17 @@
+<!-- combined_background.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Green background -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#368C6E" /> <!-- Your desired green background color -->
+            <corners android:topLeftRadius="0dp" android:topRightRadius="0dp" /> <!-- Rounded corners only at the top -->
+        </shape>
+    </item>
+    <!-- White background with rounded corners at the top -->
+    <item android:top="250dp"> <!-- Adjust the height to match the height of the green background -->
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white" /> <!-- Your desired white background color -->
+            <corners android:topLeftRadius="30dp" android:topRightRadius="30dp" /> <!-- Rounded corners only at the top -->
+        </shape>
+    </item>
+</layer-list>

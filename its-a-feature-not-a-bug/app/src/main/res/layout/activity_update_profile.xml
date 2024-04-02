@@ -5,23 +5,32 @@
     android:layout_height="match_parent"
     tools:context=".UpdateProfileActivity">
 
-    <ImageView
-        android:id="@+id/image_view_profile_picture"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/combined_background">
+
+    </RelativeLayout>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_view_profile_picture"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
         android:src="@drawable/default_profile_pic"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/circular_background"/>
 
     <Button
         android:id="@+id/button_remove_profile_picture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/image_view_profile_picture"
         android:text="Remove Profile Picture"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="10dp"/>
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"/>
 
 
     <EditText
@@ -30,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/image_view_profile_picture"
         android:hint="Full Name"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="80dp"/> <!-- Increased margin top -->
 
     <EditText
         android:id="@+id/editTextEmail"
@@ -64,6 +73,8 @@
         android:text="Submit"
         android:layout_below="@id/switchGeolocation"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"/>
+        android:layout_marginTop="20dp"/>
 
 </RelativeLayout>
+
+

@@ -7,7 +7,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="270dp"
-        android:background="@drawable/rounded_background" />
+        android:background="@drawable/combined_background" />
 
     <ImageView
         android:id="@+id/deleteProfileButton"
