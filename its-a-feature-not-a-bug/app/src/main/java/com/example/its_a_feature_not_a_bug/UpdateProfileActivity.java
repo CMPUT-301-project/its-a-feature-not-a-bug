@@ -170,6 +170,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
                         }
                     });
                 } else {
+                    newUser.setImageId(currentUser.getImageId());
                     updateProfile(newUser);
                 }
             }
