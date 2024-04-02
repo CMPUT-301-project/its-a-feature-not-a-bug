@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;

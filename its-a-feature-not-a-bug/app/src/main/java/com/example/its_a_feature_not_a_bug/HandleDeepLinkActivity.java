@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +27,16 @@ public class HandleDeepLinkActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Log.d("Brayden", "entered deep link handler");
+
+        // silently start MainActivity
+        Intent main_intent = new Intent(this, MainActivity.class);
+        main_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(main_intent);
+
+        // silently start BrowseEventsActivity
+        Intent browse_intent = new Intent(this, BrowseEventsActivity.class);
+        browse_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(browse_intent);
 
         // connect to database and create collection reference
         db = FirebaseFirestore.getInstance();
