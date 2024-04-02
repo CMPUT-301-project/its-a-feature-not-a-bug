@@ -27,6 +27,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -43,8 +44,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -65,6 +64,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
     private EditText editTextFullName;
     private EditText editTextPhoneNumber;
     private Button buttonSubmit;
+    private Button buttonRemovePicture;
     private Switch switchGeolocation; // Add Switch reference
     private UserRefactored currentUser;
     private String androidId;
@@ -95,6 +95,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         editTextPhoneNumber = findViewById(R.id.editTextPhoneNumber);
         editTextFullName = findViewById(R.id.editTextFullName);
         buttonSubmit = findViewById(R.id.buttonSubmit);
+        buttonRemovePicture = findViewById(R.id.button_remove_profile_picture);
         switchGeolocation = findViewById(R.id.switchGeolocation); // Initialize Switch reference
 
         // Database initialization
@@ -134,6 +135,9 @@ public class UpdateProfileActivity extends AppCompatActivity {
                         profilePicture.setImageURI(selectedImageUri);
                     }
                 });
+
+        buttonRemovePicture.setOnClickListener(v -> showDeleteConfirmationDialog());
+
 
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -264,6 +268,46 @@ public class UpdateProfileActivity extends AppCompatActivity {
         if (currentUser.isGeoLocationDisabled()) {
             switchGeolocation.setChecked(true);
         }
+    }
+
+    private void showDeleteConfirmationDialog() {
+        if (currentUser.getImageId() != null) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete Profile Picture")
+                    .setMessage("Are you sure you want to delete this profile picture?")
+                    .setPositiveButton("OK", ((dialog, which) -> removeProfilePicture()))
+                    .setNegativeButton("Cancel", ((dialog, which) -> dialog.dismiss()))
+                    .show();
+        }
+    }
+
+    public void removeProfilePicture() {
+        // remove profile picture from image view
+        Glide.with(getApplicationContext())
+                .load(R.drawable.default_profile_pic)
+                .centerCrop()
+                .into(profilePicture);
+
+        // remove image from database storage
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReferenceFromUrl(currentUser.getImageId());
+        storageRef.delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("Firestore", "Image Deleted");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Log.e("Firestore", "Error deleting image", exception);
+                    }
+                });
+
+        // remove image from document field
+        Map<String, Object> data = new HashMap<>();
+        data.put("imageId", null);
+        profilesRef.document(currentUser.getUserId()).update(data);
     }
 
     interface OnImageUploadListener {
