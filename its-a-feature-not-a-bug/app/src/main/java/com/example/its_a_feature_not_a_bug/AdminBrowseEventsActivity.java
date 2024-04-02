@@ -47,6 +47,10 @@ public class AdminBrowseEventsActivity extends BrowseEventsActivity {
         Button cameraButton = findViewById(R.id.button_camera);
         cameraButton.setVisibility(View.GONE);
 
+        // Hide events button
+        Button eventsButton = findViewById(R.id.button_events);
+        eventsButton.setVisibility(View.GONE);
+
     }
 
     @Override

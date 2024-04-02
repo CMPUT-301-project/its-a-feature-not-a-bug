@@ -4,6 +4,7 @@
 package com.example.its_a_feature_not_a_bug;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,12 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +71,23 @@ public class EventAdapter extends ArrayAdapter<Event> {
         }
 
         if (event.getHost() != null && !event.getHost().isEmpty()) {
+            // fetch the host's name from the database
+            CollectionReference usersRef = FirebaseFirestore.getInstance().collection("users");
+            usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (event.getHost().equals(document.getId())) {
+                                UserRefactored user = document.toObject(UserRefactored.class);
+                                hostName.setText(user.getFullName());
+                            }
+                        }
+                    } else {
+                        Log.d("Firestore", "Error getting documents: ", task.getException());
+                    }
+                }
+            });
             hostName.setText(event.getHost());
         } else {
             hostName.setText("Organizer not found");

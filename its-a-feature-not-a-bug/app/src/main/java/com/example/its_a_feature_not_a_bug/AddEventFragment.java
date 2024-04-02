@@ -15,6 +15,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.os.Bundle;
@@ -72,7 +73,6 @@ public class AddEventFragment extends DialogFragment {
         storageRef = storage.getReference();
 
         EditText editEventId = view.findViewById(R.id.edit_text_event_title);
-        EditText editEventHost = view.findViewById(R.id.edit_tex_event_host);
         DatePicker editEventDate = view.findViewById(R.id.date_picker_event_date);
         TimePicker editEventTime = (TimePicker) view.findViewById(R.id.time_picker_event_time);
         EditText editEventDescription = view.findViewById(R.id.edit_text_event_description);
@@ -105,7 +105,6 @@ public class AddEventFragment extends DialogFragment {
             Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(v -> {
                 String title = editEventId.getText().toString();
-                String host = editEventHost.getText().toString();
                 int year = editEventDate.getYear();
                 int month = editEventDate.getMonth();
                 int dayOfMonth = editEventDate.getDayOfMonth();
@@ -138,20 +137,32 @@ public class AddEventFragment extends DialogFragment {
                     }
                 }
 
-                Event newEvent = new Event(title, date, host, description, attendeeLimit);
-                uploadImageToFirebaseStorage(newEvent, new OnImageUploadListener() {
-                    @Override
-                    public void onImageUploadSuccess(String imageURL) {
-                        newEvent.setImageId(imageURL);
-                        listener.addEvent(newEvent);
-                        alertDialog.dismiss();
-                    }
+                // create new event
+                Event newEvent = new Event();
+                newEvent.setTitle(title);
+                newEvent.setDate(date);
+                newEvent.setHost(Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID));
+                newEvent.setDescription(description);
+                newEvent.setAttendeeLimit(attendeeLimit);
 
-                    @Override
-                    public void onImageUploadFailure(String errorMessage) {
-                        // Handle upload failure with error message
-                    }
-                });
+                if (selectedImageUri != null) {
+                    uploadImageToFirebaseStorage(newEvent, new OnImageUploadListener() {
+                        @Override
+                        public void onImageUploadSuccess(String imageURL) {
+                            newEvent.setImageId(imageURL);
+                            listener.addEvent(newEvent);
+                            alertDialog.dismiss();
+                        }
+
+                        @Override
+                        public void onImageUploadFailure(String errorMessage) {
+                            // Handle upload failure with error message
+                        }
+                    });
+                } else {
+                    listener.addEvent(newEvent);
+                    alertDialog.dismiss();
+                }
 
             });
         });
@@ -173,31 +184,29 @@ public class AddEventFragment extends DialogFragment {
      * @param newEvent the event that the image belongs to
      */
     private void uploadImageToFirebaseStorage(Event newEvent, OnImageUploadListener uploadListener) {
-        if (selectedImageUri != null) {
-            StorageReference storageReference = storageRef.child("event_posters/" + UUID.randomUUID().toString() + ".jpg");
-            eventPoster.setDrawingCacheEnabled(true);
-            eventPoster.buildDrawingCache();
-            Bitmap bitmap = ((BitmapDrawable) eventPoster.getDrawable()).getBitmap();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] data = baos.toByteArray();
+        StorageReference storageReference = storageRef.child("event_posters/" + UUID.randomUUID().toString() + ".jpg");
+        eventPoster.setDrawingCacheEnabled(true);
+        eventPoster.buildDrawingCache();
+        Bitmap bitmap = ((BitmapDrawable) eventPoster.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
 
-            UploadTask uploadTask = storageReference.putBytes(data);
-            uploadTask.continueWithTask(task -> {
-                if (!task.isSuccessful()) {
-                    throw task.getException();
-                }
-                return storageReference.getDownloadUrl();
-            }).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Uri downloadUri = task.getResult();
-                    String selectedImageURL = downloadUri.toString();
-                    uploadListener.onImageUploadSuccess(selectedImageURL); // Callback with URL
-                } else {
-                    uploadListener.onImageUploadFailure(task.getException().getMessage());
-                }
-            });
-        }
+        UploadTask uploadTask = storageReference.putBytes(data);
+        uploadTask.continueWithTask(task -> {
+            if (!task.isSuccessful()) {
+                throw task.getException();
+            }
+            return storageReference.getDownloadUrl();
+        }).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Uri downloadUri = task.getResult();
+                String selectedImageURL = downloadUri.toString();
+                uploadListener.onImageUploadSuccess(selectedImageURL); // Callback with URL
+            } else {
+                uploadListener.onImageUploadFailure(task.getException().getMessage());
+            }
+        });
     }
 
     private void displayQRCode(Bitmap qrCodeBitmap) {

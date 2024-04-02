@@ -24,18 +24,18 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
      * This is an interface that ensures implementing classes can click on a profile
      */
     public interface OnProfileClickListener {
-        void onProfileClick(Profile profile);
+        void onProfileClick(UserRefactored profile);
     }
-    private List<Profile> profiles;
+    private List<UserRefactored> profiles;
     private Context context;
     private OnProfileClickListener clickListener;
 
     /**
      * This is a constructor for the class.
      * @param context the context of the calling activity
-     * @param profiles the list of profiles
+     * @param profiles the list of users
      */
-    public ProfileAdapter(Context context, List<Profile> profiles,OnProfileClickListener clickListener) {
+    public ProfileAdapter(Context context, List<UserRefactored> profiles,OnProfileClickListener clickListener) {
         this.context = context;
         this.profiles = profiles;
         this.clickListener = clickListener;
@@ -54,11 +54,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
 
     @Override
     public void onBindViewHolder(@NonNull ProfileViewHolder holder, int position) {
-        Profile profile = profiles.get(position);
+        UserRefactored profile = profiles.get(position);
         holder.profileFullName.setText(profile.getFullName());
-        if (profile.getProfilePic() != null) {
+        if (profile.getImageId() != null) {
             Glide.with(context)
-                    .load(profile.getProfilePic())
+                    .load(profile.getImageId())
                     .placeholder(R.drawable.default_profile_pic)
                     .into(holder.profileImageView);
         } else {

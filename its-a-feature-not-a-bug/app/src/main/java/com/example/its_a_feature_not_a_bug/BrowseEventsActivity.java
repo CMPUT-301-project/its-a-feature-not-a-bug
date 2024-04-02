@@ -53,7 +53,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
     private FloatingActionButton fab;
     private Button cameraButton;
     ActivityResultLauncher<ScanOptions> barLauncher;
-    private ArrayList<User> signedAttendees = new ArrayList<>();
+    private ArrayList<String> signedAttendees = new ArrayList<>();
 
     private ArrayList<String> attendees = new ArrayList<String>();
 
@@ -130,7 +130,6 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
             }
         });
 
-        // get list of event names
         barLauncher = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() != null) {
                 Intent intent = new Intent(this, HandleDeepLinkActivity.class);
@@ -208,8 +207,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
 
                     if (attendees.size() >  0) {
                         for (String attendee : attendees) {
-                            User user = new User(attendee);
-                            signedAttendees.add(user);
+                            signedAttendees.add(attendee);
                         }
                     }
 

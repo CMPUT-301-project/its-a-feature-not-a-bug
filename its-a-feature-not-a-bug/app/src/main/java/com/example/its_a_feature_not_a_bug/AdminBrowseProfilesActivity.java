@@ -32,7 +32,7 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
     private FirebaseFirestore db;
     private RecyclerView profilesRecyclerView;
     private ProfileAdapter profileAdapter;
-    private List<Profile> profileList;
+    private List<UserRefactored> profileList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +72,7 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
      * This loads the profiles from the database and adds them to a list.
      */
     private void loadProfiles() {
-        db.collection("profiles").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("users").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if (e != null) {
@@ -82,7 +82,7 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
 
                 profileList.clear();
                 for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                    Profile profile = document.toObject(Profile.class);
+                    UserRefactored profile = document.toObject(UserRefactored.class);
                     // Assuming your Profile model has a method to set the document ID
                     // profile.setId(document.getId());
                     profileList.add(profile);
@@ -97,7 +97,7 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
      * @param profile the profile to be deleted
      */
     @Override
-    public void onProfileClick(Profile profile) {
+    public void onProfileClick(UserRefactored profile) {
         // Start ProfileDetailsActivity and pass the profile details
         Intent intent = new Intent(AdminBrowseProfilesActivity.this, ProfileDetailsActivity.class);
         intent.putExtra("profile", profile);
