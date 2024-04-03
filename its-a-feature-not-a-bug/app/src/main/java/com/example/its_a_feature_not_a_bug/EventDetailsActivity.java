@@ -42,6 +42,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -61,6 +62,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private Event event;
     private TextView name;
     private TextView date;
+    private TextView host;
     private TextView location;
     private TextView description;
     private ImageView qrCode;
@@ -109,9 +111,6 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         event = (Event) intent.getSerializableExtra("event");
-        if (event.getTitle() != null) {
-            Log.d("Brayden", event.getTitle());
-        }
 
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
@@ -119,6 +118,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         eventPoster = findViewById(R.id.eventImage);
         name = findViewById(R.id.eventTitle);
+        host = findViewById(R.id.eventHost);
         date = findViewById(R.id.eventDate);
         description = findViewById(R.id.eventDescription);
 
@@ -141,7 +141,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         });
 
         // get attendees
-        if (event.getSignedAttendees() != null) {
+        attendees = new ArrayList<>();
+        if (event.getSignedAttendees() != null && !event.getSignedAttendees().isEmpty()) {
+            Log.d("Brayden", "got here");
             populateSignedAttendees();
         }
 
@@ -215,26 +217,31 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                // This ID represents the Home or Up button. In the case of this
-                // activity, the Up button is shown. Use NavUtils to allow users
-                // to navigate up one level in the application structure. For
-                // more details, see the Navigation pattern on Android Design:
-                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-                onBackPressed();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     /**
      * This displays the information of the event.
      */
     public void displayInfo() {
         name.setText(event.getTitle());
+
+        // fetch host name from firebase
+        usersRef.document(event.getHost()).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            UserRefactored user = documentSnapshot.toObject(UserRefactored.class);
+                            host.setText(user.getFullName());
+                        } else {
+                            Log.d("Firestore", "Document does not exist");
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Firestore", "Failed to fetch host name", e);
+                    }
+                });
+
         // convert date to string
         date.setText(event.getDate().toString());
         description.setText(event.getDescription());
@@ -250,22 +257,17 @@ public class EventDetailsActivity extends AppCompatActivity {
                 attendees.add(currentUser);
                 // Increment the attendee count
                 event.setAttendeeCount(event.getAttendeeCount() + 1);
+
                 // Set the updated list of attendees to the event
                 ArrayList<String> formattedAttendees = new ArrayList<>();
                 for (UserRefactored user : attendees) {
-                    formattedAttendees.add(user.getFullName());
+                    formattedAttendees.add(user.getUserId());
                 }
                 event.setSignedAttendees(formattedAttendees);
 
-                // Extract names from the attendees list
-                ArrayList<String> attendeeNames = new ArrayList<>();
-                for (UserRefactored user : attendees) {
-                    attendeeNames.add(user.getFullName());
-                }
-
                 // Update the Firestore document for the event with the names of attendees and attendee count
                 eventsRef.document(event.getTitle())
-                        .update("signedAttendees", attendeeNames, "attendeeCount", event.getAttendeeCount())
+                        .update("signedAttendees", formattedAttendees, "attendeeCount", event.getAttendeeCount())
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
@@ -376,10 +378,11 @@ public class EventDetailsActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             UserRefactored user = document.toObject(UserRefactored.class);
-                            if (attendeesData.contains(document.getId())) {
+                            if (attendeesData.contains(user.getUserId())) {
                                 attendees.add(user);
                             }
                         }
+                        attendeeAdapter.notifyDataSetChanged();
                     } else {
                         Log.d("Firestore", "Error getting documents: ", task.getException());
                     }

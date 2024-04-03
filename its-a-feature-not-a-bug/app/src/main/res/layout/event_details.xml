@@ -51,6 +51,15 @@
                 android:textSize="16sp"
                 android:layout_marginTop="8dp" />
 
+            <TextView
+                android:id="@+id/text_view_event_announcement_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_marginTop="8dp"
+                android:textAlignment="center"
+                android:text="Announcements"/>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/announcementsRecyclerView"
                 android:layout_width="match_parent"
@@ -58,6 +67,15 @@
                 app:layout_constraintTop_toBottomOf="@+id/attendeesRecyclerView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/text_view_event_signed_attendees_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_marginTop="8dp"
+                android:textAlignment="center"
+                android:text="Signed Attendees"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/attendeesRecyclerView"
