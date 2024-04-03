@@ -269,6 +269,8 @@ public class UpdateProfileActivity extends AppCompatActivity {
         if (currentUser.isGeoLocationDisabled()) {
             switchGeolocation.setChecked(true);
         }
+
+        Log.d("Firestore", "Fetched user data");
     }
 
     private void showDeleteConfirmationDialog() {
@@ -284,6 +286,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
     public void removeProfilePicture() {
         // remove profile picture from image view
+        selectedImageUri = null;
         Glide.with(getApplicationContext())
                 .load(R.drawable.default_profile_pic)
                 .centerCrop()
@@ -291,7 +294,8 @@ public class UpdateProfileActivity extends AppCompatActivity {
 
         // remove image from database storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReferenceFromUrl(currentUser.getImageId());
+        String imageToDelete = currentUser.getImageId();
+        storageRef = storage.getReferenceFromUrl(imageToDelete);
         storageRef.delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -308,7 +312,19 @@ public class UpdateProfileActivity extends AppCompatActivity {
         // remove image from document field
         Map<String, Object> data = new HashMap<>();
         data.put("imageId", null);
-        profilesRef.document(currentUser.getUserId()).update(data);
+        profilesRef.document(currentUser.getUserId()).update(data)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("Firestore", "Updated user data");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Firestore", "Failed to update user data", e);
+                    }
+                });
     }
 
     interface OnImageUploadListener {
