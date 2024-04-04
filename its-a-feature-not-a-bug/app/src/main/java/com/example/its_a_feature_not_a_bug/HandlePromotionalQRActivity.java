@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 
-import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,16 +15,16 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-public class HandleDeepLinkActivity extends AppCompatActivity {
+public class HandlePromotionalQRActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
-    private Event event; // the event that the deep link goes to
+    private Event promotionalEvent; // the event that the deep link goes to
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d("Brayden", "entered deep link handler");
+        Log.d("Brayden", "entered promotional deep link handler");
 
         // silently start MainActivity
         Intent main_intent = new Intent(this, MainActivity.class);
@@ -56,10 +54,10 @@ public class HandleDeepLinkActivity extends AppCompatActivity {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
                             Log.d("Brayden", "DocumentSnapshot data: " + document.getData());
-                            event = document.toObject(Event.class);
-                            event.setTitle(document.getId());
-                            Intent intent = new Intent(HandleDeepLinkActivity.this, EventDetailsActivity.class);
-                            intent.putExtra("event", event);
+                            promotionalEvent = document.toObject(Event.class);
+                            promotionalEvent.setTitle(document.getId());
+                            Intent intent = new Intent(HandlePromotionalQRActivity.this, EventDetailsActivity.class);
+                            intent.putExtra("event", promotionalEvent);
                             startActivity(intent);
                         } else {
                             Log.d("Brayden", "No such document");
