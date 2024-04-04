@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * A class representing an event.
@@ -18,12 +19,14 @@ public class Event implements Serializable {
     private String host; // user that created the event
     private Date date; // date of the event
     private ArrayList<String> signedAttendees; // list of users signed up for the event
-    private ArrayList<String> checkedAttendees; //list of users checked into the event
+//    private ArrayList<String> checkedAttendees; // list of users checked into the event
     private ArrayList<Announcement> announcements;
+//    private Map<String, Integer> numTimesCheckedIn;
+    private Map<String, Integer> checkedAttendees; // second value is the number of times checked in
     private String description; // short description of the event posted by the host
     private int attendeeLimit;
     private int attendeeCount;
-    private Bitmap checkInQRCode;
+//    private Bitmap checkInQRCode;
 
     public Event() {}
 
@@ -181,21 +184,21 @@ public class Event implements Serializable {
         this.signedAttendees = attendees;
     }
 
-    /**
-     * This returns the list of attendees that are checked in.
-     * @return the list of attendees
-     */
-    public ArrayList<String> getCheckedAttendees() {
-        return checkedAttendees;
-    }
+//    /**
+//     * This returns the list of attendees that are checked in.
+//     * @return the list of attendees
+//     */
+//    public ArrayList<String> getCheckedAttendees() {
+//        return checkedAttendees;
+//    }
 
-    /**
-     * This sets the list of attendees that are checked in to a new value.
-     * @param checkedAttendees the new list of attendees
-     */
-    public void setCheckedAttendees(ArrayList<String> checkedAttendees) {
-        this.checkedAttendees = checkedAttendees;
-    }
+//    /**
+//     * This sets the list of attendees that are checked in to a new value.
+//     * @param checkedAttendees the new list of attendees
+//     */
+//    public void setCheckedAttendees(ArrayList<String> checkedAttendees) {
+//        this.checkedAttendees = checkedAttendees;
+//    }
 
     /**
      * This returns the list of announcements for an event.
@@ -211,6 +214,22 @@ public class Event implements Serializable {
      */
     public void setAnnouncements(ArrayList<Announcement> announcements) {
         this.announcements = announcements;
+    }
+
+    /**
+     * Returns the map of users who have checked in and the number of times each has done so.
+     * @return the map of users and check-ins
+     */
+    public Map<String, Integer> getCheckedAttendees() {
+        return checkedAttendees;
+    }
+
+    /**
+     * Sets the map of users:counts to a new value.
+     * @param checkedAttendees the new map
+     */
+    public void setCheckedAttendees(Map<String, Integer> checkedAttendees) {
+        this.checkedAttendees = checkedAttendees;
     }
 
     /**
@@ -244,4 +263,20 @@ public class Event implements Serializable {
     public void setAttendeeCount(int attendeeCount) {
         this.attendeeCount = attendeeCount;
     }
+
+//    /**
+//     * This returns the map of the number of times users have checked into this event.
+//     * @return the map
+//     */
+//    public Map<String, Integer> getNumTimesCheckedIn() {
+//        return numTimesCheckedIn;
+//    }
+
+//    /**
+//     * This sets the map of the number of times users have checked into this event to a new value.
+//     * @param numTimesCheckedIn the new map
+//     */
+//    public void setNumTimesCheckedIn(Map<String, Integer> numTimesCheckedIn) {
+//        this.numTimesCheckedIn = numTimesCheckedIn;
+//    }
 }

@@ -3,14 +3,12 @@
 
 package com.example.its_a_feature_not_a_bug;
 
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +20,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -133,10 +130,31 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
 
         barLauncher = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() != null) {
-                Intent intent = new Intent(this, HandleDeepLinkActivity.class);
+                // Parse the URI
                 Uri uri = Uri.parse(result.getContents());
+
+                // Extract the handlerType from the URI
+                String handlerType = uri.getHost();
+
+                // Handle the QR code
+                Class<?> targetActivityClass;
+                if ("promotional".equals(handlerType)) {
+                    targetActivityClass = HandlePromotionalQRActivity.class;
+                } else if ("checkin".equals(handlerType)) {
+                    targetActivityClass = HandleCheckInQRActivity.class;
+                } else {
+                    targetActivityClass = BrowseEventsActivity.class;
+                }
+
+                // Start the appropriate activity with the parsed URI
+                Intent intent = new Intent(this, targetActivityClass);
                 intent.setData(uri);
                 startActivity(intent);
+
+//                Intent intent = new Intent(this, HandlePromotionalQRActivity.class);
+//                Uri uri = Uri.parse(result.getContents());
+//                intent.setData(uri);
+//                startActivity(intent);
             }
         });
 

@@ -3,6 +3,7 @@
 
 package com.example.its_a_feature_not_a_bug;
 
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -173,20 +174,22 @@ public class EventDetailsActivity extends AppCompatActivity {
         qrCodeImageView = findViewById(R.id.qrCodeImageView);
         // Initialize and set OnClickListener for the Show QR Code button
         Button btnShowQRCode = findViewById(R.id.btnShowQRCode);
-        btnShowQRCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (qrCodeImageView.getVisibility() == View.GONE) {
-                    // Generate and show the QR code if it's not already visible
-                    Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(event, 200); // Adjust size as needed
-                    qrCodeImageView.setImageBitmap(qrCodeBitmap);
-                    qrCodeImageView.setVisibility(View.VISIBLE);
-                } else {
-                    // Hide the QR code if it's already visible
-                    qrCodeImageView.setVisibility(View.GONE);
-                }
-            }
-        });
+
+        btnShowQRCode.setOnClickListener(v -> showQROptionsDialog());
+//        btnShowQRCode.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (qrCodeImageView.getVisibility() == View.GONE) {
+//                    // Generate and show the QR code if it's not already visible
+//                    Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(event, 200); // Adjust size as needed
+//                    qrCodeImageView.setImageBitmap(qrCodeBitmap);
+//                    qrCodeImageView.setVisibility(View.VISIBLE);
+//                } else {
+//                    // Hide the QR code if it's already visible
+//                    qrCodeImageView.setVisibility(View.GONE);
+//                }
+//            }
+//        });
 
 
         signUpButton = findViewById(R.id.signup_button);
@@ -253,39 +256,43 @@ public class EventDetailsActivity extends AppCompatActivity {
     private void signUpForEvent() {
         if (currentUser != null) {
             if (event.getAttendeeCount() < event.getAttendeeLimit()) {
-                // Add the current user's name to the list of attendees
-                attendees.add(currentUser);
-                // Increment the attendee count
-                event.setAttendeeCount(event.getAttendeeCount() + 1);
+                if (!attendees.contains(currentUser)) {
+                    // Add the current user's name to the list of attendees
+                    attendees.add(currentUser);
+                    // Increment the attendee count
+                    event.setAttendeeCount(event.getAttendeeCount() + 1);
 
-                // Set the updated list of attendees to the event
-                ArrayList<String> formattedAttendees = new ArrayList<>();
-                for (UserRefactored user : attendees) {
-                    formattedAttendees.add(user.getUserId());
+                    // Set the updated list of attendees to the event
+                    ArrayList<String> formattedAttendees = new ArrayList<>();
+                    for (UserRefactored user : attendees) {
+                        formattedAttendees.add(user.getUserId());
+                    }
+                    event.setSignedAttendees(formattedAttendees);
+
+                    // Update the Firestore document for the event with the names of attendees and attendee count
+                    eventsRef.document(event.getTitle())
+                            .update("signedAttendees", formattedAttendees, "attendeeCount", event.getAttendeeCount())
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+//                                    currentUser.signUpForEvent(event);
+
+                                    // Successfully updated the list of attendees and attendee count in the database
+                                    Toast.makeText(EventDetailsActivity.this, "Signed up for event", Toast.LENGTH_SHORT).show();
+                                    // Notify the adapter of the data change
+                                    attendeeAdapter.notifyDataSetChanged();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // Failed to update the list of attendees and attendee count in the database
+                                    Toast.makeText(EventDetailsActivity.this, "Failed to sign up for event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                } else {
+                    Toast.makeText(EventDetailsActivity.this, "Already signed up for this event", Toast.LENGTH_SHORT).show();
                 }
-                event.setSignedAttendees(formattedAttendees);
-
-                // Update the Firestore document for the event with the names of attendees and attendee count
-                eventsRef.document(event.getTitle())
-                        .update("signedAttendees", formattedAttendees, "attendeeCount", event.getAttendeeCount())
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                currentUser.signUpForEvent(event);
-
-                                // Successfully updated the list of attendees and attendee count in the database
-                                Toast.makeText(EventDetailsActivity.this, "Signed up for event", Toast.LENGTH_SHORT).show();
-                                // Notify the adapter of the data change
-                                attendeeAdapter.notifyDataSetChanged();
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                // Failed to update the list of attendees and attendee count in the database
-                                Toast.makeText(EventDetailsActivity.this, "Failed to sign up for event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
             } else {
                 // Attendee limit reached
                 Toast.makeText(EventDetailsActivity.this, "Attendee limit reached for this event", Toast.LENGTH_SHORT).show();
@@ -368,6 +375,35 @@ public class EventDetailsActivity extends AppCompatActivity {
             }
 
             notificationManager.notify(0, builder.build());
+        }
+
+        public void showQROptionsDialog() {
+            // hide QR code if displayed on the screen
+            if (qrCodeImageView.getVisibility() == View.VISIBLE) {
+                qrCodeImageView.setVisibility(View.GONE);
+                return;
+            }
+
+            final CharSequence[] options = {"Promotional QR", "Check-in QR"};
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Which QR Code would you like to see?");
+            builder.setItems(options, (dialog, which) -> {
+                if (which == 0) {
+                    // "Promotional QR" was clicked
+                    // Generate and show the QR code if it's not already visible
+                    Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(event, 200); // Adjust size as needed
+                    qrCodeImageView.setImageBitmap(qrCodeBitmap);
+                    qrCodeImageView.setVisibility(View.VISIBLE);
+                } else if (which == 1) {
+                    // "Check-in QR" was clicked
+                    // Generate and show the QR code if it's not already visible
+                    Bitmap qrCodeBitmap = QRCodeGenerator.generateCheckInQRCode(event, 200); // Adjust size as needed
+                    qrCodeImageView.setImageBitmap(qrCodeBitmap);
+                    qrCodeImageView.setVisibility(View.VISIBLE);
+                }
+            });
+            builder.show();
         }
 
         public void populateSignedAttendees() {

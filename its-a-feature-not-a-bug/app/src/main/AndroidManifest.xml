@@ -16,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Itsafeaturenotabug"
         tools:targetApi="31">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -23,15 +24,16 @@
             android:theme="@style/Theme.Itsafeaturenotabug">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".BrowseEventsActivity"
             android:exported="true"
             android:parentActivityName=".MainActivity">
         </activity>
+
         <activity android:name=".AdminDashboardActivity"
             android:parentActivityName=".MainActivity">
         </activity>
@@ -41,27 +43,45 @@
             android:parentActivityName=".AdminDashboardActivity"
             android:exported="true">
         </activity>
+
         <activity android:name=".EventDetailsActivity">
         </activity>
+
         <activity android:name=".AdminBrowseProfilesActivity"
-            android:parentActivityName=".AdminDashboardActivity"/>
+            android:parentActivityName=".AdminDashboardActivity">
+        </activity>
 
         <activity android:name=".UpdateProfileActivity">
         </activity>
-        <activity android:name=".ProfileDetailsActivity">
 
+        <activity android:name=".ProfileDetailsActivity">
         </activity>
+
         <activity android:name=".QRCodeScanner"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
-            android:theme="@style/zxing_CaptureTheme"/>
-        <activity android:name=".HandleDeepLinkActivity" android:exported="true">
+            android:theme="@style/zxing_CaptureTheme">
+        </activity>
+
+        <activity android:name=".HandlePromotionalQRActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="featurenotbug" android:host="event"/>
+                <data android:scheme="featurenotbug" android:host="promotional"/>
             </intent-filter>
+        </activity>
+
+        <activity android:name=".HandleCheckInQRActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="featurenotbug" android:host="checkin"/>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".UserCheckInActivity">
         </activity>
 
     </application>
