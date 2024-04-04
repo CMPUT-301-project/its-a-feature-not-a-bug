@@ -108,22 +108,31 @@ public class AddEventFragment extends DialogFragment {
                 int year = editEventDate.getYear();
                 int month = editEventDate.getMonth();
                 int dayOfMonth = editEventDate.getDayOfMonth();
+
+                // Initialize Calendar instance to combine date and time
                 Calendar calendar = Calendar.getInstance();
                 calendar.set(year, month, dayOfMonth);
 
-                // Now, handle time from TimePicker
+                // Handling time from TimePicker
                 int hour, minute;
-                if (Build.VERSION.SDK_INT >= 23) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     hour = editEventTime.getHour();
                     minute = editEventTime.getMinute();
                 } else {
                     hour = editEventTime.getCurrentHour(); // Deprecated in API 23
                     minute = editEventTime.getCurrentMinute(); // Deprecated in API 23
                 }
+                calendar.set(Calendar.HOUR_OF_DAY, hour);
+                calendar.set(Calendar.MINUTE, minute);
 
-                Date date = calendar.getTime();
+                // This Date object now has both the correct date and time
+                Date combinedDate = calendar.getTime();
+
                 String description = editEventDescription.getText().toString();
-                int attendeeLimit = 0;
+                int attendeeLimit = switchAttendeeLimit.isChecked() ? Integer.parseInt(editEventLimit.getText().toString()) : 0;
+
+                // Create a new event with combined date and time
+                Event newEvent = new Event(title, combinedDate, Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID), description, attendeeLimit);
 
                 // Check if Switch is checked
                 if (switchAttendeeLimit.isChecked()) {
@@ -138,9 +147,8 @@ public class AddEventFragment extends DialogFragment {
                 }
 
                 // create new event
-                Event newEvent = new Event();
                 newEvent.setTitle(title);
-                newEvent.setDate(date);
+                newEvent.setDate(combinedDate);
                 newEvent.setHost(Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID));
                 newEvent.setDescription(description);
                 newEvent.setAttendeeLimit(attendeeLimit);
