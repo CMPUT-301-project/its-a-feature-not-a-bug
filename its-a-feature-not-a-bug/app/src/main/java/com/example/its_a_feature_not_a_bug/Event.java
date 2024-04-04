@@ -264,6 +264,7 @@ public class Event implements Serializable {
         this.attendeeCount = attendeeCount;
     }
 
+
 //    /**
 //     * This returns the map of the number of times users have checked into this event.
 //     * @return the map
