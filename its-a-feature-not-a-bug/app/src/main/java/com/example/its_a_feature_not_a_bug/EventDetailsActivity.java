@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -40,6 +41,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -276,7 +278,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             photoRef.delete().addOnSuccessListener(aVoid -> {
                 Log.d("EventDetailsActivity", "Event poster deleted successfully.");
                 // Update the event details in Firestore to reflect the removal of the event poster.
-                db.collection("events").document(event.getImageId())
+                db.collection("events").document(event.getTitle())
                         .update("imageId", null)
                         .addOnSuccessListener(aVoid1 -> Log.d("EventDetailsActivity", "Event details updated."))
                         .addOnFailureListener(e -> Log.e("EventDetailsActivity", "Error updating event details.", e));
@@ -286,7 +288,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
 
     private void deleteEvent() {
-        String eventIdentifier = event.getImageId();
+        String eventIdentifier = event.getTitle();
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
@@ -494,12 +496,13 @@ public class EventDetailsActivity extends AppCompatActivity {
                 }
             });
         }
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case android.R.id.home:
-//                onBackPressed();
-//                return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
