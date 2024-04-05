@@ -366,9 +366,8 @@ public class EventDetailsActivity extends AppCompatActivity {
      */
     private void signUpForEvent() {
         if (currentUser != null) {
-            Log.d("Brayden", "Attendee Limit: " + event.getAttendeeLimit());
             if (event.getAttendeeLimit() == null || event.getAttendeeCount() < event.getAttendeeLimit()) {
-                if (!attendees.contains(currentUser)) {
+                if (!event.getSignedAttendees().contains(currentUser.getUserId())) {
                     // Add the current user's name to the list of attendees
                     attendees.add(currentUser);
                     // Increment the attendee count
@@ -495,12 +494,12 @@ public class EventDetailsActivity extends AppCompatActivity {
                 }
             });
         }
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case android.R.id.home:
+//                onBackPressed();
+//                return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 }

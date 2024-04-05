@@ -131,6 +131,9 @@ public class AddEventFragment extends DialogFragment {
                 String description = editEventDescription.getText().toString();
                 Integer attendeeLimit = 0;
 
+                Event newEvent = new Event(title, combinedDate, Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID), description, attendeeLimit);
+
+
                 // Check if Switch is checked
                 if (switchAttendeeLimit.isChecked()) {
                     // Parse attendee limit from EditText
