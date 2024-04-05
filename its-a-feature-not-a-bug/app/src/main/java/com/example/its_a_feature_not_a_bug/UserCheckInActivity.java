@@ -110,7 +110,6 @@ public class UserCheckInActivity extends AppCompatActivity {
     public void checkInUser() {
         Map<String, Object> data = new HashMap<>();
 
-        // TODO: update event lists
         // if user not in signed users, add user to signed users
         ArrayList<String> signedAttendees = checkInEvent.getSignedAttendees();
         if (signedAttendees == null) {
@@ -122,18 +121,15 @@ public class UserCheckInActivity extends AppCompatActivity {
         }
 
         // update the map of check-ins and counts
-        Map<String, Integer> checkedAttendees = checkInEvent.getCheckedAttendees();
+        ArrayList<String> checkedAttendees = checkInEvent.getCheckedAttendees();
         if (checkedAttendees == null) {
-            checkedAttendees = new HashMap<>();
+            checkedAttendees = new ArrayList<>();
         }
-        if (!checkedAttendees.containsKey(currentUser.getUserId())) {
-            checkedAttendees.put(currentUser.getUserId(), 1);
-        } else {
-            checkedAttendees.compute(currentUser.getUserId(), (key, value) -> (value == null) ? 1 : value + 1);
+        if (!checkedAttendees.contains(currentUser.getUserId())) {
+            checkedAttendees.add(currentUser.getUserId());
         }
         data.put("checkedAttendees", checkedAttendees);
 
-        // TODO: update database (finish activity in OnCompleteListener)
         eventsRef.document(checkInEvent.getTitle()).set(data, SetOptions.merge())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

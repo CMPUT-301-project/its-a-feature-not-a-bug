@@ -210,6 +210,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                 if (querySnapshots != null) {
                     eventDataList.clear();
                     for (QueryDocumentSnapshot doc: querySnapshots) {
+
                         String eventId = doc.getId();
                         String host = doc.getString("host");
                         Date date = doc.getDate("date");
