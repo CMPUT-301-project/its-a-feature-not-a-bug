@@ -1,9 +1,12 @@
 package com.example.its_a_feature_not_a_bug;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,22 +24,15 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class OrganizerMenuActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
     private CollectionReference usersRef;
 
-    private FirebaseStorage storage;
-    private StorageReference storageRef;
 
     private String androidId;
 
@@ -47,6 +43,7 @@ public class OrganizerMenuActivity extends AppCompatActivity {
     private CheckedInAttendeeAdapter attendeeAdapter;
     private ArrayList<String> checkedAttendees;
     private TextView checkedAttendeesHeader;
+    private Button createAnnouncementButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,6 +53,7 @@ public class OrganizerMenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_organizer_menu);
         checkedInAttendeesView = findViewById(R.id.recycler_view_checked_attendees);
         checkedAttendeesHeader = findViewById(R.id.text_view_checked_attendees_header);
+        createAnnouncementButton = findViewById(R.id.button_create_announcement);
 
         // fetch event from intent extras
         Intent intent = getIntent();
@@ -93,10 +91,16 @@ public class OrganizerMenuActivity extends AppCompatActivity {
                 Log.d("Firestore", "Failed to fetch user data");
             }
         });
+
+        // send notifications (announcements)
+        createAnnouncementButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogCreateAnnouncement.showDialog(getApplicationContext(), currentEvent);
+            }
+        });
     }
 
-    // send notifications (announcements)
-    // milestones
     // share QR code
     // geolocation map
 
