@@ -40,7 +40,7 @@ public class AttendeeAdapter extends RecyclerView.Adapter<AttendeeAdapter.Attend
     @NonNull
     @Override
     public AttendeeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.activity_list_item, parent, false);
         return new AttendeeViewHolder(view);
     }
 
