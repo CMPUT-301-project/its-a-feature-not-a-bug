@@ -194,32 +194,34 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                 if (querySnapshots != null) {
                     eventDataList.clear();
                     for (QueryDocumentSnapshot doc: querySnapshots) {
-                        String eventId = doc.getId();
-                        String host = doc.getString("host");
-                        Date date = doc.getDate("date");
-                        String description = doc.getString("description");
-                        int attendeeLimit = doc.contains("attendeeLimit") ? doc.getLong("attendeeLimit").intValue() : 0;
-                        int attendeeCount = doc.contains("attendeeCount") ? doc.getLong("attendeeCount").intValue() : 0;
+                        Event event = doc.toObject(Event.class);
+                        event.setTitle(doc.getId());
+//                        String eventId = doc.getId();
+//                        String host = doc.getString("host");
+//                        Date date = doc.getDate("date");
+//                        String description = doc.getString("description");
+//                        int attendeeLimit = doc.contains("attendeeLimit") ? doc.getLong("attendeeLimit").intValue() : 0;
+//                        int attendeeCount = doc.contains("attendeeCount") ? doc.getLong("attendeeCount").intValue() : 0;
+//
+//
+//                        if (doc.get("signedAttendees") != null) {
+//                            attendees = (ArrayList<String>) doc.get("signedAttendees");
+//                        }
 
 
-                        if (doc.get("signedAttendees") != null) {
-                            attendees = (ArrayList<String>) doc.get("signedAttendees");
-                        }
 
+//                        String imageURLString = doc.getString("imageId");
 
+                        Log.d("Firestore", String.format("Event(%s) fetched", event.getTitle()));
 
-                        String imageURLString = doc.getString("imageId");
-
-                        Log.d("Firestore", String.format("Event(%s, %s) fetched", eventId, host));
-
-                        Event event;
-                        if (attendeeLimit > 0) {
-                            event = new Event(imageURLString, eventId, host, date, description, attendeeLimit);
-                        } else {
-                            event = new Event(imageURLString, eventId, host, date, description);
-                        }
-                        event.setAttendeeCount(attendeeCount);
-                        event.setSignedAttendees(signedAttendees);
+//                        Event event;
+//                        if (attendeeLimit > 0) {
+//                            event = new Event(imageURLString, eventId, host, date, description, attendeeLimit);
+//                        } else {
+//                            event = new Event(imageURLString, eventId, host, date, description);
+//                        }
+//                        event.setAttendeeCount(attendeeCount);
+//                        event.setSignedAttendees(signedAttendees);
                         eventDataList.add(event);
                     }
 

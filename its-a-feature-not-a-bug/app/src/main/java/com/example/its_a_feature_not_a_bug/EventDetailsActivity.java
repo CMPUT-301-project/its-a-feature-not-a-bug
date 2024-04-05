@@ -15,14 +15,11 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -50,9 +47,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.text.SimpleDateFormat;
@@ -79,7 +74,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private Button signUpButton;
 
     private Button removeEventButton;
-    private Button sendNotificationButton;
+    private Button organizerMenuButton;
 
     private UserRefactored currentUser;
 
@@ -129,6 +124,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         host = findViewById(R.id.eventHost);
         date = findViewById(R.id.eventDate);
         description = findViewById(R.id.eventDescription);
+        organizerMenuButton = findViewById(R.id.button_organizer_menu);
 
         // get user data from database
         usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -138,6 +134,9 @@ public class EventDetailsActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         if (androidId.equals(document.getId())) {
                             currentUser = document.toObject(UserRefactored.class);
+                            if (!currentUser.getUserId().equals(event.getHost())) {
+                                organizerMenuButton.setVisibility(View.GONE);
+                            }
                             Log.d("Brayden", "currentUser: " + currentUser.getUserId());
                             break;
                         }
@@ -155,13 +154,20 @@ public class EventDetailsActivity extends AppCompatActivity {
             populateSignedAttendees();
         }
 
-        sendNotificationButton = findViewById(R.id.button_send_notification);
-        sendNotificationButton.setOnClickListener(new View.OnClickListener() {
+        organizerMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeNotification();
+                Intent organizerMenuIntent = new Intent(getApplicationContext(), OrganizerMenuActivity.class);
+                organizerMenuIntent.putExtra("event", event);
+                startActivity(organizerMenuIntent);
             }
         });
+//                new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                makeNotification();
+//            }
+//        });
 
         attendeeAdapter = new AttendeeAdapter(attendees, event);
         attendeesRecyclerView = findViewById(R.id.attendeesRecyclerView);
@@ -360,8 +366,8 @@ public class EventDetailsActivity extends AppCompatActivity {
      */
     private void signUpForEvent() {
         if (currentUser != null) {
-            if (event.getAttendeeCount() < event.getAttendeeLimit()) {
-                if (!attendees.contains(currentUser)) {
+            if (event.getAttendeeLimit() == null || event.getAttendeeCount() < event.getAttendeeLimit()) {
+                if (!event.getSignedAttendees().contains(currentUser.getUserId())) {
                     // Add the current user's name to the list of attendees
                     attendees.add(currentUser);
                     // Increment the attendee count
@@ -488,12 +494,12 @@ public class EventDetailsActivity extends AppCompatActivity {
                 }
             });
         }
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case android.R.id.home:
+//                onBackPressed();
+//                return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 }

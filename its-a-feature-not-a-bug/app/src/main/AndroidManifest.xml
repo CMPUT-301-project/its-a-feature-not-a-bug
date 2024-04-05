@@ -84,6 +84,9 @@
         <activity android:name=".UserCheckInActivity">
         </activity>
 
+        <activity android:name=".OrganizerMenuActivity">
+        </activity>
+
     </application>
 
 </manifest>
