@@ -123,7 +123,7 @@ public class AddEventFragment extends DialogFragment {
 
                 Date date = calendar.getTime();
                 String description = editEventDescription.getText().toString();
-                int attendeeLimit = 0;
+                Integer attendeeLimit = 0;
 
                 // Check if Switch is checked
                 if (switchAttendeeLimit.isChecked()) {

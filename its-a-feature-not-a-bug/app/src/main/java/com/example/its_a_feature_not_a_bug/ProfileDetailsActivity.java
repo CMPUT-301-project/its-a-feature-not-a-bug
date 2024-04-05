@@ -173,7 +173,8 @@ public class ProfileDetailsActivity extends AppCompatActivity {
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
         if (profile.getImageId() != null) {
-            storageRef = storage.getReferenceFromUrl(profile.getImageId());
+            String imageToDelete = profile.getImageId();
+            storageRef = storage.getReferenceFromUrl(imageToDelete);
             storageRef.delete()
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
