@@ -87,6 +87,9 @@
         <activity android:name=".OrganizerMenuActivity">
         </activity>
 
+        <activity android:name=".NewUserActivity">
+        </activity>
+
     </application>
 
 </manifest>

@@ -1,7 +1,6 @@
 package com.example.its_a_feature_not_a_bug;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -14,7 +13,7 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,42 +23,37 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NewUserFragment extends DialogFragment {
+public class NewUserActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference usersRef;
 
-    public NewUserFragment(){}
+    private String androidId;
 
-    @NonNull
+    private EditText editName;
+    private Button submitButton;
+
     @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.fragment_new_user, null);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-        EditText editName = view.findViewById(R.id.edit_text_new_user_name);
+        // set views
+        setContentView(R.layout.activity_new_user);
+        editName = findViewById(R.id.edit_text_new_user_name);
+        submitButton = findViewById(R.id.button_add_new_user);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        AlertDialog alertDialog = builder
-                .setView(view)
-                .setTitle("New User")
-                .setPositiveButton("ok", null) // Delaying positive button action to handle Switch change
-                .create();
-
-        alertDialog.setOnShowListener(dialog -> {
-            Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
-            positiveButton.setOnClickListener(v -> {
-                String name = editName.getText().toString();
-                addUsertoDatabase(name);
-
-                alertDialog.dismiss();
-            });
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userName = editName.getText().toString();
+                addUserToDatabase(userName);
+            }
         });
-        return alertDialog;
+
     }
 
-    public void addUsertoDatabase(String name) {
+    public void addUserToDatabase(String userName) {
         // get android id
-        Context context = getActivity();
-        String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        androidId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         // connect to database
         db = FirebaseFirestore.getInstance();
@@ -67,7 +61,8 @@ public class NewUserFragment extends DialogFragment {
 
         // put data in hash map
         Map<String, Object> data = new HashMap<>();
-        data.put("fullName", name);
+        data.put("fullName", userName);
+        data.put("userId", androidId);
 
         usersRef.document(androidId)
                 .set(data)
@@ -75,6 +70,7 @@ public class NewUserFragment extends DialogFragment {
                     @Override
                     public void onSuccess(Void unused) {
                         Log.d("Firestore", "DocumentSnapshot successfully written");
+                        finish();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
