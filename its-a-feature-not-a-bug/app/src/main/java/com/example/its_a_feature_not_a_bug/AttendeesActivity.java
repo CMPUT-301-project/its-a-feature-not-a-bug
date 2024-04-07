@@ -21,7 +21,7 @@ public class AttendeesActivity extends AppCompatActivity {
         attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
-        ArrayList<UserRefactored> attendees = (ArrayList<UserRefactored>) getIntent().getSerializableExtra("attendees");
+        ArrayList<User> attendees = (ArrayList<User>) getIntent().getSerializableExtra("attendees");
         Event event = (Event) getIntent().getSerializableExtra("event");
 
         AttendeeAdapter attendeeAdapter = new AttendeeAdapter(attendees, event);

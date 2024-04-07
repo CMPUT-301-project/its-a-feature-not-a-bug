@@ -89,8 +89,6 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                 });
     }
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,7 +114,6 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         eventList = findViewById(R.id.list_view_events_list);
         eventDataList = new ArrayList<>();
 
-
         cameraButton = findViewById(R.id.button_camera);
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +124,6 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                 barLauncher.launch(options);
             }
         });
-
 
         barLauncher = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() != null) {
@@ -152,17 +148,13 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                 Intent intent = new Intent(this, targetActivityClass);
                 intent.setData(uri);
                 startActivity(intent);
-
-//                Intent intent = new Intent(this, HandlePromotionalQRActivity.class);
-//                Uri uri = Uri.parse(result.getContents());
-//                intent.setData(uri);
-//                startActivity(intent);
             }
         });
 
         // adapter
         eventAdapter = new EventAdapter(this, eventDataList);
         eventList.setAdapter(eventAdapter);
+
         // add on click listener to click event
         eventList.setOnItemClickListener((parent, view, position, id) -> {
             Event event = eventDataList.get(position);
@@ -170,6 +162,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
             intent.putExtra("event", event);
             startActivity(intent);
         });
+
         // add on click listener to click event
         Button eventsButton = findViewById(R.id.button_events); // Ensure this ID matches your layout
         eventsButton.setOnClickListener(new View.OnClickListener() {
@@ -209,75 +202,15 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                 if (querySnapshots != null) {
                     eventDataList.clear();
                     for (QueryDocumentSnapshot doc: querySnapshots) {
-
-                        String eventId = doc.getId();
-                        String host = doc.getString("host");
-                        Date date = doc.getDate("date");
-                        String description = doc.getString("description");
-
-                        Long attendeeLimitLong = doc.getLong("attendeeLimit");
-                        int attendeeLimit = attendeeLimitLong != null ? attendeeLimitLong.intValue() : 0;
-
-                        Long attendeeCountLong = doc.getLong("attendeeCount");
-                        int attendeeCount = attendeeCountLong != null ? attendeeCountLong.intValue() : 0;
-
-
-
-
-                        //int attendeeLimit = doc.contains("attendeeLimit") ? doc.getLong("attendeeLimit").intValue() : 0;
-                        //int attendeeCount = doc.contains("attendeeCount") ? doc.getLong("attendeeCount").intValue() : 0;
-
-
-
-                        if (doc.get("signedAttendees") != null) {
-                            attendees = (ArrayList<String>) doc.get("signedAttendees");
-                        }
-
-
-
-                        String imageURLString = doc.getString("imageId");
-
-                        Log.d("Firestore", String.format("Event(%s, %s) fetched", eventId, host));
-
-                        Event event;
-                        if (attendeeLimit > 0) {
-                            event = new Event(imageURLString, eventId, host, date, description, attendeeLimit);
-                        } else {
-                            event = new Event(imageURLString, eventId, host, date, description);
-                        }
-                        event.setAttendeeCount(attendeeCount);
-                        event.setSignedAttendees(signedAttendees);
+                        Event event = doc.toObject(Event.class);
+                        event.setTitle(doc.getId());
+                        Log.d("Firestore", String.format("Event(%s, %s) fetched", event.getTitle(), event.getHost()));
                         eventDataList.add(event);
                     }
-
-
-                    if (attendees.size() >  0) {
-                        for (String attendee : attendees) {
-                            signedAttendees.add(attendee);
-                        }
-                    }
-
-
                     eventAdapter.notifyDataSetChanged();
                     Log.d("", "ATTENDEE LIST "  + attendees);
-
                 }
             }
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                // This ID represents the Home or Up button. In the case of this
-                // activity, the Up button is shown. Use NavUtils to allow users
-                // to navigate up one level in the application structure. For
-                // more details, see the Navigation pattern on Android Design:
-                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-                onBackPressed();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

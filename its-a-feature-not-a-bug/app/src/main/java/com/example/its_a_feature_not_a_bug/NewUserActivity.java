@@ -177,7 +177,7 @@ public class NewUserActivity extends AppCompatActivity {
      * @param uploadListener the image upload listener
      */
     private void uploadImageToFirebaseStorage(Bitmap profilePicture, NewUserActivity.OnImageUploadListener uploadListener) {
-        StorageReference storageReference = storageRef.child("profile_pics" + UUID.randomUUID().toString() + ".jpg");
+        StorageReference storageReference = storageRef.child("profile_pics/" + UUID.randomUUID().toString() + ".jpg");
 
         // convert bitmap to byte array
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
