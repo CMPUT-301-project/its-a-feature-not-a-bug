@@ -32,7 +32,7 @@ public class HandlePromotionalQRActivity extends AppCompatActivity {
         startActivity(main_intent);
 
         // silently start BrowseEventsActivity
-        Intent browse_intent = new Intent(this, BrowseEventsActivity.class);
+        Intent browse_intent = new Intent(this, AttendeeBrowseEventsActivity.class);
         browse_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(browse_intent);
 

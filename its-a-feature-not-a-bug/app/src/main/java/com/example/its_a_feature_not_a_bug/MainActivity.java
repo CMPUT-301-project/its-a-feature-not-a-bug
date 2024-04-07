@@ -41,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
     // View attributes
     private ActivityMainBinding binding;
     private Button adminButton;
-    private Button userButton;
+    private Button attendeeButton;
+    private Button organizerButton;
 
     // Local device attributes
     private String androidId;
@@ -54,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         adminButton = findViewById(R.id.button_admin_login);
-        userButton = findViewById(R.id.button_user_login);
+        attendeeButton = findViewById(R.id.button_attendee_login);
+        organizerButton = findViewById(R.id.button_organizer_login);
 
         // Set action bar title
         ActionBar actionBar = getSupportActionBar();
@@ -107,11 +109,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        userButton.setOnClickListener(new View.OnClickListener() {
+        attendeeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent userIntent = new Intent(MainActivity.this, BrowseEventsActivity.class);
-                startActivity(userIntent);
+                Intent attendeeIntent = new Intent(MainActivity.this, AttendeeBrowseEventsActivity.class);
+                startActivity(attendeeIntent);
+            }
+        });
+
+        organizerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent organizerIntent = new Intent(MainActivity.this, OrganizerBrowseEventsActivity.class);
+                startActivity(organizerIntent);
             }
         });
     }

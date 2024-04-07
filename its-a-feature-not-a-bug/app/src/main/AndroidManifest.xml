@@ -33,7 +33,13 @@
         </activity>
 
         <activity
-            android:name=".BrowseEventsActivity"
+            android:name=".AttendeeBrowseEventsActivity"
+            android:exported="true"
+            android:parentActivityName=".MainActivity">
+        </activity>
+
+        <activity
+            android:name=".OrganizerBrowseEventsActivity"
             android:exported="true"
             android:parentActivityName=".MainActivity">
         </activity>

@@ -19,7 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
  * An activity that allows administrators to browse events.
  * This activity extends BrowseEventsActivity to inherit its basic functionalities.
  */
-public class AdminBrowseEventsActivity extends BrowseEventsActivity {
+public class AdminBrowseEventsActivity extends AttendeeBrowseEventsActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

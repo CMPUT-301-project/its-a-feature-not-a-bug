@@ -9,4 +9,8 @@
     <string name="user">User</string>
     <string name="description">Description</string>
     <string name="upload_image">Upload Image</string>
+    <string name="attendee">Attendee</string>
+    <string name="organizer">Organizer</string>
+    <string name="new_event">New Event</string>
+    <string name="profile">Profile</string>
 </resources>

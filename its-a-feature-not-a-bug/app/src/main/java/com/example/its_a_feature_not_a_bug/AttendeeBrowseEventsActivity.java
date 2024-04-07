@@ -12,7 +12,6 @@ import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.content.Intent;
@@ -37,28 +36,33 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * This class is an Activity that allows a user to navigate listed events
  */
-public class BrowseEventsActivity extends AppCompatActivity implements AddEventDialogueListener{
+public class AttendeeBrowseEventsActivity extends AppCompatActivity implements AddEventDialogueListener{
+    // Firebase attributes
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
+
+    // View attributes
     private ListView eventList;
-    private EventAdapter eventAdapter;
-    private ArrayList<Event> eventDataList;
     private FloatingActionButton fab;
     private Button cameraButton;
-    ActivityResultLauncher<ScanOptions> barLauncher;
-    private ArrayList<String> signedAttendees = new ArrayList<>();
-
     private Button myEventButton;
+
+    // Adapter attributes
+    private EventAdapter eventAdapter;
+
+    // Local device attributes
     private String androidId;
 
-
+    // Other attributes
+    ActivityResultLauncher<ScanOptions> barLauncher;
+    private ArrayList<Event> eventDataList;
+    private ArrayList<String> signedAttendees = new ArrayList<>();
     private ArrayList<String> attendees = new ArrayList<String>();
 
     /**
@@ -98,7 +102,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_browse_events);
+        setContentView(R.layout.activity_attendee_browse_events);
 
         // Enable the action bar and display the back button
         ActionBar actionBar = getSupportActionBar();
@@ -146,7 +150,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                 } else if ("checkin".equals(handlerType)) {
                     targetActivityClass = HandleCheckInQRActivity.class;
                 } else {
-                    targetActivityClass = BrowseEventsActivity.class;
+                    targetActivityClass = AttendeeBrowseEventsActivity.class;
                 }
 
 
@@ -169,20 +173,6 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
             startActivity(intent);
         });
 
-        // add on click listener to click event
-//        Button eventsButton = findViewById(R.id.button_events); // Ensure this ID matches your layout
-//        eventsButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Intent to start AttendeesActivity
-//                Intent intent = new Intent(BrowseEventsActivity.this, AttendeesActivity.class);
-//                intent.putExtra("attendees", attendees);
-//                //intent.putExtra("attendees", signedAttendees);
-//                startActivity(intent);
-//            }
-//        });
-
-
         // fab
         fab = findViewById(R.id.fab_add_event);
         fab.setOnClickListener(v -> {
@@ -192,7 +182,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(BrowseEventsActivity.this, UpdateProfileActivity.class);
+                Intent intent = new Intent(AttendeeBrowseEventsActivity.this, UpdateProfileActivity.class);
                 startActivity(intent);
             }
         });
@@ -226,7 +216,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
             public void onClick(View view) {
                 androidId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
                 ArrayList<Event> myEventsList = getMyEvents(androidId, eventDataList);
-                Intent intent = new Intent(BrowseEventsActivity.this, MyEventsActivity.class);
+                Intent intent = new Intent(AttendeeBrowseEventsActivity.this, MyEventsActivity.class);
                 intent.putExtra("myEventsList", myEventsList);
                 startActivity(intent);
             }
