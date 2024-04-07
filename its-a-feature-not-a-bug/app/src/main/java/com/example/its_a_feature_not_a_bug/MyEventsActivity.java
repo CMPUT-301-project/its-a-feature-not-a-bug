@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 public class MyEventsActivity extends AppCompatActivity {
 
-    private ArrayList<String> eventNames;
     private ListView myEventsListView;
     private Button backButton;
     private TextView noEventsTextView;
@@ -35,13 +34,9 @@ public class MyEventsActivity extends AppCompatActivity {
 
         if (myEventsList == null || myEventsList.isEmpty()) {
             // No events signed up for, show the TextView
-            myEventsListView.setVisibility(View.GONE);
+            myEventsListView.setVisibility(View.INVISIBLE);
             noEventsTextView.setVisibility(View.VISIBLE);
         } else {
-            // There are events signed up for, show the ListView
-            myEventsListView.setVisibility(View.VISIBLE);
-            noEventsTextView.setVisibility(View.GONE);
-
             // Create and set the adapter
             EventAdapter adapter = new EventAdapter(this, myEventsList);
             myEventsListView.setAdapter(adapter);
