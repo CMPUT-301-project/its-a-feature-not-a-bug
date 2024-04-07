@@ -13,6 +13,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -23,6 +24,7 @@ import com.example.its_a_feature_not_a_bug.databinding.ActivityMainBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -50,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        androidId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.d("DeviceID", "Device ID: " + androidId);
+
         // Set views
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -61,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         if (actionBar != null) {
             ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
             actionBar.setBackgroundDrawable(colorDrawable);
-            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "QRCHECKIN" + "</b></font>"));
+            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "ItsAFeatureNotABug" + "</b></font>"));
         }
 
         // Request camera permissions
@@ -99,13 +104,42 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // set button listeners
+//        adminButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent adminIntent = new Intent(MainActivity.this, AdminDashboardActivity.class);
+//                startActivity(adminIntent);
+//            }
+//        });
+
         adminButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent adminIntent = new Intent(MainActivity.this, AdminDashboardActivity.class);
-                startActivity(adminIntent);
+                // Fetch the current device's Android ID
+                String currentDeviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+                // Check if this device ID is listed in the "adminDevices" collection
+                db.collection("admin_devices").document(currentDeviceId)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful() && task.getResult().exists()) {
+
+                                    Toast.makeText(MainActivity.this, "Admin access granted.", Toast.LENGTH_SHORT).show();
+
+                                    // Document for this device ID exists, meaning it's an admin device
+                                    Intent adminIntent = new Intent(MainActivity.this, AdminDashboardActivity.class);
+                                    startActivity(adminIntent);
+                                } else {
+                                    // Document doesn't exist, meaning this device isn't authorized for admin access
+                                    Toast.makeText(MainActivity.this, "Admin access denied.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
             }
         });
+
 
         userButton.setOnClickListener(new View.OnClickListener() {
             @Override
