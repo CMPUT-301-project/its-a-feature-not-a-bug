@@ -82,6 +82,15 @@
         </activity>
 
         <activity android:name=".UserCheckInActivity">
+
+        </activity>
+        <activity android:name=".AttendeesActivity">
+        </activity>
+
+        <activity android:name=".OrganizerMenuActivity">
+        </activity>
+
+        <activity android:name=".NewUserActivity">
         </activity>
 
     </application>

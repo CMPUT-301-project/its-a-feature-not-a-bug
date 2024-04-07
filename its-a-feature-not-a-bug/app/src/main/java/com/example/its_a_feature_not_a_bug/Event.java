@@ -19,14 +19,11 @@ public class Event implements Serializable {
     private String host; // user that created the event
     private Date date; // date of the event
     private ArrayList<String> signedAttendees; // list of users signed up for the event
-//    private ArrayList<String> checkedAttendees; // list of users checked into the event
     private ArrayList<Announcement> announcements;
-//    private Map<String, Integer> numTimesCheckedIn;
-    private Map<String, Integer> checkedAttendees; // second value is the number of times checked in
+    private ArrayList<String> checkedAttendees; // second value is the number of times checked in
     private String description; // short description of the event posted by the host
-    private int attendeeLimit;
-    private int attendeeCount;
-//    private Bitmap checkInQRCode;
+    private Integer attendeeLimit;
+    private Integer attendeeCount;
 
     public Event() {}
 
@@ -39,7 +36,7 @@ public class Event implements Serializable {
      * @param description a short description describing the event
      * @param attendeeLimit the max number of attendees
      */
-    public Event(String imageId, String title, String host, Date date, String description, int attendeeLimit) {
+    public Event(String imageId, String title, String host, Date date, String description, Integer attendeeLimit) {
         this.imageId = imageId;
         this.title = title;
         this.host = host;
@@ -78,7 +75,7 @@ public class Event implements Serializable {
         this.description = description;
     }
 
-    public Event(String title, Date date, String host, String description, int attendeeLimit) {
+    public Event(String title, Date date, String host, String description, Integer attendeeLimit) {
         this.title = title;
         this.date = date;
         this.host = host;
@@ -184,22 +181,6 @@ public class Event implements Serializable {
         this.signedAttendees = attendees;
     }
 
-//    /**
-//     * This returns the list of attendees that are checked in.
-//     * @return the list of attendees
-//     */
-//    public ArrayList<String> getCheckedAttendees() {
-//        return checkedAttendees;
-//    }
-
-//    /**
-//     * This sets the list of attendees that are checked in to a new value.
-//     * @param checkedAttendees the new list of attendees
-//     */
-//    public void setCheckedAttendees(ArrayList<String> checkedAttendees) {
-//        this.checkedAttendees = checkedAttendees;
-//    }
-
     /**
      * This returns the list of announcements for an event.
      * @return the list of announcements
@@ -218,9 +199,9 @@ public class Event implements Serializable {
 
     /**
      * Returns the map of users who have checked in and the number of times each has done so.
-     * @return the map of users and check-ins
+     * @return the list of users and check-ins
      */
-    public Map<String, Integer> getCheckedAttendees() {
+    public ArrayList<String> getCheckedAttendees() {
         return checkedAttendees;
     }
 
@@ -228,7 +209,7 @@ public class Event implements Serializable {
      * Sets the map of users:counts to a new value.
      * @param checkedAttendees the new map
      */
-    public void setCheckedAttendees(Map<String, Integer> checkedAttendees) {
+    public void setCheckedAttendees(ArrayList<String> checkedAttendees) {
         this.checkedAttendees = checkedAttendees;
     }
 
@@ -236,7 +217,7 @@ public class Event implements Serializable {
      * This returns the maximum number of attendees for an event.
      * @return the number of attendees
      */
-    public int getAttendeeLimit() {
+    public Integer getAttendeeLimit() {
         return attendeeLimit;
     }
 
@@ -244,7 +225,7 @@ public class Event implements Serializable {
      * This sets the maximum number of attendees to a new value.
      * @param attendeeLimit the new number of attendees
      */
-    public void setAttendeeLimit(int attendeeLimit) {
+    public void setAttendeeLimit(Integer attendeeLimit) {
         this.attendeeLimit = attendeeLimit;
     }
 
@@ -252,7 +233,7 @@ public class Event implements Serializable {
      * The returns the number of attendees currently signed up for the event.
      * @return the number of attendees
      */
-    public int getAttendeeCount() {
+    public Integer getAttendeeCount() {
         return attendeeCount;
     }
 
@@ -260,23 +241,15 @@ public class Event implements Serializable {
      * This sets the number of attendees currently signed up for the event.
      * @param attendeeCount the new number of attendees
      */
-    public void setAttendeeCount(int attendeeCount) {
+    public void setAttendeeCount(Integer attendeeCount) {
         this.attendeeCount = attendeeCount;
     }
 
-//    /**
-//     * This returns the map of the number of times users have checked into this event.
-//     * @return the map
-//     */
-//    public Map<String, Integer> getNumTimesCheckedIn() {
-//        return numTimesCheckedIn;
-//    }
-
-//    /**
-//     * This sets the map of the number of times users have checked into this event to a new value.
-//     * @param numTimesCheckedIn the new map
-//     */
-//    public void setNumTimesCheckedIn(Map<String, Integer> numTimesCheckedIn) {
-//        this.numTimesCheckedIn = numTimesCheckedIn;
-//    }
+    /**
+     * Returns the number of unique attendee check-ins.
+     * @return the number of check-ins
+     */
+    public Integer getNumTimesCheckedIn() {
+        return checkedAttendees.size();
+    }
 }

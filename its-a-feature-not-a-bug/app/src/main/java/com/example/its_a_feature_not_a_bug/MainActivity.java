@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         androidId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
         Log.d("Brayden", androidId);
 
-        // Fetch document IDs
+        // Fetch user IDs
         usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -74,15 +74,9 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     if (!docIDs.contains(androidId)) { // this is a new user
-                        UserRefactored currentUser = new UserRefactored();
-                        currentUser.setUserId(androidId);
-
-                        Map<String, Object> data = new HashMap<>();
-                        data.put("userId", androidId);
-
-                        usersRef.document(androidId).set(data);
+                        Intent newUserIntent = new Intent(MainActivity.this, NewUserActivity.class);
+                        startActivity(newUserIntent);
                     }
-
                 } else {
                     Log.d("Firestore", "Error getting documents: ", task.getException());
                 }
@@ -116,8 +110,6 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setBackgroundDrawable(colorDrawable);
             actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "QRCHECKIN" + "</b></font>"));
         }
-
-
 
         // set button listeners
         adminButton.setOnClickListener(new View.OnClickListener() {

@@ -15,13 +15,11 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -43,6 +41,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -50,10 +49,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.text.SimpleDateFormat;
+
 
 /**
  * An activity that allows users to view the details of an event.
@@ -76,7 +76,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private Button signUpButton;
 
     private Button removeEventButton;
-    private Button sendNotificationButton;
+    private Button organizerMenuButton;
 
     private UserRefactored currentUser;
 
@@ -96,6 +96,8 @@ public class EventDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.event_details);
 
+        db = FirebaseFirestore.getInstance();
+
         // Enable the action bar and display the back button
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -107,13 +109,15 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         }
 
+        ImageView deleteEventButton = findViewById(R.id.deleteEventButton);
+        deleteEventButton.setOnClickListener(v -> showDeleteEventOptionsDialog());
+
         // System.out.print("reached this point");
         androidId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         Intent intent = getIntent();
         event = (Event) intent.getSerializableExtra("event");
 
-        db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
         usersRef = db.collection("users");
 
@@ -122,6 +126,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         host = findViewById(R.id.eventHost);
         date = findViewById(R.id.eventDate);
         description = findViewById(R.id.eventDescription);
+        organizerMenuButton = findViewById(R.id.button_organizer_menu);
 
         // get user data from database
         usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -131,6 +136,9 @@ public class EventDetailsActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         if (androidId.equals(document.getId())) {
                             currentUser = document.toObject(UserRefactored.class);
+                            if (!currentUser.getUserId().equals(event.getHost())) {
+                                organizerMenuButton.setVisibility(View.GONE);
+                            }
                             Log.d("Brayden", "currentUser: " + currentUser.getUserId());
                             break;
                         }
@@ -148,13 +156,20 @@ public class EventDetailsActivity extends AppCompatActivity {
             populateSignedAttendees();
         }
 
-        sendNotificationButton = findViewById(R.id.button_send_notification);
-        sendNotificationButton.setOnClickListener(new View.OnClickListener() {
+        organizerMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeNotification();
+                Intent organizerMenuIntent = new Intent(getApplicationContext(), OrganizerMenuActivity.class);
+                organizerMenuIntent.putExtra("event", event);
+                startActivity(organizerMenuIntent);
             }
         });
+//                new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                makeNotification();
+//            }
+//        });
 
         attendeeAdapter = new AttendeeAdapter(attendees, event);
         attendeesRecyclerView = findViewById(R.id.attendeesRecyclerView);
@@ -212,13 +227,102 @@ public class EventDetailsActivity extends AppCompatActivity {
             eventPoster.setImageResource(R.drawable.default_poster);
         }
 
-        removeEventButton = findViewById(R.id.btnRemoveEvent);
-        removeEventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) { deleteEventFromDatabase(event);}
-        });
+//        removeEventButton = findViewById(R.id.btnRemoveEvent);
+//        removeEventButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) { deleteEvent(event);}
+//        });
 
     }
+
+    private void showDeleteEventOptionsDialog() {
+        final CharSequence[] options = {"Event Poster", "Event"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("What would you like to delete?");
+        builder.setItems(options, (dialog, which) -> {
+            if (which == 0) {
+                showConfirmDeleteEventPosterDialog();
+            } else if (which == 1) {
+                showConfirmDeleteEventDialog();
+            }
+        });
+        builder.show();
+    }
+
+    private void showConfirmDeleteEventPosterDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Event Poster")
+                .setMessage("Are you sure you want to delete this event poster?")
+                .setPositiveButton("OK", (dialog, which) -> removeEventPoster())
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    private void showConfirmDeleteEventDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Event")
+                .setMessage("Are you sure you want to delete this event?")
+                .setPositiveButton("OK", (dialog, which) -> deleteEvent())
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    private void removeEventPoster() {
+        ImageView eventPosterImageView = findViewById(R.id.eventImage);
+        eventPosterImageView.setImageResource(R.drawable.default_poster);
+
+        // Remove the profile picture from Firebase Storage
+        if (event.getImageId() != null && !event.getImageId().isEmpty()) {
+            StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(event.getImageId());
+            photoRef.delete().addOnSuccessListener(aVoid -> {
+                Log.d("EventDetailsActivity", "Event poster deleted successfully.");
+                // Update the event details in Firestore to reflect the removal of the event poster.
+                db.collection("events").document(event.getTitle())
+                        .update("imageId", null)
+                        .addOnSuccessListener(aVoid1 -> Log.d("EventDetailsActivity", "Event details updated."))
+                        .addOnFailureListener(e -> Log.e("EventDetailsActivity", "Error updating event details.", e));
+            }).addOnFailureListener(e -> Log.e("EventDetailsActivity", "Error deleting event poster.", e));
+        }
+    }
+
+
+    private void deleteEvent() {
+        String eventIdentifier = event.getTitle();
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        if (event.getImageId() != null) {
+            storageRef = storage.getReferenceFromUrl(event.getImageId());
+            storageRef.delete()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Log.d("Firestore", "Image Deleted");
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Log.e("Firestore", "Error deleting image", exception);
+                        }
+                    });
+        }
+
+        db.collection("events").document(eventIdentifier)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    // Handle successful deletion
+                    Toast.makeText(EventDetailsActivity.this, "Event deleted successfully", Toast.LENGTH_SHORT).show();
+                    // Optionally, navigate the user away from the current activity, back to the profile list or previous activity
+                    finish(); // Close the current activity
+                })
+                .addOnFailureListener(e -> {
+                    // Handle any errors during deletion
+                    Toast.makeText(EventDetailsActivity.this, "Error deleting event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+
 
     /**
      * This displays the information of the event.
@@ -244,9 +348,18 @@ public class EventDetailsActivity extends AppCompatActivity {
                         Log.e("Firestore", "Failed to fetch host name", e);
                     }
                 });
+        // Format and display the date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+        String formattedDate = dateFormat.format(event.getDate());
 
-        // convert date to string
-        date.setText(event.getDate().toString());
+        // Format and display the time
+        SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
+        String formattedTime = timeFormat.format(event.getDate());
+
+        // Assuming 'date' TextView is used to show both date and time together
+        // You might want to separate them or adjust according to your layout needs
+        date.setText(String.format("%s at %s", formattedDate, formattedTime));
+
         description.setText(event.getDescription());
     }
 
@@ -255,8 +368,8 @@ public class EventDetailsActivity extends AppCompatActivity {
      */
     private void signUpForEvent() {
         if (currentUser != null) {
-            if (event.getAttendeeCount() < event.getAttendeeLimit()) {
-                if (!attendees.contains(currentUser)) {
+            if (event.getAttendeeLimit() == null || event.getAttendeeCount() < event.getAttendeeLimit()) {
+                if (!event.getSignedAttendees().contains(currentUser.getUserId())) {
                     // Add the current user's name to the list of attendees
                     attendees.add(currentUser);
                     // Increment the attendee count
@@ -301,48 +414,6 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
 
-    /**
-     * This deletes a selected event from the database.
-     * @param eventToDelete the event to be deleted
-     */
-    private void deleteEventFromDatabase (Event eventToDelete){
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-
-        if (eventToDelete.getImageId() != null) {
-            storageRef = storage.getReferenceFromUrl(eventToDelete.getImageId());
-            storageRef.delete()
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void unused) {
-                            Log.d("Firestore", "Image Deleted");
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Log.e("Firestore", "Error deleting image", exception);
-                        }
-                    });
-        }
-
-        eventsRef.document(eventToDelete.getTitle())
-                .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        // Successfully deleted the event
-                        Toast.makeText(EventDetailsActivity.this, "Event removed successfully", Toast.LENGTH_SHORT).show();
-                        // Finish the activity
-                        finish();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Failed to delete the event
-                        Toast.makeText(EventDetailsActivity.this, "Failed to remove event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-        }
 
         public void makeNotification() {
             String channelId = "CHANNEL_ID_NOTIFICATION";
@@ -425,4 +496,13 @@ public class EventDetailsActivity extends AppCompatActivity {
                 }
             });
         }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
