@@ -20,7 +20,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +33,7 @@ public class UserCheckInActivity extends AppCompatActivity {
 
     private String androidId;
 
-    private UserRefactored currentUser;
+    private User currentUser;
     private Event checkInEvent;
 
     private ImageView eventImage;
@@ -79,7 +78,7 @@ public class UserCheckInActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        currentUser = documentSnapshot.toObject(UserRefactored.class);
+                        currentUser = documentSnapshot.toObject(User.class);
                         Log.d("Firestore", "Fetched user data");
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -121,7 +120,7 @@ public class UserCheckInActivity extends AppCompatActivity {
         }
 
         // update the map of check-ins and counts
-        ArrayList<String> checkedAttendees = checkInEvent.getCheckedAttendees();
+        ArrayList<String> checkedAttendees = checkInEvent.getCheckedInAttendees();
         if (checkedAttendees == null) {
             checkedAttendees = new ArrayList<>();
         }

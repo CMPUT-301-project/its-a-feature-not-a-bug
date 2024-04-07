@@ -49,6 +49,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -72,21 +74,23 @@ public class EventDetailsActivity extends AppCompatActivity {
     private AttendeeAdapter attendeeAdapter;
     private RecyclerView announcementRecyclerView;
     private AnnouncementAdapter announcementAdapter;
+    private ArrayList<Announcement> announcements;
 
     private Button signUpButton;
 
     private Button removeEventButton;
     private Button organizerMenuButton;
 
-    private UserRefactored currentUser;
+    private User currentUser;
 
     private FirebaseFirestore db;
 
     private CollectionReference eventsRef;
     private CollectionReference usersRef;
+    private CollectionReference announcementsRef;
     private StorageReference storageRef;
 
-    private ArrayList<UserRefactored> attendees;
+    private ArrayList<User> attendees;
 
     private ImageView qrCodeImageView;
     private String androidId;
@@ -120,6 +124,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         eventsRef = db.collection("events");
         usersRef = db.collection("users");
+        announcementsRef = db.collection("announcements");
 
         eventPoster = findViewById(R.id.eventImage);
         name = findViewById(R.id.eventTitle);
@@ -135,7 +140,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         if (androidId.equals(document.getId())) {
-                            currentUser = document.toObject(UserRefactored.class);
+                            currentUser = document.toObject(User.class);
                             if (!currentUser.getUserId().equals(event.getHost())) {
                                 organizerMenuButton.setVisibility(View.GONE);
                             }
@@ -155,6 +160,10 @@ public class EventDetailsActivity extends AppCompatActivity {
             Log.d("Brayden", "got here");
             populateSignedAttendees();
         }
+        attendeeAdapter = new AttendeeAdapter(attendees, event);
+        attendeesRecyclerView = findViewById(R.id.attendeesRecyclerView);
+        attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        attendeesRecyclerView.setAdapter(attendeeAdapter);
 
         organizerMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,21 +173,10 @@ public class EventDetailsActivity extends AppCompatActivity {
                 startActivity(organizerMenuIntent);
             }
         });
-//                new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                makeNotification();
-//            }
-//        });
 
-        attendeeAdapter = new AttendeeAdapter(attendees, event);
-        attendeesRecyclerView = findViewById(R.id.attendeesRecyclerView);
-        attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        attendeesRecyclerView.setAdapter(attendeeAdapter);
-
-        List<Announcement> announcements = event.getAnnouncements();
-        if (announcements == null) {
-            announcements = new ArrayList<>();
+        announcements = new ArrayList<>();
+        if (event.getAnnouncements() != null && !event.getAnnouncements().isEmpty()) {
+            populateAnnouncements();
         }
         announcementAdapter = new AnnouncementAdapter(announcements);
         announcementRecyclerView = findViewById(R.id.announcementsRecyclerView);
@@ -191,20 +189,6 @@ public class EventDetailsActivity extends AppCompatActivity {
         Button btnShowQRCode = findViewById(R.id.btnShowQRCode);
 
         btnShowQRCode.setOnClickListener(v -> showQROptionsDialog());
-//        btnShowQRCode.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (qrCodeImageView.getVisibility() == View.GONE) {
-//                    // Generate and show the QR code if it's not already visible
-//                    Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(event, 200); // Adjust size as needed
-//                    qrCodeImageView.setImageBitmap(qrCodeBitmap);
-//                    qrCodeImageView.setVisibility(View.VISIBLE);
-//                } else {
-//                    // Hide the QR code if it's already visible
-//                    qrCodeImageView.setVisibility(View.GONE);
-//                }
-//            }
-//        });
 
 
         signUpButton = findViewById(R.id.signup_button);
@@ -226,12 +210,6 @@ public class EventDetailsActivity extends AppCompatActivity {
             // Set a placeholder image if no image is available
             eventPoster.setImageResource(R.drawable.default_poster);
         }
-
-//        removeEventButton = findViewById(R.id.btnRemoveEvent);
-//        removeEventButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) { deleteEvent(event);}
-//        });
 
     }
 
@@ -336,7 +314,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if (documentSnapshot.exists()) {
-                            UserRefactored user = documentSnapshot.toObject(UserRefactored.class);
+                            User user = documentSnapshot.toObject(User.class);
                             host.setText(user.getFullName());
                         } else {
                             Log.d("Firestore", "Document does not exist");
@@ -368,23 +346,21 @@ public class EventDetailsActivity extends AppCompatActivity {
      */
     private void signUpForEvent() {
         if (currentUser != null) {
-            if (event.getAttendeeLimit() == null || event.getAttendeeCount() < event.getAttendeeLimit()) {
+            if (event.getAttendeeLimit() == null || event.getNumberSignedAttendees() < event.getAttendeeLimit()) {
                 if (!event.getSignedAttendees().contains(currentUser.getUserId())) {
                     // Add the current user's name to the list of attendees
                     attendees.add(currentUser);
-                    // Increment the attendee count
-                    event.setAttendeeCount(event.getAttendeeCount() + 1);
 
                     // Set the updated list of attendees to the event
                     ArrayList<String> formattedAttendees = new ArrayList<>();
-                    for (UserRefactored user : attendees) {
+                    for (User user : attendees) {
                         formattedAttendees.add(user.getUserId());
                     }
                     event.setSignedAttendees(formattedAttendees);
 
                     // Update the Firestore document for the event with the names of attendees and attendee count
                     eventsRef.document(event.getTitle())
-                            .update("signedAttendees", formattedAttendees, "attendeeCount", event.getAttendeeCount())
+                            .update("signedAttendees", formattedAttendees)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -484,7 +460,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            UserRefactored user = document.toObject(UserRefactored.class);
+                            User user = document.toObject(User.class);
                             if (attendeesData.contains(user.getUserId())) {
                                 attendees.add(user);
                             }
@@ -497,12 +473,23 @@ public class EventDetailsActivity extends AppCompatActivity {
             });
         }
 
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+    public void populateAnnouncements() {
+        ArrayList<String> announcementsData = event.getAnnouncements();
+        announcementsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Announcement announcement = document.toObject(Announcement.class);
+                        if (announcementsData.contains(announcement.getAnnouncementId())) {
+                            announcements.add(announcement);
+                        }
+                    }
+                    announcementAdapter.notifyDataSetChanged();
+                } else {
+                    Log.d("Firestore", "Error getting documents: ", task.getException());
+                }
+            }
+        });
     }
 }

@@ -1,6 +1,5 @@
 package com.example.its_a_feature_not_a_bug;
 
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAttendeeAdapter.AttendeeViewHolder>{
     private ArrayList<String> attendeeList;
@@ -66,7 +64,7 @@ public class CheckedInAttendeeAdapter extends RecyclerView.Adapter<CheckedInAtte
             usersRef.document(userId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    UserRefactored user = documentSnapshot.toObject(UserRefactored.class);
+                    User user = documentSnapshot.toObject(User.class);
                     String fullName = user.getFullName(); // Implement this function to fetch user's name
                     userNameTextView.setText(fullName);
                 }

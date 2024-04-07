@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,7 +24,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * An adapter for the ListView in the BrowseEventsActivity.
@@ -79,7 +77,7 @@ public class EventAdapter extends ArrayAdapter<Event> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             if (event.getHost().equals(document.getId())) {
-                                UserRefactored user = document.toObject(UserRefactored.class);
+                                User user = document.toObject(User.class);
                                 hostName.setText(user.getFullName());
                             }
                         }

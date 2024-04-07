@@ -66,7 +66,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
     private Button buttonSubmit;
     private Button buttonRemovePicture;
     private Switch switchGeolocation; // Add Switch reference
-    private UserRefactored currentUser;
+    private User currentUser;
     private String androidId;
 
     @Override
@@ -109,7 +109,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         if (androidId.equals(document.getId())) {
-                            currentUser = document.toObject(UserRefactored.class);
+                            currentUser = document.toObject(User.class);
                             Log.d("Brayden", "currentUser: " + currentUser.getFullName());
                             break;
                         }
@@ -150,7 +150,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 boolean geolocationDisabled = switchGeolocation.isChecked(); // Get Switch state
 
                 // create new user
-                UserRefactored newUser = new UserRefactored();
+                User newUser = new User();
                 newUser.setFullName(fullName);
                 newUser.setEmail(email);
                 newUser.setPhoneNumber(phoneNumber);
@@ -192,7 +192,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void uploadImageToFirebaseStorage(UserRefactored newUser, OnImageUploadListener uploadListener) {
+    private void uploadImageToFirebaseStorage(User newUser, OnImageUploadListener uploadListener) {
         StorageReference storageReference = storageRef.child("profile_pics/" + UUID.randomUUID().toString() + ".jpg");
         profilePicture.setDrawingCacheEnabled(true);
         profilePicture.buildDrawingCache();
@@ -219,7 +219,7 @@ public class UpdateProfileActivity extends AppCompatActivity {
         });
     }
 
-    public void updateProfile(UserRefactored newUser) {
+    public void updateProfile(User newUser) {
         // Create a map to store data
         Map<String, Object> data = new HashMap<>();
         data.put("fullName", newUser.getFullName());

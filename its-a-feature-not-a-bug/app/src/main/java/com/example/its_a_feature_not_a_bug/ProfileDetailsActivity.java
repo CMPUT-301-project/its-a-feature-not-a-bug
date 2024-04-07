@@ -1,7 +1,6 @@
 package com.example.its_a_feature_not_a_bug;
 
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -31,7 +30,7 @@ public class ProfileDetailsActivity extends AppCompatActivity {
     private StorageReference storageRef;
     private RecyclerView profilesRecyclerView;
     private ProfileAdapter profileAdapter;
-    private UserRefactored profile;
+    private User profile;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,7 +52,7 @@ public class ProfileDetailsActivity extends AppCompatActivity {
 
         // Get the Profile object from the intent extra
 
-        profile = (UserRefactored) getIntent().getSerializableExtra("profile");
+        profile = (User) getIntent().getSerializableExtra("profile");
 
 
         // Initialize views

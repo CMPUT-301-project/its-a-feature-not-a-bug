@@ -1,12 +1,9 @@
-// This source code file implements the user class.
+// This source code file implements the class that represents users.
 // No outstanding issues.
 
 package com.example.its_a_feature_not_a_bug;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,140 +11,131 @@ import java.util.Map;
  * This class implements users
  */
 public class User implements Serializable {
-    private String name;
-    private List<Event> signedEvents;
+    // Attributes
+    private String userId; // id of the user in the database
+    private String imageId;
+    private String fullName;
+    private String email;
+    private String phoneNumber;
+    private boolean geoLocationDisabled;
 
-    private List<Event> checkedEvents;
-
-    private Map<String, Integer> NumTimesCheckedIn;
+    // Constructors
+    /**
+     * This is a constructor for the User class that takes no arguments
+     */
+    public User(){}
 
     /**
-     * This is a constructor for the class
-     * @param name the name of the user
+     * This is a constructor for the User class that takes all attributes as arguments.
+     * @param imageId the URL of the user's profile image
+     * @param fullName the full name of the user
+     * @param email the email of the user
+     * @param phoneNumber the phone number of the user
+     * @param geoLocationDisabled whether the user allows geolocation tracking
      */
-    public User(String name) {
-        this.name = name;
-        this.signedEvents = new ArrayList<>();
-        this.checkedEvents = new ArrayList<>();
-        NumTimesCheckedIn = new HashMap<String, Integer>();
+    public User(String userId, String imageId, String fullName, String email, String phoneNumber, boolean geoLocationDisabled, List<String> signedEvents, List<String> checkedEvents, Map<String, Integer> numTimesCheckedIn) {
+        this.userId = userId;
+        this.imageId = imageId;
+        this.fullName = fullName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.geoLocationDisabled = geoLocationDisabled;
+    }
+
+    // Getters and Setters
+    /**
+     * This returns the ID of the user.
+     * @return the ID of the user
+     */
+    public String getUserId() {
+        return userId;
     }
 
     /**
-     * This allows a user to sign up for an event.
-     * @param event the event
+     * This sets the ID of the user to a new value.
+     * @param userId the new user ID
      */
-    public void signUpForEvent(Event event) {
-        this.signedEvents.add(event);
-    }
-
-//    public void checkInToEvent(Event event){
-//        //TODO: functionality for actually checking into event
-//        String eventTitle = event.getTitle();
-//
-//        // Check if the event title is already in the HashMap
-//        if (NumTimesCheckedIn.containsKey(eventTitle)) {
-//            // If it exists, increment the value of the integer key
-//            int currentCheckIns = NumTimesCheckedIn.get(eventTitle);
-//            NumTimesCheckedIn.put(eventTitle, currentCheckIns + 1);
-//        } else {
-//            // If it doesn't exist, initialize with value 1
-//            this.checkedEvents.add(event);
-//            NumTimesCheckedIn.put(eventTitle, 1);
-//        }
-//    }
-
-    /**
-     * This returns the list of events that the user is signed up for.
-     * @return the list of events
-     */
-    public List<Event> getSignedUpEvents() {
-        return signedEvents;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     /**
-     * This returns the list of events that are currently active.
-     * @return the list of events.
+     * This returns the Firebase Storage URL of the profile picture of the user.
+     * @return the image URL
      */
-    public List<Event> getCurrentEvents() {
-        List<Event> currentEvents = new ArrayList<>();
-        Date now = new Date();
-        for (Event event : signedEvents) {
-            if (event.getDate().equals(now)) {
-                currentEvents.add(event);
-            }
-        }
-        return currentEvents;
+    public String getImageId() {
+        return imageId;
     }
 
     /**
-     * This returns the list of events that are not yet active.
-     * @return the list of events
+     * This sets the Firebase Storage URL of the profile picture to a new value.
+     * @param imageId the new image URL as a String
      */
-    public List<Event> getFutureEvents() {
-        List<Event> futureEvents = new ArrayList<>();
-        Date now = new Date();
-        for (Event event : signedEvents) {
-            if (event.getDate().after(now)) {
-                futureEvents.add(event);
-            }
-        }
-        return futureEvents;
+    public void setImageId(String imageId) {
+        this.imageId = imageId;
     }
 
     /**
      * This returns the name of the user.
-     * @return the name
+     * @return the name of the user
      */
-    public String getName() {
-        return name;
+    public String getFullName() {
+        return fullName;
     }
 
     /**
-     * This sets the name of the user to a new value.
-     * @param name the new name
+     * This sets the name of the user to a new value
+     * @param fullName the new name of the user
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     /**
-     * This returns a list of events the user is signed up for.
-     * @return the list of events.
+     * This returns the email of the user.
+     * @return the email of the user
      */
-    public List<Event> getSignedEvents() {
-        return signedEvents;
+    public String getEmail() {
+        return email;
     }
 
     /**
-     * This sets the list of events that a user is signed up for to a new value.
-     * @param signedEvents the new list of events
+     * This sets the email of the user to a new value.
+     * @param email the new email of the user
      */
-    public void setSignedEvents(List<Event> signedEvents) {
-        this.signedEvents = signedEvents;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     /**
-     * This returns the list of events that the user is checked in to.
-     * @return the list of events
+     * This returns the phone number of the user, as a String.
+     * @return the phone number of the user
      */
-    public List<Event> getCheckedEvents() {
-        return checkedEvents;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
     /**
-     * This serts the list of checked-in events to a new value
-     * @param checkedEvents the new event list
+     * This sets the phone number of the user to a new value.
+     * @param phoneNumber the new phone number of the user
      */
-    public void setCheckedEvents(List<Event> checkedEvents) {
-        this.checkedEvents = checkedEvents;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     /**
-     * This returns the number of times this user has checked into an event.
-     * @param event the event
-     * @return the number of check-ins
+     * This returns whether the user allows geolocation tracking (true = disabled).
+     * @return the boolean representing their consent
      */
-    public int getNumTimesCheckedIn(Event event){
-        return NumTimesCheckedIn.get(event.getTitle());
+    public boolean isGeoLocationDisabled() {
+        return geoLocationDisabled;
+    }
+
+    /**
+     * Sets the consent of geolocation tracking for a user to a new value.
+     * @param geoLocationDisabled the new value of the boolean
+     */
+    public void setGeoLocationDisabled(boolean geoLocationDisabled) {
+        this.geoLocationDisabled = geoLocationDisabled;
     }
 }
