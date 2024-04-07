@@ -24,8 +24,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
@@ -212,13 +214,28 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         event.setTitle(doc.getId());
                         Log.d("Firestore", String.format("Event(%s, %s) fetched", event.getTitle(), event.getHost()));
 
-                        ArrayList<Map<String, Object>> attendeeLocations = new ArrayList<>();
-                        QuerySnapshot attendeeLocationsSnapshot = doc.getReference().collection("AttendeeLocations").get().getResult();
-                        for (QueryDocumentSnapshot attendeeLocationDoc : attendeeLocationsSnapshot) {
-                            attendeeLocations.add(attendeeLocationDoc.getData());
-                        }
-                        event.setAttendeeLocations(attendeeLocations);
-                        Log.d("", "attendee locations added");
+                        // Check if the subcollection exists and is not empty before accessing it
+                        CollectionReference attendeeLocationsRef = doc.getReference().collection("AttendeeLocations");
+                        attendeeLocationsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    QuerySnapshot attendeeLocationsSnapshot = task.getResult();
+                                    if (!attendeeLocationsSnapshot.isEmpty()) {
+                                        ArrayList<Map<String, Object>> attendeeLocations = new ArrayList<>();
+                                        for (QueryDocumentSnapshot attendeeLocationDoc : attendeeLocationsSnapshot) {
+                                            attendeeLocations.add(attendeeLocationDoc.getData());
+                                        }
+                                        event.setAttendeeLocations(attendeeLocations);
+                                        Log.d("", "attendee locations added");
+                                    } else {
+                                        Log.d("", "AttendeeLocations subcollection is empty for event: " + event.getTitle());
+                                    }
+                                } else {
+                                    Log.e("Firestore", "Error getting attendee locations for event: " + event.getTitle(), task.getException());
+                                }
+                            }
+                        });
                         eventDataList.add(event);
                     }
                     eventAdapter.notifyDataSetChanged();
