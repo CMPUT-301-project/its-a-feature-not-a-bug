@@ -116,6 +116,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         eventList = findViewById(R.id.list_view_events_list);
         eventDataList = new ArrayList<>();
 
+
         cameraButton = findViewById(R.id.button_camera);
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,6 +127,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                 barLauncher.launch(options);
             }
         });
+
 
         barLauncher = registerForActivityResult(new ScanContract(), result -> {
             if (result.getContents() != null) {
@@ -144,6 +146,7 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                 } else {
                     targetActivityClass = BrowseEventsActivity.class;
                 }
+
 
                 // Start the appropriate activity with the parsed URI
                 Intent intent = new Intent(this, targetActivityClass);
@@ -167,6 +170,19 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
             intent.putExtra("event", event);
             startActivity(intent);
         });
+        // add on click listener to click event
+        Button eventsButton = findViewById(R.id.button_events); // Ensure this ID matches your layout
+        eventsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Intent to start AttendeesActivity
+                Intent intent = new Intent(BrowseEventsActivity.this, AttendeesActivity.class);
+                intent.putExtra("attendees", attendees);
+                //intent.putExtra("attendees", signedAttendees);
+                startActivity(intent);
+            }
+        });
+
 
         // fab
         fab = findViewById(R.id.fab_add_event);
@@ -193,34 +209,44 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                 if (querySnapshots != null) {
                     eventDataList.clear();
                     for (QueryDocumentSnapshot doc: querySnapshots) {
-                        Event event = doc.toObject(Event.class);
-                        event.setTitle(doc.getId());
-//                        String eventId = doc.getId();
-//                        String host = doc.getString("host");
-//                        Date date = doc.getDate("date");
-//                        String description = doc.getString("description");
-//                        int attendeeLimit = doc.contains("attendeeLimit") ? doc.getLong("attendeeLimit").intValue() : 0;
-//                        int attendeeCount = doc.contains("attendeeCount") ? doc.getLong("attendeeCount").intValue() : 0;
-//
-//
-//                        if (doc.get("signedAttendees") != null) {
-//                            attendees = (ArrayList<String>) doc.get("signedAttendees");
-//                        }
+
+                        String eventId = doc.getId();
+                        String host = doc.getString("host");
+                        Date date = doc.getDate("date");
+                        String description = doc.getString("description");
+
+                        Long attendeeLimitLong = doc.getLong("attendeeLimit");
+                        int attendeeLimit = attendeeLimitLong != null ? attendeeLimitLong.intValue() : 0;
+
+                        Long attendeeCountLong = doc.getLong("attendeeCount");
+                        int attendeeCount = attendeeCountLong != null ? attendeeCountLong.intValue() : 0;
 
 
 
-//                        String imageURLString = doc.getString("imageId");
 
-                        Log.d("Firestore", String.format("Event(%s) fetched", event.getTitle()));
+                        //int attendeeLimit = doc.contains("attendeeLimit") ? doc.getLong("attendeeLimit").intValue() : 0;
+                        //int attendeeCount = doc.contains("attendeeCount") ? doc.getLong("attendeeCount").intValue() : 0;
 
-//                        Event event;
-//                        if (attendeeLimit > 0) {
-//                            event = new Event(imageURLString, eventId, host, date, description, attendeeLimit);
-//                        } else {
-//                            event = new Event(imageURLString, eventId, host, date, description);
-//                        }
-//                        event.setAttendeeCount(attendeeCount);
-//                        event.setSignedAttendees(signedAttendees);
+
+
+                        if (doc.get("signedAttendees") != null) {
+                            attendees = (ArrayList<String>) doc.get("signedAttendees");
+                        }
+
+
+
+                        String imageURLString = doc.getString("imageId");
+
+                        Log.d("Firestore", String.format("Event(%s, %s) fetched", eventId, host));
+
+                        Event event;
+                        if (attendeeLimit > 0) {
+                            event = new Event(imageURLString, eventId, host, date, description, attendeeLimit);
+                        } else {
+                            event = new Event(imageURLString, eventId, host, date, description);
+                        }
+                        event.setAttendeeCount(attendeeCount);
+                        event.setSignedAttendees(signedAttendees);
                         eventDataList.add(event);
                     }
 
