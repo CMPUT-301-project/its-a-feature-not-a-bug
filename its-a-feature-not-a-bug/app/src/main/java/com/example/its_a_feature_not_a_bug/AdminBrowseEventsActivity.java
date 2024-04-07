@@ -35,9 +35,9 @@ public class AdminBrowseEventsActivity extends AttendeeBrowseEventsActivity {
             actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "EVENTS" + "</b></font>"));
         }
 
-        // Hide add event fab
-        FloatingActionButton fabAddEvent = findViewById(R.id.fab_add_event);
-        fabAddEvent.setVisibility(View.GONE);
+//        // Hide add event fab
+//        FloatingActionButton fabAddEvent = findViewById(R.id.fab_add_event);
+//        fabAddEvent.setVisibility(View.GONE);
 
         // Hide update profile fab
         Button profileButton = findViewById(R.id.button_profile);

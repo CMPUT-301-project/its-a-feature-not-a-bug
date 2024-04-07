@@ -8,6 +8,7 @@ import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -120,6 +121,16 @@ public class OrganizerBrowseEventsActivity extends AppCompatActivity implements 
             public void onClick(View v) {
                 Intent profileIntent = new Intent(OrganizerBrowseEventsActivity.this, UpdateProfileActivity.class);
                 startActivity(profileIntent);
+            }
+        });
+        
+        eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Event event = eventDataList.get(position);
+                Intent eventDetailsIntent = new Intent(OrganizerBrowseEventsActivity.this, OrganizerEventDetailsActivity.class);
+                eventDetailsIntent.putExtra("event", event);
+                startActivity(eventDetailsIntent);
             }
         });
     }

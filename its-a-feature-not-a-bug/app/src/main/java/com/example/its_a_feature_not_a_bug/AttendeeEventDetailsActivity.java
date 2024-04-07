@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -41,7 +40,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -49,10 +47,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import org.checkerframework.checker.units.qual.A;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.text.SimpleDateFormat;
 
@@ -61,7 +56,7 @@ import java.text.SimpleDateFormat;
  * An activity that allows users to view the details of an event.
  * This activity extends AppCompatActivity to inherit its basic functionalities.
  */
-public class EventDetailsActivity extends AppCompatActivity {
+public class AttendeeEventDetailsActivity extends AppCompatActivity {
     private Event event;
     private TextView name;
     private TextView date;
@@ -290,13 +285,13 @@ public class EventDetailsActivity extends AppCompatActivity {
                 .delete()
                 .addOnSuccessListener(aVoid -> {
                     // Handle successful deletion
-                    Toast.makeText(EventDetailsActivity.this, "Event deleted successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AttendeeEventDetailsActivity.this, "Event deleted successfully", Toast.LENGTH_SHORT).show();
                     // Optionally, navigate the user away from the current activity, back to the profile list or previous activity
                     finish(); // Close the current activity
                 })
                 .addOnFailureListener(e -> {
                     // Handle any errors during deletion
-                    Toast.makeText(EventDetailsActivity.this, "Error deleting event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AttendeeEventDetailsActivity.this, "Error deleting event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -367,7 +362,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 //                                    currentUser.signUpForEvent(event);
 
                                     // Successfully updated the list of attendees and attendee count in the database
-                                    Toast.makeText(EventDetailsActivity.this, "Signed up for event", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AttendeeEventDetailsActivity.this, "Signed up for event", Toast.LENGTH_SHORT).show();
                                     // Notify the adapter of the data change
                                     attendeeAdapter.notifyDataSetChanged();
                                 }
@@ -376,15 +371,15 @@ public class EventDetailsActivity extends AppCompatActivity {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     // Failed to update the list of attendees and attendee count in the database
-                                    Toast.makeText(EventDetailsActivity.this, "Failed to sign up for event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AttendeeEventDetailsActivity.this, "Failed to sign up for event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
                 } else {
-                    Toast.makeText(EventDetailsActivity.this, "Already signed up for this event", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AttendeeEventDetailsActivity.this, "Already signed up for this event", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 // Attendee limit reached
-                Toast.makeText(EventDetailsActivity.this, "Attendee limit reached for this event", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AttendeeEventDetailsActivity.this, "Attendee limit reached for this event", Toast.LENGTH_SHORT).show();
             }
         }
     }

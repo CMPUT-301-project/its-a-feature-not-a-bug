@@ -54,7 +54,7 @@
             android:exported="true">
         </activity>
 
-        <activity android:name=".EventDetailsActivity">
+        <activity android:name=".AttendeeEventDetailsActivity">
         </activity>
 
         <activity android:name=".AdminBrowseProfilesActivity"

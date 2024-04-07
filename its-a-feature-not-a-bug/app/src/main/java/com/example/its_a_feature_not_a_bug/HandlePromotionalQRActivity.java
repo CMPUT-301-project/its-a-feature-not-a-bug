@@ -56,7 +56,7 @@ public class HandlePromotionalQRActivity extends AppCompatActivity {
                             Log.d("Brayden", "DocumentSnapshot data: " + document.getData());
                             promotionalEvent = document.toObject(Event.class);
                             promotionalEvent.setTitle(document.getId());
-                            Intent intent = new Intent(HandlePromotionalQRActivity.this, EventDetailsActivity.class);
+                            Intent intent = new Intent(HandlePromotionalQRActivity.this, AttendeeEventDetailsActivity.class);
                             intent.putExtra("event", promotionalEvent);
                             startActivity(intent);
                         } else {

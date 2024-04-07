@@ -25,7 +25,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -49,7 +48,7 @@ public class AttendeeBrowseEventsActivity extends AppCompatActivity implements A
 
     // View attributes
     private ListView eventList;
-    private FloatingActionButton fab;
+//    private FloatingActionButton fab;
     private Button cameraButton;
     private Button myEventButton;
 
@@ -168,16 +167,12 @@ public class AttendeeBrowseEventsActivity extends AppCompatActivity implements A
         // add on click listener to click event
         eventList.setOnItemClickListener((parent, view, position, id) -> {
             Event event = eventDataList.get(position);
-            Intent intent = new Intent(this, EventDetailsActivity.class);
+            Intent intent = new Intent(this, AttendeeEventDetailsActivity.class);
             intent.putExtra("event", event);
             startActivity(intent);
         });
 
-        // fab
-        fab = findViewById(R.id.fab_add_event);
-        fab.setOnClickListener(v -> {
-            new AddEventFragment().show(getSupportFragmentManager(), "Add Event");
-        });
+
         Button profileButton = findViewById(R.id.button_profile);
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
