@@ -6,6 +6,7 @@ package com.example.its_a_feature_not_a_bug;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * A class representing an event.
@@ -22,7 +23,9 @@ public class Event implements Serializable {
     private ArrayList<String> checkedInAttendees; // list of users checked into the event
     private ArrayList<String> announcements; // list of event annoucements
 
-    // Constructors
+    private ArrayList<Map<String, Object>> attendeeLocations;
+
+// Constructors
 
     /**
      * This is a constructor for the Event class that takes no arguments.
@@ -339,5 +342,13 @@ public class Event implements Serializable {
             return 0;
         }
         return announcements.size();
+    }
+
+    public ArrayList<Map<String, Object>> getAttendeeLocations() {
+        return attendeeLocations;
+    }
+
+    public void setAttendeeLocations(ArrayList<Map<String, Object>> attendeeLocations) {
+        this.attendeeLocations = attendeeLocations;
     }
 }

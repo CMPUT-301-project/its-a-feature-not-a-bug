@@ -211,6 +211,14 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         Event event = doc.toObject(Event.class);
                         event.setTitle(doc.getId());
                         Log.d("Firestore", String.format("Event(%s, %s) fetched", event.getTitle(), event.getHost()));
+
+                        ArrayList<Map<String, Object>> attendeeLocations = new ArrayList<>();
+                        QuerySnapshot attendeeLocationsSnapshot = doc.getReference().collection("AttendeeLocations").get().getResult();
+                        for (QueryDocumentSnapshot attendeeLocationDoc : attendeeLocationsSnapshot) {
+                            attendeeLocations.add(attendeeLocationDoc.getData());
+                        }
+                        event.setAttendeeLocations(attendeeLocations);
+                        Log.d("", "attendee locations added");
                         eventDataList.add(event);
                     }
                     eventAdapter.notifyDataSetChanged();
