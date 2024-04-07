@@ -105,23 +105,34 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // set button listeners
-//        adminButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent adminIntent = new Intent(MainActivity.this, AdminDashboardActivity.class);
-//                startActivity(adminIntent);
-//            }
-//        });
-
+        // set click listeners
         adminButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent adminIntent = new Intent(MainActivity.this, AdminDashboardActivity.class);
-                startActivity(adminIntent);
+                // Fetch the current device's Android ID
+                String currentDeviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+                // Check if this device ID is listed in the "adminDevices" collection
+                db.collection("admin_devices").document(currentDeviceId)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful() && task.getResult().exists()) {
+
+                                    Toast.makeText(MainActivity.this, "Admin access granted.", Toast.LENGTH_SHORT).show();
+
+                                    // Document for this device ID exists, meaning it's an admin device
+                                    Intent adminIntent = new Intent(MainActivity.this, AdminDashboardActivity.class);
+                                    startActivity(adminIntent);
+                                } else {
+                                    // Document doesn't exist, meaning this device isn't authorized for admin access
+                                    Toast.makeText(MainActivity.this, "Admin access denied.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
             }
         });
-
 
         attendeeButton.setOnClickListener(new View.OnClickListener() {
             @Override
