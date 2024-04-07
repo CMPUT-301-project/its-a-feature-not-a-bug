@@ -93,6 +93,9 @@
         <activity android:name=".NewUserActivity">
         </activity>
 
+    <activity android:name=".MyEventsActivity">
+    </activity>
+
     </application>
 
 </manifest>
