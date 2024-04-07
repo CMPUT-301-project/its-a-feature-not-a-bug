@@ -1,18 +1,23 @@
 package com.example.its_a_feature_not_a_bug;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -21,11 +26,13 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class implements the activity that allows organizers to browse their own events and create new ones.
  */
-public class OrganizerBrowseEventsActivity extends AppCompatActivity {
+public class OrganizerBrowseEventsActivity extends AppCompatActivity implements AddEventDialogueListener {
     // Firebase attributes
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
@@ -99,5 +106,51 @@ public class OrganizerBrowseEventsActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // set up click listeners
+        newEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AddEventFragment().show(getSupportFragmentManager(), "Add Event");
+            }
+        });
+
+        profileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent profileIntent = new Intent(OrganizerBrowseEventsActivity.this, UpdateProfileActivity.class);
+                startActivity(profileIntent);
+            }
+        });
+    }
+
+    @Override
+    public void addEvent(Event event) {
+        // Adds event to the Firestore collection
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("host", event.getHost());
+        data.put("date", event.getDate());
+        data.put("description", event.getDescription());
+        data.put("imageId", event.getImageId());
+
+        // Include attendee limit if available
+        if (event.getAttendeeLimit() > 0) {
+            data.put("attendeeLimit", event.getAttendeeLimit());
+        }
+
+        eventsRef.document(event.getTitle())
+                .set(data)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d("Firestore", "DocumentSnapshot successfully written");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("Firestore", "Failed to upload event", e);
+                    }
+                });
     }
 }

@@ -42,7 +42,7 @@ import java.util.Map;
 /**
  * This class is an Activity that allows a user to navigate listed events
  */
-public class AttendeeBrowseEventsActivity extends AppCompatActivity implements AddEventDialogueListener{
+public class AttendeeBrowseEventsActivity extends AppCompatActivity implements AddEventDialogueListener {
     // Firebase attributes
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
