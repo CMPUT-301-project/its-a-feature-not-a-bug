@@ -216,26 +216,17 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
 
                         // Check if the subcollection exists and is not empty before accessing it
                         CollectionReference attendeeLocationsRef = doc.getReference().collection("AttendeeLocations");
-                        attendeeLocationsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    QuerySnapshot attendeeLocationsSnapshot = task.getResult();
-                                    if (!attendeeLocationsSnapshot.isEmpty()) {
-                                        ArrayList<Map<String, Object>> attendeeLocations = new ArrayList<>();
-                                        for (QueryDocumentSnapshot attendeeLocationDoc : attendeeLocationsSnapshot) {
-                                            attendeeLocations.add(attendeeLocationDoc.getData());
-                                        }
-                                        event.setAttendeeLocations(attendeeLocations);
-                                        Log.d("", "attendee locations added");
-                                    } else {
-                                        Log.d("", "AttendeeLocations subcollection is empty for event: " + event.getTitle());
-                                    }
-                                } else {
-                                    Log.e("Firestore", "Error getting attendee locations for event: " + event.getTitle(), task.getException());
-                                }
+                        QuerySnapshot attendeeLocationsSnapshot = attendeeLocationsRef.get().getResult();
+                        if (attendeeLocationsSnapshot != null && !attendeeLocationsSnapshot.isEmpty()) {
+                            ArrayList<Map<String, Object>> attendeeLocations = new ArrayList<>();
+                            for (QueryDocumentSnapshot attendeeLocationDoc : attendeeLocationsSnapshot) {
+                                attendeeLocations.add(attendeeLocationDoc.getData());
                             }
-                        });
+                            event.setAttendeeLocations(attendeeLocations);
+                            Log.d("", "attendee locations added");
+                        } else {
+                            Log.d("", "AttendeeLocations subcollection is empty for event: " + event.getTitle());
+                        }
                         eventDataList.add(event);
                     }
                     eventAdapter.notifyDataSetChanged();
