@@ -5,15 +5,21 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/edit_text_announcement_title"
+        android:id="@+id/edit_text_notification_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Announcement Title"/>
 
     <EditText
-        android:id="@+id/edit_text_announcement_description"
+        android:id="@+id/edit_text_notification_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Announcement Message"/>
+
+    <Button
+        android:id="@+id/button_send_notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Continue" />
 
 </LinearLayout>

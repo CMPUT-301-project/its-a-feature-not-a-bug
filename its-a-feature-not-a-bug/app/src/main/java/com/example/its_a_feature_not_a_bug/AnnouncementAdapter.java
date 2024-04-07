@@ -27,9 +27,6 @@ public class AnnouncementAdapter extends RecyclerView.Adapter<AnnouncementAdapte
      */
     public AnnouncementAdapter(List<Announcement> announcementList) {
         this.announcementList = announcementList;
-        /// populate with dummy data
-        this.announcementList.add(new Announcement("Announcement 1", "This is the first announcement"));
-        this.announcementList.add(new Announcement("Announcement 2", "This is the second announcement"));
     }
 
 

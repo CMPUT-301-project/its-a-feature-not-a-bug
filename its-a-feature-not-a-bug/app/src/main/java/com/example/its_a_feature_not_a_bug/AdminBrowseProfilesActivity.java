@@ -3,7 +3,6 @@
 
 package com.example.its_a_feature_not_a_bug;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -32,7 +31,7 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
     private FirebaseFirestore db;
     private RecyclerView profilesRecyclerView;
     private ProfileAdapter profileAdapter;
-    private List<UserRefactored> profileList;
+    private List<User> profileList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +81,7 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
 
                 profileList.clear();
                 for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                    UserRefactored profile = document.toObject(UserRefactored.class);
+                    User profile = document.toObject(User.class);
                     // Assuming your Profile model has a method to set the document ID
                     // profile.setId(document.getId());
                     profileList.add(profile);
@@ -97,7 +96,7 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
      * @param profile the profile to be deleted
      */
     @Override
-    public void onProfileClick(UserRefactored profile) {
+    public void onProfileClick(User profile) {
         // Start ProfileDetailsActivity and pass the profile details
         Intent intent = new Intent(AdminBrowseProfilesActivity.this, ProfileDetailsActivity.class);
         intent.putExtra("profile", profile);

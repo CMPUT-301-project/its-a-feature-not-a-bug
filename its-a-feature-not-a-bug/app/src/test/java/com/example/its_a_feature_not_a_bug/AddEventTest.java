@@ -10,6 +10,6 @@ public class AddEventTest {
         assertEquals("Test Event", event.getTitle());
         assertEquals("Test Host", event.getHost());
         assertEquals("Test Description", event.getDescription());
-        assertEquals(10, event.getAttendeeLimit());
+        assertEquals(10, (int) event.getAttendeeLimit());
     }
 }

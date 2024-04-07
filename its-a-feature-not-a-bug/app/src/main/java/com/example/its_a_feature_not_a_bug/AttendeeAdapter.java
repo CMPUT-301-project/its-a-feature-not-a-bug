@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 public class AttendeeAdapter extends RecyclerView.Adapter<AttendeeAdapter.AttendeeViewHolder> {
 
-    private ArrayList<UserRefactored> attendees;
+    private ArrayList<User> attendees;
 
     private Event event;
 
@@ -27,7 +27,7 @@ public class AttendeeAdapter extends RecyclerView.Adapter<AttendeeAdapter.Attend
      * @param attendees the list of attendees
      * @param event the event to be attended
      */
-    public AttendeeAdapter(ArrayList<UserRefactored> attendees, Event event) {
+    public AttendeeAdapter(ArrayList<User> attendees, Event event) {
         this.event = event;
         if (attendees == null) {
             this.attendees = new ArrayList<>();
@@ -46,7 +46,7 @@ public class AttendeeAdapter extends RecyclerView.Adapter<AttendeeAdapter.Attend
 
     @Override
     public void onBindViewHolder(@NonNull AttendeeViewHolder holder, int position) {
-        UserRefactored attendee = attendees.get(position);
+        User attendee = attendees.get(position);
         String name = attendee.getFullName();
 //        String stringNumTimesCheckIn = "Checked in: " + attendee.getNumTimesCheckedIn(this.event);
 //        String info = name + "\t" + stringNumTimesCheckIn;

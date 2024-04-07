@@ -2,16 +2,20 @@ package com.example.its_a_feature_not_a_bug;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +30,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class OrganizerMenuActivity extends AppCompatActivity {
@@ -36,7 +43,7 @@ public class OrganizerMenuActivity extends AppCompatActivity {
 
     private String androidId;
 
-    private UserRefactored currentUser;
+    private User currentUser;
     private Event currentEvent;
 
     private RecyclerView checkedInAttendeesView;
@@ -44,6 +51,7 @@ public class OrganizerMenuActivity extends AppCompatActivity {
     private ArrayList<String> checkedAttendees;
     private TextView checkedAttendeesHeader;
     private Button createAnnouncementButton;
+    private Button sendQRButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,6 +62,7 @@ public class OrganizerMenuActivity extends AppCompatActivity {
         checkedInAttendeesView = findViewById(R.id.recycler_view_checked_attendees);
         checkedAttendeesHeader = findViewById(R.id.text_view_checked_attendees_header);
         createAnnouncementButton = findViewById(R.id.button_create_announcement);
+        sendQRButton = findViewById(R.id.button_send_QR);
 
         // fetch event from intent extras
         Intent intent = getIntent();
@@ -66,8 +75,7 @@ public class OrganizerMenuActivity extends AppCompatActivity {
 
         // set adapters
         checkedAttendees = new ArrayList<>();
-        Log.d("Brayden", currentEvent.getCheckedAttendees().toString());
-        if (currentEvent.getCheckedAttendees() != null) {
+        if (currentEvent.getCheckedInAttendees() != null) {
             populateCheckedAttendees();
         }
         attendeeAdapter = new CheckedInAttendeeAdapter(checkedAttendees);
@@ -82,7 +90,7 @@ public class OrganizerMenuActivity extends AppCompatActivity {
         usersRef.document(androidId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                currentUser = documentSnapshot.toObject(UserRefactored.class);
+                currentUser = documentSnapshot.toObject(User.class);
                 Log.d("Firestore", "Fetched user data");
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -93,25 +101,32 @@ public class OrganizerMenuActivity extends AppCompatActivity {
         });
 
         // send notifications (announcements)
-        createAnnouncementButton.setOnClickListener(new View.OnClickListener() {
+//        createAnnouncementButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent notificationIntent = new Intent(getApplicationContext(), CreateNotificationActivity.class);
+//                notificationIntent.putExtra("event", currentEvent);
+//                startActivity(notificationIntent);
+//            }
+//        });
+
+        // share QR code
+        sendQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogCreateAnnouncement.showDialog(getApplicationContext(), currentEvent);
+                showQROptionsDialog();
             }
         });
     }
 
-    // share QR code
-    // geolocation map
-
     public void populateCheckedAttendees() {
-        ArrayList<String> attendeesData = currentEvent.getCheckedAttendees();
+        ArrayList<String> attendeesData = currentEvent.getCheckedInAttendees();
         usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        UserRefactored user = document.toObject(UserRefactored.class);
+                        User user = document.toObject(User.class);
                         if (attendeesData.contains(user.getUserId())) {
                             checkedAttendees.add(user.getUserId());
                             Log.d("Brayden", "Added: " + user.getUserId());
@@ -126,5 +141,54 @@ public class OrganizerMenuActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void showQROptionsDialog() {
+        final CharSequence[] options = {"Promotional QR", "Check-in QR"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Which QR Code would you like to share?");
+        builder.setItems(options, (dialog, which) -> {
+            if (which == 0) {
+                // "Promotional QR" was clicked
+                Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(currentEvent, 200);
+                shareBitmap(qrCodeBitmap);
+            } else if (which == 1) {
+                // "Check-in QR" was clicked
+                // Generate and show the QR code if it's not already visible
+                Bitmap qrCodeBitmap = QRCodeGenerator.generateCheckInQRCode(currentEvent, 200);
+                shareBitmap(qrCodeBitmap);
+            }
+        });
+        builder.show();
+    }
+
+    private void shareBitmap(Bitmap bitmap) {
+        try {
+            // Save Bitmap to cache directory
+            File cachePath = new File(getExternalCacheDir(), "images");
+            cachePath.mkdirs(); // Make sure directory exists
+            FileOutputStream stream = new FileOutputStream(cachePath + "/image.png");
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            stream.close();
+
+            // Share Bitmap using FileProvider
+            File imagePath = new File(getExternalCacheDir(), "images");
+            File newFile = new File(imagePath, "image.png");
+
+            // Dynamically retrieve the authority
+            String authority = getPackageName() + ".fileprovider";
+
+            Uri contentUri = FileProvider.getUriForFile(this, authority, newFile);
+
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("image/*");
+            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(shareIntent, "Share QR Code"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error sharing QR code", Toast.LENGTH_SHORT).show();
+        }
     }
 }
