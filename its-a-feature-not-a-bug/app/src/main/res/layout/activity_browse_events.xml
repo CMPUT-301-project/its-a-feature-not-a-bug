@@ -41,7 +41,7 @@
             android:id="@+id/button_events"
             android:layout_width="126dp"
             android:layout_height="wrap_content"
-            android:text="Events" />
+            android:text="My Events" />
 
         <Button
             android:id="@+id/button_camera"

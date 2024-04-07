@@ -7,10 +7,12 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.content.Intent;
@@ -52,6 +54,10 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
     private Button cameraButton;
     ActivityResultLauncher<ScanOptions> barLauncher;
     private ArrayList<String> signedAttendees = new ArrayList<>();
+
+    private Button myEventButton;
+    private String androidId;
+
 
     private ArrayList<String> attendees = new ArrayList<String>();
 
@@ -164,17 +170,17 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         });
 
         // add on click listener to click event
-        Button eventsButton = findViewById(R.id.button_events); // Ensure this ID matches your layout
-        eventsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Intent to start AttendeesActivity
-                Intent intent = new Intent(BrowseEventsActivity.this, AttendeesActivity.class);
-                intent.putExtra("attendees", attendees);
-                //intent.putExtra("attendees", signedAttendees);
-                startActivity(intent);
-            }
-        });
+//        Button eventsButton = findViewById(R.id.button_events); // Ensure this ID matches your layout
+//        eventsButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Intent to start AttendeesActivity
+//                Intent intent = new Intent(BrowseEventsActivity.this, AttendeesActivity.class);
+//                intent.putExtra("attendees", attendees);
+//                //intent.putExtra("attendees", signedAttendees);
+//                startActivity(intent);
+//            }
+//        });
 
 
         // fab
@@ -212,5 +218,47 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                 }
             }
         });
+
+
+        myEventButton = findViewById(R.id.button_events); // Ensure this ID matches your layout
+        myEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                androidId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+                ArrayList<Event> myEventsList = getMyEvents(androidId, eventDataList);
+                Intent intent = new Intent(BrowseEventsActivity.this, MyEventsActivity.class);
+                intent.putExtra("myEventsList", myEventsList);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // This ID represents the Home or Up button. In the case of this
+                // activity, the Up button is shown. Use NavUtils to allow users
+                // to navigate up one level in the application structure. For
+                // more details, see the Navigation pattern on Android Design:
+                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public ArrayList<Event> getMyEvents(String androidId, ArrayList <Event> eventDataList) {
+        ArrayList<Event> myEvents = new ArrayList<>();
+        for (Event event : eventDataList) {
+            if (event.getSignedAttendees() != null) {
+                for (String attendeeId : event.getSignedAttendees()) {
+                    if (attendeeId.equalsIgnoreCase(androidId)) {
+                        myEvents.add(event);
+                    }
+                }
+            }
+        }
+        return myEvents;
     }
 }
