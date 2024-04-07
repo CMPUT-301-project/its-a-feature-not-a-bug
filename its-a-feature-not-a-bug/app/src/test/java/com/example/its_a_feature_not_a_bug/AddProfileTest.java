@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 public class AddProfileTest {
     @Test
     public void testAddProfile() {
-        User user = new User("Test User");
-        assertEquals("Test User", user.getName());
+        User user = new User();
+        assertEquals("Test User", user.getFullName());
     }
 }

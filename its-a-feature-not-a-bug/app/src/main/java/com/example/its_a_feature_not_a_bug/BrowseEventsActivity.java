@@ -68,7 +68,6 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
         data.put("date", event.getDate());
         data.put("description", event.getDescription());
         data.put("imageId", event.getImageId());
-        data.put("attendeeCount", event.getAttendeeCount());
 
         // Include attendee limit if available
         if (event.getAttendeeLimit() > 0) {

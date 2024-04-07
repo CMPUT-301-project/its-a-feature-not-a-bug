@@ -1,72 +1,133 @@
 package com.example.its_a_feature_not_a_bug;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import java.util.Date;
-
 public class EventUnitTest {
-    private Event mockEvent;
+    private Event mockEvent() {
+        return new Event(null, "Test Event", "Brayden", null, "This is a test event.", 6);
+    }
 
+    // test signed attendee methods
     @Test
-    public void testGetImageId() {
-        String imageId = "https://image1.png";
-        mockEvent = new Event(imageId, "Study Group", "Hindle", null, "This is a test.", 5);
-        assertEquals(imageId, mockEvent.getImageId());
+    public void testAddSignedAttendee() {
+        Event event = mockEvent();
+        event.addSignedAttendee("User 1");
+        event.addSignedAttendee("User 2");
+        assertEquals(2, event.getNumberSignedAttendees());
+        assertTrue(event.hasSignedAttendee("User 1"));
+        assertTrue(event.hasSignedAttendee("User 2"));
     }
 
     @Test
-    public void testSetImageId() {
-        mockEvent = new Event("https://image1.png", "Study Group", "Hindle", null, "This is a test.", 5);
-        String newImageId = "https://image2.png";
-        mockEvent.setImageId(newImageId);
-        assertEquals(newImageId, mockEvent.getImageId());
+    public void testRemoveSignedAttendee() {
+        Event event = mockEvent();
+        event.addSignedAttendee("User 1");
+        assertEquals(1, event.getNumberSignedAttendees());
+        assertTrue(event.hasSignedAttendee("User 1"));
+        event.removeSignedAttendee("User 1");
+        assertEquals(0, event.getNumberSignedAttendees());
+        assertFalse(event.hasSignedAttendee("User 1"));
     }
 
     @Test
-    public void testGetTitle() {
-        String title = "Study Group";
-        mockEvent = new Event("https://image1.png", title, "Hindle", null, "This is a test.", 5);
-        assertEquals(title, mockEvent.getTitle());
+    public void testHasSignedAttendee() {
+        Event event = mockEvent();
+        event.addSignedAttendee("User 1");
+        assertTrue(event.hasSignedAttendee("User 1"));
+        assertFalse(event.hasSignedAttendee("User 2"));
     }
 
     @Test
-    public void testSetTitle() {
-        mockEvent = new Event("https://image1.png", "Study Group", "Hindle", null, "This is a test.", 5);
-        String newTitle = "Study Group 2";
-        mockEvent.setTitle(newTitle);
-        assertEquals(newTitle, mockEvent.getTitle());
+    public void testGetNumberSignedAttendees() {
+        Event event = mockEvent();
+        assertEquals(0, event.getNumberSignedAttendees());
+        event.addSignedAttendee("User 1");
+        assertEquals(1, event.getNumberSignedAttendees());
+        event.removeSignedAttendee("User 1");
+        assertEquals(0, event.getNumberSignedAttendees());
+    }
+
+    // test checked-in attendee methods
+    @Test
+    public void testAddCheckIn() {
+        Event event = mockEvent();
+        event.addCheckIn("User 1");
+        event.addCheckIn("User 2");
+        assertEquals(2, event.getNumberCheckIns());
+        assertTrue(event.hasCheckIn("User 1"));
+        assertTrue(event.hasCheckIn("User 2"));
     }
 
     @Test
-    public void testGetHost() {
-        String host = "Hindle";
-        mockEvent = new Event("https://image1.png", "Study Group", host, null, "This is a test.", 5);
-        assertEquals(host, mockEvent.getHost());
+    public void testRemoveCheckIn() {
+        Event event = mockEvent();
+        event.addCheckIn("User 1");
+        assertEquals(1, event.getNumberCheckIns());
+        assertTrue(event.hasCheckIn("User 1"));
+        event.removeCheckIn("User 1");
+        assertEquals(0, event.getNumberCheckIns());
+        assertFalse(event.hasCheckIn("User 1"));
     }
 
     @Test
-    public void testSetHost() {
-        mockEvent = new Event("https://image1.png", "Study Group", "Hindle", null, "This is a test.", 5);
-        String newHost = "Hazel";
-        mockEvent.setHost(newHost);
-        assertEquals(newHost, mockEvent.getHost());
+    public void testHasCheckIn() {
+        Event event = mockEvent();
+        event.addCheckIn("User 1");
+        assertTrue(event.hasCheckIn("User 1"));
+        assertFalse(event.hasCheckIn("User 2"));
     }
 
     @Test
-    public void testGetDescription() {
-        String desc = "This is a test.";
-        mockEvent = new Event("https://image1.png", "Study Group", "Hindle", null, desc, 5);
-        assertEquals(desc, mockEvent.getDescription());
+    public void testGetNumberCheckIns() {
+        Event event = mockEvent();
+        assertEquals(0, event.getNumberCheckIns());
+        event.addCheckIn("User 1");
+        assertEquals(1, event.getNumberCheckIns());
+        event.removeCheckIn("User 1");
+        assertEquals(0, event.getNumberCheckIns());
+    }
+
+    // test announcement methods
+    @Test
+    public void testAddAnnouncement() {
+        Event event = mockEvent();
+        event.addAnnouncement("Announcement 1");
+        event.addAnnouncement("Announcement 2");
+        assertEquals(2, event.getNumberAnnouncements());
+        assertTrue(event.hasAnnouncement("Announcement 1"));
+        assertTrue(event.hasAnnouncement("Announcement 2"));
     }
 
     @Test
-    public void testSetDescription() {
-        mockEvent = new Event("https://image1.png", "Study Group", "Hindle", null, "This is a test.", 5);
-        String newDesc = "This is not a test.";
-        mockEvent.setDescription(newDesc);
-        assertEquals(newDesc, mockEvent.getDescription());
+    public void testRemoveAnnouncement() {
+        Event event = mockEvent();
+        event.addAnnouncement("Announcement 1");
+        assertEquals(1, event.getNumberAnnouncements());
+        assertTrue(event.hasAnnouncement("Announcement 1"));
+        event.removeAnnouncement("Announcement 1");
+        assertEquals(0, event.getNumberAnnouncements());
+        assertFalse(event.hasAnnouncement("Announcement 1"));
+    }
+
+    @Test
+    public void testHasAnnouncement() {
+        Event event = mockEvent();
+        event.addAnnouncement("Announcement 1");
+        assertTrue(event.hasAnnouncement("Announcement 1"));
+        assertFalse(event.hasAnnouncement("Announcement 2"));
+    }
+
+    @Test
+    public void testGetNumberAnnouncements() {
+        Event event = mockEvent();
+        assertEquals(0, event.getNumberAnnouncements());
+        event.addAnnouncement("Announcement 1");
+        assertEquals(1, event.getNumberAnnouncements());
+        event.removeAnnouncement("Announcement 1");
+        assertEquals(0, event.getNumberAnnouncements());
     }
 }
