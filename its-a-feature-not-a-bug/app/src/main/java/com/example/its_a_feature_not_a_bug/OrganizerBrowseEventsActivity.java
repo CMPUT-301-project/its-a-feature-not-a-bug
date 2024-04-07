@@ -68,7 +68,6 @@ public class OrganizerBrowseEventsActivity extends AppCompatActivity implements 
             ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
             actionBar.setBackgroundDrawable(colorDrawable);
             actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "MY EVENTS" + "</b></font>"));
-
         }
 
         // Fetch build number
@@ -123,7 +122,7 @@ public class OrganizerBrowseEventsActivity extends AppCompatActivity implements 
                 startActivity(profileIntent);
             }
         });
-        
+
         eventList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

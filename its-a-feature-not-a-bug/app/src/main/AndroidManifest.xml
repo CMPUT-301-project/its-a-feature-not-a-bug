@@ -57,6 +57,9 @@
         <activity android:name=".AttendeeEventDetailsActivity">
         </activity>
 
+        <activity android:name=".OrganizerEventDetailsActivity">
+        </activity>
+
         <activity android:name=".AdminBrowseProfilesActivity"
             android:parentActivityName=".AdminDashboardActivity">
         </activity>
