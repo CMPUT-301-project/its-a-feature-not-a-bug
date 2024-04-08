@@ -66,8 +66,8 @@ public class OrganizerMapActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_organizer_map);
 
         // Initialize views

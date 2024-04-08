@@ -217,8 +217,11 @@ public class AttendeeBrowseEventsActivity extends AppCompatActivity implements A
                                         for (QueryDocumentSnapshot attendeeLocationDoc : attendeeLocationsSnapshot) {
                                             AttendeeLocationInformation locationInformation = attendeeLocationDoc.toObject(AttendeeLocationInformation.class);
                                             locationInformation.setTitle(attendeeLocationDoc.getId());
+                                            Double latitude = Double.valueOf(locationInformation.getLatitude() != null ? locationInformation.getLatitude().trim() : "0.0");
+                                            Double longitude = Double.valueOf(locationInformation.getLongitude() != null ? locationInformation.getLongitude().trim() : "0.0");
 
-                                            List<Double> gpsCoordinates = Arrays.asList(Double.valueOf(locationInformation.getLatitude()), Double.valueOf(locationInformation.getLongitude()));
+                                            List<Double> gpsCoordinates = Arrays.asList(latitude, longitude);
+
                                             idLocationMap.put(locationInformation.getTitle(), gpsCoordinates);
                                             Log.d("Location Information", "Even title" + event.getTitle() + "Attendee ID: " + locationInformation.getTitle()
                                             + " Coordinates = " + locationInformation.getLatitude() + " , " + locationInformation.getLongitude());
