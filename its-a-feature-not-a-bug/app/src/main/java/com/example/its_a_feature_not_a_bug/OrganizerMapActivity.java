@@ -187,8 +187,9 @@ public class OrganizerMapActivity extends AppCompatActivity {
                             locationInformation.setTitle(document.getId());
                             Map<String, Object> locationData = document.getData();
                             if (locationData != null && locationData.containsKey("latitude") && locationData.containsKey("longitude")) {
-                                double latitude = (double) locationData.get("latitude");
-                                double longitude = (double) locationData.get("longitude");
+                                Double latitude = Double.valueOf(locationInformation.getLatitude());
+                                Double longitude = Double.valueOf(locationInformation.getLongitude());
+
                                 List<Double> gpsCoordinates = Arrays.asList(latitude, longitude);
                                 attendeeLocations.put(locationInformation.getTitle(), gpsCoordinates);
                             }
