@@ -8,7 +8,9 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +58,9 @@ public class UserCheckInActivity extends AppCompatActivity {
     private Button declineButton;
     private Button confirmButton;
 
+    private Switch geolocationSwitch;
+    private boolean blockLocation = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +74,7 @@ public class UserCheckInActivity extends AppCompatActivity {
         eventDescription = findViewById(R.id.text_view_event_description);
         declineButton = findViewById(R.id.button_deny_checkin);
         confirmButton = findViewById(R.id.button_confirm_checkin);
+        geolocationSwitch = findViewById(R.id.switchGeolocation);
 
         // fetch event from intent extras
         Intent intent = getIntent();
@@ -117,7 +123,19 @@ public class UserCheckInActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 checkInUser();
-                storeUserLocation();
+                if (!blockLocation) {
+                    storeUserLocation();
+                }
+            }
+        });
+
+        // Set switch initial state
+        geolocationSwitch.setChecked(!blockLocation);
+        geolocationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // Update the value of blockLocation based on the switch state
+                blockLocation = !isChecked;
             }
         });
     }
