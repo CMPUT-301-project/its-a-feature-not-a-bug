@@ -71,7 +71,7 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
     private AnnouncementAdapter announcementAdapter;
     private ArrayList<Announcement> announcements;
 
-    // Current attributes
+     // Current attributes
     private Event currentEvent;
 
     private static final int EDIT_EVENT_REQUEST_CODE = 1;
