@@ -119,25 +119,29 @@
             android:id="@+id/button_attendees"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="11sp"
             android:text="Attendees"/>
 
         <Button
             android:id="@+id/button_qr_codes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="QR Codes" />
+            android:textSize="11sp"
+            android:text="QR" />
 
         <Button
             android:id="@+id/button_map"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="11sp"
             android:text="Map"/>
 
         <Button
             android:id="@+id/button_new_announcement"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Announcement"/>
+            android:textSize="11sp"
+            android:text="Announcement"/>
 
     </LinearLayout>
 

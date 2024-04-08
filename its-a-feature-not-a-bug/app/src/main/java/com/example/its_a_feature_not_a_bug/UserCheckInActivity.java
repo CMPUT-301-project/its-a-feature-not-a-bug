@@ -176,7 +176,7 @@ public class UserCheckInActivity extends AppCompatActivity {
         if (!checkedAttendees.contains(currentUser.getUserId())) {
             checkedAttendees.add(currentUser.getUserId());
         }
-        data.put("checkedAttendees", checkedAttendees);
+        data.put("checkedInAttendees", checkedAttendees);
 
         eventsRef.document(checkInEvent.getTitle()).set(data, SetOptions.merge())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {

@@ -69,7 +69,6 @@ public class AttendeesActivity extends AppCompatActivity {
             ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
             actionBar.setBackgroundDrawable(colorDrawable);
             actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "ATTENDEES" + "</b></font>"));
-
         }
 
         // connect to Firebase
@@ -86,7 +85,7 @@ public class AttendeesActivity extends AppCompatActivity {
         signedAttendeesRecyclerView.setAdapter(signedAttendeesAdapter);
 
         checkedAttendees = new ArrayList<>();
-        Log.d("Brayden", currentEvent.getNumberCheckIns() + " check-ins");
+        Log.d("Brayden", currentEvent.getCheckedInAttendees().toString());
         if (currentEvent.getNumberCheckIns() > 0) {
             populateCheckedAttendees();
         }
