@@ -160,7 +160,9 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // implement map functionality here
+                Intent mapEventIntent = new Intent(OrganizerEventDetailsActivity.this, OrganizerMapActivity.class);
+                mapEventIntent.putExtra("event", currentEvent);
+                startActivity(mapEventIntent);
             }
         });
     }
