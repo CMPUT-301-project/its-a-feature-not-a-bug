@@ -38,10 +38,6 @@ public class AdminBrowseEventsActivity extends AttendeeBrowseEventsActivity {
             actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "EVENTS" + "</b></font>"));
         }
 
-//        // Hide add event fab
-//        FloatingActionButton fabAddEvent = findViewById(R.id.fab_add_event);
-//        fabAddEvent.setVisibility(View.GONE);
-
         // Hide update profile fab
         Button profileButton = findViewById(R.id.button_profile);
         profileButton.setVisibility(View.GONE);
@@ -53,12 +49,13 @@ public class AdminBrowseEventsActivity extends AttendeeBrowseEventsActivity {
         // Hide events button
         Button eventsButton = findViewById(R.id.button_events);
         eventsButton.setVisibility(View.GONE);
-
     }
 
-
-
-
+    /**
+     * This implements the back button functionality for the action bar.
+     * @param item The menu item that was selected
+     * @return whether the back button was selected
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
