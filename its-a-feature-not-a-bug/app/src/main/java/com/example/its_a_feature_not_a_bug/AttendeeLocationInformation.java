@@ -1,11 +1,15 @@
 package com.example.its_a_feature_not_a_bug;
 
-public class AttendeeLocationInformation {
+import java.io.Serializable;
+
+public class AttendeeLocationInformation implements Serializable {
     private String latitude;
 
     private String longitude;
 
     private String title;
+
+    public AttendeeLocationInformation() {}
 
     public AttendeeLocationInformation(String latitude, String longitude) {
         this.latitude = latitude;
