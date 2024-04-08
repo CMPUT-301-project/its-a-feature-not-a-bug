@@ -1,4 +1,4 @@
-// This source code file implements the fuctionality for a user to browse profiles as an admin.
+// This source code file implements the functionality for a user to browse profiles as an admin.
 // No outstanding issues.
 
 package com.example.its_a_feature_not_a_bug;

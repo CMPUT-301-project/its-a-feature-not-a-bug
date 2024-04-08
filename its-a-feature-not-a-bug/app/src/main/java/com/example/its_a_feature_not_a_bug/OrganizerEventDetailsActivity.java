@@ -1,3 +1,7 @@
+// This source code file implements the functionality for an organizer to view the details
+// of one of their events.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.app.AlertDialog;
@@ -277,6 +281,9 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         eventDescription.setText(currentEvent.getDescription());
     }
 
+    /**
+     * This shows the dialog that gives QR code display options.
+     */
     public void showQROptionsDialog() {
         // hide QR code if displayed on the screen
         if (qrCodeImageView.getVisibility() == View.VISIBLE) {
@@ -313,6 +320,10 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This updates an event in Firebase.
+     * @param editedEvent the event to be updated
+     */
     private void updateEventInFirestore(Event editedEvent) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("events").document(editedEvent.getTitle()).set(editedEvent)
@@ -320,7 +331,11 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(this, "Error updating event.", Toast.LENGTH_SHORT).show());
     }
 
-
+    /**
+     * This implements the back button functionality for the action bar.
+     * @param item The menu item that was selected
+     * @return whether the back button was selected
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

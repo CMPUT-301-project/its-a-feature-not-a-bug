@@ -74,6 +74,10 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ProfileV
         });
     }
 
+    /**
+     * This returns the number of items in the list
+     * @return the number of items
+     */
     @Override
     public int getItemCount() {
         return profiles.size();

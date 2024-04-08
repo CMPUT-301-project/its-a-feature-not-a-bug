@@ -1,3 +1,6 @@
+// This source code file implements the functionality to edit an event.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.app.Activity;
@@ -31,6 +34,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
+/**
+ * This implements the activity that allows the user to edit an event.
+ */
 public class EditEventActivity extends AppCompatActivity {
     private Event currentEvent;
     private EditText editTextEventTitle, editTextEventDescription, editTextAttendeeLimit;
@@ -92,7 +98,11 @@ public class EditEventActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * This uploads an image to Firebase and listens for it's completion.
+     * @param imageUri the image Uri
+     * @param uploadListener the upload listener
+     */
     private void uploadImageToFirebaseStorage(Uri imageUri, OnImageUploadListener uploadListener) {
         String filename = "events/" + UUID.randomUUID().toString() + ".jpg";
         StorageReference fileRef = FirebaseStorage.getInstance().getReference(filename);
@@ -114,13 +124,17 @@ public class EditEventActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * This is the image upload listener.
+     */
     interface OnImageUploadListener {
         void onImageUploadSuccess(String imageURL);
     }
 
-
-
-
+    /**
+     * This populates the event view fields.
+     * @param event the event to be displayed
+     */
     private void populateFields(Event event) {
         editTextEventTitle.setText(event.getTitle());
         editTextEventDescription.setText(event.getDescription());
@@ -143,6 +157,9 @@ public class EditEventActivity extends AppCompatActivity {
         timePickerEventTime.setCurrentMinute(calendar.get(Calendar.MINUTE));
     }
 
+    /**
+     * Saves the event details once updated.
+     */
     private void saveEventDetails() {
         String title = editTextEventTitle.getText().toString();
         String description = editTextEventDescription.getText().toString();
@@ -173,6 +190,10 @@ public class EditEventActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * This updates the event data in Firebase.
+     * @param event the event to be updated
+     */
     private void updateEventInFirestore(Event event) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("events").document(event.getTitle())
@@ -183,6 +204,11 @@ public class EditEventActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(EditEventActivity.this, "Error updating event: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }
 
+    /**
+     * This implements the back button functionality for the action bar.
+     * @param item The menu item that was selected
+     * @return whether the back button was selected
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

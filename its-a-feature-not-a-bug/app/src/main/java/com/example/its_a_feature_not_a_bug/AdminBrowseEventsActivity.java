@@ -74,15 +74,6 @@ public class AdminBrowseEventsActivity extends AppCompatActivity {
         eventAdapter = new EventAdapter(this, eventDataList);
         eventList.setAdapter(eventAdapter);
 
-
-        // Handle event item clicks
-//        eventList.setOnItemClickListener((parent, view, position, id) -> {
-//            Event event = eventDataList.get(position); // Assuming eventDataList is your ArrayList<Event>
-//            Intent intent = new Intent(AdminBrowseEventsActivity.this, AdminEventDetailsActivity.class);
-//            intent.putExtra("event", event);
-//            startActivity(intent);
-//        });
-
         // Handle event item clicks
         eventList.setOnItemClickListener((parent, view, position, id) -> {
             Event event = eventDataList.get(position); // Assuming eventDataList is your ArrayList<Event>
@@ -94,9 +85,6 @@ public class AdminBrowseEventsActivity extends AppCompatActivity {
             intent.putExtra("event", event); // Passing the Event object to the next activity
             startActivity(intent);
         });
-
-
-
 
         eventsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -120,6 +108,11 @@ public class AdminBrowseEventsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This implements the back button functionality for the action bar.
+     * @param item The menu item that was selected
+     * @return whether the back button was selected
+     */
     @Override
     public boolean onOptionsItemSelected (MenuItem item){
         if (item.getItemId() == android.R.id.home) {

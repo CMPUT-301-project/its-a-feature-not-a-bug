@@ -39,7 +39,6 @@ import java.util.UUID;
 
 /**
  * This is the activity that creates a new user profile.
- * This activity extends AppCompatActivity to inherit its basic functionalities.
  */
 public class NewUserActivity extends AppCompatActivity {
     // Firebase attributes

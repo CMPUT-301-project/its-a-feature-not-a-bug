@@ -63,8 +63,6 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
     private RecyclerView announcementRecyclerView;
     private Button signUpButton;
 
-    // Adapter attributes
-//    private ArrayList<User> attendees;
     private AnnouncementAdapter announcementAdapter;
     private ArrayList<Announcement> announcements;
 
@@ -127,17 +125,6 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
             }
         });
 
-//        // get attendees
-//        attendees = new ArrayList<>();
-//        if (currentEvent.getSignedAttendees() != null && !currentEvent.getSignedAttendees().isEmpty()) {
-//            Log.d("Brayden", "got here");
-//            populateSignedAttendees();
-//        }
-//        attendeeAdapter = new AttendeeAdapter(attendees, currentEvent);
-//        attendeesRecyclerView = findViewById(R.id.attendeesRecyclerView);
-//        attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        attendeesRecyclerView.setAdapter(attendeeAdapter);
-
         announcements = new ArrayList<>();
         if (currentEvent.getAnnouncements() != null && !currentEvent.getAnnouncements().isEmpty()) {
             populateAnnouncements();
@@ -147,10 +134,7 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
         announcementRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         announcementRecyclerView.setAdapter(announcementAdapter);
 
-        // Initialize the ImageView and Button for QR code
-//        qrCodeImageView = findViewById(R.id.qrCodeImageView);
         // Initialize and set OnClickListener for the Show QR Code button
-
         signUpButton = findViewById(R.id.signup_button);
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,57 +155,6 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
             eventPoster.setImageResource(R.drawable.default_poster);
         }
     }
-
-//    private void showDeleteEventOptionsDialog() {
-//        final CharSequence[] options = {"Event Poster", "Event"};
-//
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setTitle("What would you like to delete?");
-//        builder.setItems(options, (dialog, which) -> {
-//            if (which == 0) {
-//                showConfirmDeleteEventPosterDialog();
-//            } else if (which == 1) {
-//                showConfirmDeleteEventDialog();
-//            }
-//        });
-//        builder.show();
-//    }
-//
-//    private void showConfirmDeleteEventPosterDialog() {
-//        new AlertDialog.Builder(this)
-//                .setTitle("Delete Event Poster")
-//                .setMessage("Are you sure you want to delete this event poster?")
-//                .setPositiveButton("OK", (dialog, which) -> removeEventPoster())
-//                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-//                .show();
-//    }
-//
-//    private void showConfirmDeleteEventDialog() {
-//        new AlertDialog.Builder(this)
-//                .setTitle("Delete Event")
-//                .setMessage("Are you sure you want to delete this event?")
-//                .setPositiveButton("OK", (dialog, which) -> deleteEvent())
-//                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-//                .show();
-//    }
-
-//    private void removeEventPoster() {
-//        ImageView eventPosterImageView = findViewById(R.id.eventImage);
-//        eventPosterImageView.setImageResource(R.drawable.default_poster);
-//
-//        // Remove the profile picture from Firebase Storage
-//        if (currentEvent.getImageId() != null && !currentEvent.getImageId().isEmpty()) {
-//            StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(currentEvent.getImageId());
-//            photoRef.delete().addOnSuccessListener(aVoid -> {
-//                Log.d("EventDetailsActivity", "Event poster deleted successfully.");
-//                // Update the event details in Firestore to reflect the removal of the event poster.
-//                db.collection("events").document(currentEvent.getTitle())
-//                        .update("imageId", null)
-//                        .addOnSuccessListener(aVoid1 -> Log.d("EventDetailsActivity", "Event details updated."))
-//                        .addOnFailureListener(e -> Log.e("EventDetailsActivity", "Error updating event details.", e));
-//            }).addOnFailureListener(e -> Log.e("EventDetailsActivity", "Error deleting event poster.", e));
-//        }
-//    }
 
     /**
      * This displays the information of the event.
@@ -300,26 +233,9 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
         }
     }
 
-//    public void populateSignedAttendees() {
-//        ArrayList<String> attendeesData = currentEvent.getSignedAttendees();
-//        usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    for (QueryDocumentSnapshot document : task.getResult()) {
-//                        User user = document.toObject(User.class);
-//                        if (attendeesData.contains(user.getUserId())) {
-//                            attendees.add(user);
-//                        }
-//                    }
-//                    attendeeAdapter.notifyDataSetChanged();
-//                } else {
-//                    Log.d("Firestore", "Error getting documents: ", task.getException());
-//                }
-//            }
-//        });
-//    }
-
+    /**
+     * This populates the list of announcements.
+     */
     public void populateAnnouncements() {
         ArrayList<String> announcementsData = currentEvent.getAnnouncements();
         announcementsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -340,6 +256,11 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This implements the back button functionality for the action bar.
+     * @param item The menu item that was selected
+     * @return whether the back button was selected
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

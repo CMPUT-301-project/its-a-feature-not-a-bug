@@ -1,3 +1,6 @@
+// This source code file implements the functionality for a map to be displayed.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.content.Context;
@@ -43,6 +46,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This implements the organizer map.
+ */
 public class OrganizerMapActivity extends AppCompatActivity {
     private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
     private MapView mapView;
@@ -145,6 +151,10 @@ public class OrganizerMapActivity extends AppCompatActivity {
         mapView.onResume();
     }
 
+    /**
+     * This requests location permissions if needed.
+     * @param permissions the permissions to be granted.
+     */
     private void requestPermissionsIfNecessary(String[] permissions) {
         ArrayList<String> permissionsToRequest = new ArrayList<>();
         for (String permission : permissions) {
@@ -162,6 +172,9 @@ public class OrganizerMapActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This populates the view of checked-in attendees.
+     */
     private void populateCheckedAttendees() {
         ArrayList<String> attendeesData = currentEvent.getCheckedInAttendees();
         usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -184,6 +197,9 @@ public class OrganizerMapActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This populates the list of attendee locations.
+     */
     private void populateAttendeeLocations() {
         locationsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -213,6 +229,9 @@ public class OrganizerMapActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This populates the map with markers.
+     */
     private void populateMapWithMarkers() {
         final ArrayList<OverlayItem> items = new ArrayList<>();
 
@@ -257,6 +276,11 @@ public class OrganizerMapActivity extends AppCompatActivity {
         mapView.getOverlays().add(mapOverlay);
     }
 
+    /**
+     * This returns the phone number of the selected user.
+     * @param fullName the user's name
+     * @return the phone number
+     */
     private String getUserPhoneNumber(String fullName) {
         for (User user : checkedAttendees) {
             if (user.getFullName().equals(fullName)) {
@@ -266,6 +290,9 @@ public class OrganizerMapActivity extends AppCompatActivity {
         return "";
     }
 
+    /**
+     * This centers the map location.
+     */
     private void centerMapLocation() {
         // Check for location permissions again before getting last known location
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)

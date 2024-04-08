@@ -1,4 +1,8 @@
+// This source code file implements the functionality of displaying signed and checked attendees.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
+
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -26,7 +30,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-
+/**
+ * This implements the activity that display attendees signed or checked into an event.
+ */
 public class AttendeesActivity extends AppCompatActivity {
     // Firebase attributes
     private FirebaseFirestore db;
@@ -98,6 +104,9 @@ public class AttendeesActivity extends AppCompatActivity {
         checkedAttendeesHeader.setText(currentEvent.getNumberCheckIns() + " Checked-in Attendees");
     }
 
+    /**
+     * This populates the view of signed attendees.
+     */
     private void populateSignedAttendees() {
         ArrayList<String> attendeesData = currentEvent.getSignedAttendees();
         usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -118,6 +127,9 @@ public class AttendeesActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This populates the view of checked-in attendees.
+     */
     private void populateCheckedAttendees() {
         ArrayList<String> attendeesData = currentEvent.getCheckedInAttendees();
         usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -139,6 +151,11 @@ public class AttendeesActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This implements the back button functionality for the action bar.
+     * @param item The menu item that was selected
+     * @return whether the back button was selected
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
