@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -20,7 +21,6 @@ import java.util.ArrayList;
 public class MyEventsActivity extends AppCompatActivity {
 
     private ListView myEventsListView;
-    private Button backButton;
     private TextView noEventsTextView;
 
     @Override
@@ -29,7 +29,6 @@ public class MyEventsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_events);
 
         myEventsListView = findViewById(R.id.list_view_my_events);
-        backButton = findViewById(R.id.back_button);
         noEventsTextView = findViewById(R.id.text_view_no_events);
 
         // Enable the action bar and display the back button
@@ -68,12 +67,15 @@ public class MyEventsActivity extends AppCompatActivity {
             });
         }
 
-        // Set click listener for back button
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

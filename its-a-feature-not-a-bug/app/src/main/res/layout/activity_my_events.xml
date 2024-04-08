@@ -3,17 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/text_view_my_events"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="My Events"
-        android:textSize="18sp"
-        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/text_view_no_events"
@@ -27,20 +16,9 @@
 
     <ListView
         android:id="@+id/list_view_my_events"
-        android:layout_above="@id/back_button"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/text_view_my_events"
         android:visibility="visible"/>
 
-    <Button
-        android:id="@+id/back_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Back"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        />
 
 </RelativeLayout>
