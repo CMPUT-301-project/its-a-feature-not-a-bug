@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -54,7 +55,7 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
     private Button attendeesButton;
     private Button mapButton;
     private Button qrCodeButton;
-    private ImageView deleteEventButton;
+//    private ImageView deleteEventButton;
     private ImageView editEventButton;
     private ImageView eventPoster;
     private TextView eventTitle;
@@ -72,6 +73,9 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
     // Current attributes
     private Event currentEvent;
 
+    private static final int EDIT_EVENT_REQUEST_CODE = 1;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +88,7 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         attendeesButton = findViewById(R.id.button_attendees);
         mapButton = findViewById(R.id.button_map);
         qrCodeButton = findViewById(R.id.button_qr_codes);
-        deleteEventButton = findViewById(R.id.deleteEventButton);
+//        deleteEventButton = findViewById(R.id.deleteEventButton);
         editEventButton = findViewById(R.id.editEventButton);
         eventPoster = findViewById(R.id.eventImage);
         eventTitle = findViewById(R.id.eventTitle);
@@ -125,21 +129,13 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         populateViews();
 
         // Set click listeners
-        editEventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent editEventIntent = new Intent(OrganizerEventDetailsActivity.this, EditEventActivity.class);
-                editEventIntent.putExtra("event", currentEvent);
-                startActivity(editEventIntent);
-            }
+        editEventButton.setOnClickListener(v -> {
+            Intent editEventIntent = new Intent(OrganizerEventDetailsActivity.this, EditEventActivity.class);
+            editEventIntent.putExtra("event", currentEvent);
+            startActivityForResult(editEventIntent, EDIT_EVENT_REQUEST_CODE); // EDIT_EVENT_REQUEST_CODE is an integer constant that identifies the request
         });
 
-        deleteEventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteEvent();
-            }
-        });
+
 
         attendeesButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -237,42 +233,6 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         eventDescription.setText(currentEvent.getDescription());
     }
 
-    /**
-     * This deletes the current event.
-     */
-    private void deleteEvent() {
-        // delete image if event has one
-        if (currentEvent.getImageId() != null) {
-            String imageToDelete = currentEvent.getImageId();
-            storageRef = storage.getReferenceFromUrl(imageToDelete);
-            storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void unused) {
-                    Log.d("Firestore", "Image Deleted");
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e("Firestore", "Error deleting image", e);
-                }
-            });
-        }
-
-        // delete database entry
-        eventsRef.document(currentEvent.getTitle()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Toast.makeText(OrganizerEventDetailsActivity.this, "Event deleted successfully", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(OrganizerEventDetailsActivity.this, "Error deleting event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     public void showQROptionsDialog() {
         // hide QR code if displayed on the screen
         if (qrCodeImageView.getVisibility() == View.VISIBLE) {
@@ -300,5 +260,36 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
             }
         });
         builder.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EDIT_EVENT_REQUEST_CODE && resultCode == RESULT_OK) {
+            Event editedEvent = (Event) data.getSerializableExtra("editedEvent");
+            if (editedEvent != null) {
+                updateEventInFirestore(editedEvent);
+            }
+        }
+    }
+
+    private void updateEventInFirestore(Event editedEvent) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        // Assuming 'events' is your collection and you're using event title as the document ID
+        // This is just an example, adjust according to your actual document structure and identifier
+        db.collection("events").document(editedEvent.getTitle()).set(editedEvent)
+                .addOnSuccessListener(unused -> Toast.makeText(this, "Event updated successfully.", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(this, "Error updating event.", Toast.LENGTH_SHORT).show());
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -1,16 +1,10 @@
-// This source code file implements the functionality for a user to view event details.
-// No outstanding issues.
-
 package com.example.its_a_feature_not_a_bug;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-
 import android.graphics.Bitmap;
-
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Html;
@@ -24,10 +18,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -42,17 +35,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.text.SimpleDateFormat;
 
-
-/**
- * An activity that allows users to view the details of an event.
- * This activity extends AppCompatActivity to inherit its basic functionalities.
- */
-public class AttendeeEventDetailsActivity extends AppCompatActivity {
-    // Firebase attributes
+public class AdminEventDetailsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
     private CollectionReference usersRef;
@@ -83,6 +70,10 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
     // Local device attributes
     private String androidId;
 
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +81,9 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-        // Enable the action bar and display the back button
+
+
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -102,13 +95,19 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
         }
 
         ImageView deleteEventButton = findViewById(R.id.deleteEventButton);
-//        deleteEventButton.setOnClickListener(v -> showDeleteEventOptionsDialog());
+        deleteEventButton.setOnClickListener(v -> showDeleteEventOptionsDialog());
 
         // System.out.print("reached this point");
         androidId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         Intent intent = getIntent();
         currentEvent = (Event) intent.getSerializableExtra("event");
+
+        // Extract the event object from the intent
+        Event currentEvent = (Event) getIntent().getSerializableExtra("event");
+        if (currentEvent != null) {
+            displayInfo();
+        }
 
         eventsRef = db.collection("events");
         usersRef = db.collection("users");
@@ -201,56 +200,93 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
 
     }
 
-//    private void showDeleteEventOptionsDialog() {
-//        final CharSequence[] options = {"Event Poster", "Event"};
-//
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setTitle("What would you like to delete?");
-//        builder.setItems(options, (dialog, which) -> {
-//            if (which == 0) {
-//                showConfirmDeleteEventPosterDialog();
-//            } else if (which == 1) {
-//                showConfirmDeleteEventDialog();
-//            }
-//        });
-//        builder.show();
-//    }
-//
-//    private void showConfirmDeleteEventPosterDialog() {
-//        new AlertDialog.Builder(this)
-//                .setTitle("Delete Event Poster")
-//                .setMessage("Are you sure you want to delete this event poster?")
-//                .setPositiveButton("OK", (dialog, which) -> removeEventPoster())
-//                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-//                .show();
-//    }
-//
-//    private void showConfirmDeleteEventDialog() {
-//        new AlertDialog.Builder(this)
-//                .setTitle("Delete Event")
-//                .setMessage("Are you sure you want to delete this event?")
-//                .setPositiveButton("OK", (dialog, which) -> deleteEvent())
-//                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-//                .show();
-//    }
+    private void showDeleteEventOptionsDialog() {
+        final CharSequence[] options = {"Event Poster", "Event"};
 
-//    private void removeEventPoster() {
-//        ImageView eventPosterImageView = findViewById(R.id.eventImage);
-//        eventPosterImageView.setImageResource(R.drawable.default_poster);
-//
-//        // Remove the profile picture from Firebase Storage
-//        if (currentEvent.getImageId() != null && !currentEvent.getImageId().isEmpty()) {
-//            StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(currentEvent.getImageId());
-//            photoRef.delete().addOnSuccessListener(aVoid -> {
-//                Log.d("EventDetailsActivity", "Event poster deleted successfully.");
-//                // Update the event details in Firestore to reflect the removal of the event poster.
-//                db.collection("events").document(currentEvent.getTitle())
-//                        .update("imageId", null)
-//                        .addOnSuccessListener(aVoid1 -> Log.d("EventDetailsActivity", "Event details updated."))
-//                        .addOnFailureListener(e -> Log.e("EventDetailsActivity", "Error updating event details.", e));
-//            }).addOnFailureListener(e -> Log.e("EventDetailsActivity", "Error deleting event poster.", e));
-//        }
-//    }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("What would you like to delete?");
+        builder.setItems(options, (dialog, which) -> {
+            if (which == 0) {
+                showConfirmDeleteEventPosterDialog();
+            } else if (which == 1) {
+                showConfirmDeleteEventDialog();
+            }
+        });
+        builder.show();
+    }
+
+    private void showConfirmDeleteEventPosterDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Event Poster")
+                .setMessage("Are you sure you want to delete this event poster?")
+                .setPositiveButton("OK", (dialog, which) -> removeEventPoster())
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    private void showConfirmDeleteEventDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Event")
+                .setMessage("Are you sure you want to delete this event?")
+                .setPositiveButton("OK", (dialog, which) -> deleteEvent())
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+
+    private void removeEventPoster() {
+        ImageView eventPosterImageView = findViewById(R.id.eventImage);
+        eventPosterImageView.setImageResource(R.drawable.default_poster);
+
+        // Remove the profile picture from Firebase Storage
+        if (currentEvent.getImageId() != null && !currentEvent.getImageId().isEmpty()) {
+            StorageReference photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(currentEvent.getImageId());
+            photoRef.delete().addOnSuccessListener(aVoid -> {
+                Log.d("AdminEventDetailsActivity", "Event poster deleted successfully.");
+                // Update the event details in Firestore to reflect the removal of the event poster.
+                db.collection("events").document(currentEvent.getTitle())
+                        .update("imageId", null)
+                        .addOnSuccessListener(aVoid1 -> Log.d("AdminEventDetailsActivity", "Event details updated."))
+                        .addOnFailureListener(e -> Log.e("AdminEventDetailsActivity", "Error updating event details.", e));
+            }).addOnFailureListener(e -> Log.e("AdminEventDetailsActivity", "Error deleting event poster.", e));
+        }
+    }
+
+
+    /**
+     * This deletes the current event.
+     */
+    private void deleteEvent() {
+        // delete image if event has one
+        if (currentEvent.getImageId() != null) {
+            String imageToDelete = currentEvent.getImageId();
+            storageRef = storage.getReferenceFromUrl(imageToDelete);
+            storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Log.d("Firestore", "Image Deleted");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e("Firestore", "Error deleting image", e);
+                }
+            });
+        }
+
+        // delete database entry
+        eventsRef.document(currentEvent.getTitle()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Toast.makeText(AdminEventDetailsActivity.this, "Event deleted successfully", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(AdminEventDetailsActivity.this, "Error deleting event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     /**
      * This displays the information of the event.
@@ -317,7 +353,7 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
 //                                    currentUser.signUpForEvent(event);
 
                                     // Successfully updated the list of attendees and attendee count in the database
-                                    Toast.makeText(AttendeeEventDetailsActivity.this, "Signed up for event", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AdminEventDetailsActivity.this, "Signed up for event", Toast.LENGTH_SHORT).show();
                                     // Notify the adapter of the data change
                                     attendeeAdapter.notifyDataSetChanged();
                                 }
@@ -326,15 +362,15 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     // Failed to update the list of attendees and attendee count in the database
-                                    Toast.makeText(AttendeeEventDetailsActivity.this, "Failed to sign up for event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AdminEventDetailsActivity.this, "Failed to sign up for event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
                 } else {
-                    Toast.makeText(AttendeeEventDetailsActivity.this, "Already signed up for this event", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AdminEventDetailsActivity.this, "Already signed up for this event", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 // Attendee limit reached
-                Toast.makeText(AttendeeEventDetailsActivity.this, "Attendee limit reached for this event", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AdminEventDetailsActivity.this, "Attendee limit reached for this event", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -417,4 +453,5 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }
