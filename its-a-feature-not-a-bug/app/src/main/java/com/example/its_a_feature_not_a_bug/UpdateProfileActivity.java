@@ -65,7 +65,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
     private EditText editTextPhoneNumber;
     private Button buttonSubmit;
     private Button buttonRemovePicture;
-    private Switch switchGeolocation; // Add Switch reference
     private User currentUser;
     private String androidId;
 
@@ -96,7 +95,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
         editTextFullName = findViewById(R.id.editTextFullName);
         buttonSubmit = findViewById(R.id.buttonSubmit);
         buttonRemovePicture = findViewById(R.id.button_remove_profile_picture);
-        switchGeolocation = findViewById(R.id.switchGeolocation); // Initialize Switch reference
 
         // Database initialization
         db = FirebaseFirestore.getInstance();
@@ -147,14 +145,12 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 String email = editTextEmail.getText().toString();
                 String phoneNumber = editTextPhoneNumber.getText().toString();
                 String fullName = editTextFullName.getText().toString();
-                boolean geolocationDisabled = switchGeolocation.isChecked(); // Get Switch state
-
                 // create new user
                 User newUser = new User();
                 newUser.setFullName(fullName);
                 newUser.setEmail(email);
                 newUser.setPhoneNumber(phoneNumber);
-                newUser.setGeoLocationDisabled(geolocationDisabled);
+                newUser.setGeoLocationDisabled(Boolean.FALSE);
 
                 if (selectedImageUri != null) {
                     uploadImageToFirebaseStorage(newUser, new OnImageUploadListener() {
@@ -260,9 +256,6 @@ public class UpdateProfileActivity extends AppCompatActivity {
                     .load(currentUser.getImageId())
                     .centerCrop()
                     .into(profilePicture);
-        }
-        if (currentUser.isGeoLocationDisabled()) {
-            switchGeolocation.setChecked(true);
         }
 
         Log.d("Firestore", "Fetched user data");
