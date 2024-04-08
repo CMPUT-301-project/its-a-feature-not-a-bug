@@ -104,6 +104,8 @@ public class OrganizerMapActivity extends AppCompatActivity {
         checkedAttendees = new ArrayList<>();
         attendeeLocations = new HashMap<>();
 
+        Log.v("NumAttendees", "num of attendees: " + String.valueOf(currentEvent.getNumberCheckIns()));
+
         //only populate map if attendees have checked in
         if (currentEvent.getNumberCheckIns() > 0) {
             populateCheckedAttendees();
@@ -213,7 +215,7 @@ public class OrganizerMapActivity extends AppCompatActivity {
                 List<Double> coordinates = attendeeLocations.get(user.getUserId());
                 double latitude = coordinates.get(0);
                 double longitude = coordinates.get(1);
-                Log.d("Populating markers for each attendee", "attendee: " + user.getFullName());
+                Log.v("Populating markers for each attendee", "attendee: " + user.getFullName());
 
                 // Create OverlayItem with user's information
                 OverlayItem overlayItem = new OverlayItem(user.getFullName(), user.getEmail(),
