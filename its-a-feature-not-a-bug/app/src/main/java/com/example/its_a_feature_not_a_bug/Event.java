@@ -43,14 +43,13 @@ public class Event implements Serializable {
      * @param description a short description describing the event
      * @param attendeeLimit the maximum number of attendees
      */
-    public Event(String imageId, String title, String host, Date date, String description, Integer attendeeLimit, Integer attendeeCount) {
+    public Event(String imageId, String title, String host, Date date, String description, Integer attendeeLimit) {
         this.imageId = imageId;
         this.title = title;
         this.host = host;
         this.date = date;
         this.description = description;
         this.attendeeLimit = attendeeLimit;
-        this.attendeeCount = attendeeCount;
     }
 
     public Event(String imageId, String title, String host, Date date, String description, Integer attendeeLimit, ArrayList<String> checkedInAttendees) {
