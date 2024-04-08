@@ -84,6 +84,8 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
         eventDate = findViewById(R.id.eventDate);
         eventDescription = findViewById(R.id.eventDescription);
 
+        storage = FirebaseStorage.getInstance();
+
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
         usersRef = db.collection("users");
