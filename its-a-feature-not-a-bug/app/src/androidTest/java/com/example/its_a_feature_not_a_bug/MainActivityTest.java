@@ -71,6 +71,7 @@ public class MainActivityTest {
         onView(withId(R.id.deleteEventButton)).perform(click());
         onView(withText("CRYING")).check(doesNotExist());
     }
+    @Test
     public void testUpdateProfile(){
         // Start Activity
         ActivityScenario.launch(MainActivity.class);
@@ -80,14 +81,12 @@ public class MainActivityTest {
         onView(withId(R.id.button_profile)).perform(click());
         // Type "Jingyang" in the editTest
         onView(withId(R.id.editTextFullName)).perform(ViewActions.typeText("Jingyang"));
+        Espresso.closeSoftKeyboard();
         // Press submit button buttonSubmit
         onView(withId(R.id.buttonSubmit)).perform(click());
         onView(withText("Jingyang")).check(matches(isDisplayed()));
-
-
-
-
     }
+
 }
 
 
