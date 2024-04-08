@@ -51,6 +51,16 @@ public class Event implements Serializable {
         this.attendeeLimit = attendeeLimit;
     }
 
+    public Event(String imageId, String title, String host, Date date, String description, Integer attendeeLimit, ArrayList<String> checkedInAttendees) {
+        this.imageId = imageId;
+        this.title = title;
+        this.host = host;
+        this.date = date;
+        this.description = description;
+        this.attendeeLimit = attendeeLimit;
+        this.checkedInAttendees = checkedInAttendees;
+    }
+
     // Getters and Setters
     /**
      * This returns the Firebase Storage URL of the event image.

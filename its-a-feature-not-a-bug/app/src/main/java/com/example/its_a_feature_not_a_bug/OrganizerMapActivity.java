@@ -265,8 +265,10 @@ public class OrganizerMapActivity extends AppCompatActivity {
                             if (task.isSuccessful() && task.getResult() != null) {
                                 // Get the last known location
                                 Location lastLocation = task.getResult();
+                                Log.d("OrganizerMapActivity", "got location");
                                 // Create a GeoPoint object with the obtained coordinates
                                 GeoPoint userLocation = new GeoPoint(lastLocation.getLatitude(), lastLocation.getLongitude());
+                                mapController.setZoom(5.); //zoom in a bit
                                 // Set the center of the map to the user's location
                                 mapController.setCenter(userLocation);
                             }
