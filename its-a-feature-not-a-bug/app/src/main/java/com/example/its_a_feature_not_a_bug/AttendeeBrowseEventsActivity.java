@@ -3,6 +3,7 @@
 
 package com.example.its_a_feature_not_a_bug;
 
+
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -23,8 +24,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -35,7 +39,9 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -108,7 +114,6 @@ public class AttendeeBrowseEventsActivity extends AppCompatActivity implements A
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
-//            actionBar.setTitle("EVENTS"); // Set the title for the action bar
             ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
             actionBar.setBackgroundDrawable(colorDrawable);
             actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "EVENTS" + "</b></font>"));
@@ -196,6 +201,40 @@ public class AttendeeBrowseEventsActivity extends AppCompatActivity implements A
                         Event event = doc.toObject(Event.class);
                         event.setTitle(doc.getId());
                         Log.d("Firestore", String.format("Event(%s, %s) fetched", event.getTitle(), event.getHost()));
+
+                        // Get reference to AttendeeLocations subcollection
+                        CollectionReference attendeeLocationsRef = doc.getReference().collection("Attendee Locations");
+
+                        // Retrieve data asynchronously
+                        attendeeLocationsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    QuerySnapshot attendeeLocationsSnapshot = task.getResult();
+                                    if (attendeeLocationsSnapshot != null && !attendeeLocationsSnapshot.isEmpty()) {
+                                        Map<String, List<Double>> idLocationMap = new HashMap<>();
+                                        for (QueryDocumentSnapshot attendeeLocationDoc : attendeeLocationsSnapshot) {
+                                            AttendeeLocationInformation locationInformation = attendeeLocationDoc.toObject(AttendeeLocationInformation.class);
+                                            locationInformation.setTitle(attendeeLocationDoc.getId());
+                                            Double latitude = Double.valueOf(locationInformation.getLatitude() != null ? locationInformation.getLatitude().trim() : "0.0");
+                                            Double longitude = Double.valueOf(locationInformation.getLongitude() != null ? locationInformation.getLongitude().trim() : "0.0");
+
+                                            List<Double> gpsCoordinates = Arrays.asList(latitude, longitude);
+
+                                            idLocationMap.put(locationInformation.getTitle(), gpsCoordinates);
+                                            Log.d("Location Information", "Even title" + event.getTitle() + "Attendee ID: " + locationInformation.getTitle()
+                                            + " Coordinates = " + locationInformation.getLatitude() + " , " + locationInformation.getLongitude());
+                                        }
+                                        event.setAttendeeLocations(idLocationMap);
+                                        Log.d("Firebase", "attendee locations added");
+                                    } else {
+                                        Log.d("", "AttendeeLocations subcollection is empty for event: " + event.getTitle());
+                                    }
+                                } else {
+                                    Log.e("Firestore", "Error getting attendee locations: ", task.getException());
+                                }
+                            }
+                        });
                         eventDataList.add(event);
                     }
                     eventAdapter.notifyDataSetChanged();
@@ -222,11 +261,6 @@ public class AttendeeBrowseEventsActivity extends AppCompatActivity implements A
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // This ID represents the Home or Up button. In the case of this
-                // activity, the Up button is shown. Use NavUtils to allow users
-                // to navigate up one level in the application structure. For
-                // more details, see the Navigation pattern on Android Design:
-                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
                 onBackPressed();
                 return true;
         }

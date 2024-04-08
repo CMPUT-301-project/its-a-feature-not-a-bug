@@ -57,6 +57,15 @@
         android:textSize="28sp"
         android:textStyle="bold" />
 
+    <Switch
+        android:id="@+id/switchGeolocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Disable Geolocation"
+        android:layout_below="@id/text_view_check_in"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"/>
+
     <Button
         android:id="@+id/button_deny_checkin"
         android:layout_width="wrap_content"

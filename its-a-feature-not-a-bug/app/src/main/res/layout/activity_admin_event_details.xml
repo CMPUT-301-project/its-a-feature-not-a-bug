@@ -25,6 +25,16 @@
                     android:layout_height="250dp"
                     android:scaleType="centerCrop" />
 
+                <ImageView
+                    android:id="@+id/deleteEventButton"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/garbage_can"
+                    android:layout_gravity="end|top"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:clickable="true"
+                    android:focusable="true" />
             </FrameLayout>
 
             <TextView
@@ -57,56 +67,23 @@
                 android:textSize="16sp"
                 android:layout_marginTop="8dp" />
 
+
             <TextView
-                android:id="@+id/text_view_event_announcement_header"
+                android:id="@+id/text_view_event_signed_attendees_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:layout_marginTop="8dp"
-                android:textAlignment="center"
-                android:text="Announcements"/>
+                android:text="Signed Attendees"/>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/announcementsRecyclerView"
+                android:id="@+id/attendeesRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                app:layout_constraintTop_toBottomOf="@+id/attendeesRecyclerView"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-<!--            <TextView-->
-<!--                android:id="@+id/text_view_event_signed_attendees_header"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:textSize="20sp"-->
-<!--                android:layout_marginTop="8dp"-->
-<!--                android:text="Signed Attendees"/>-->
-
-<!--            <androidx.recyclerview.widget.RecyclerView-->
-<!--                android:id="@+id/attendeesRecyclerView"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="16dp"/>-->
-
-            <ImageView
-                android:id="@+id/qrCodeImageView"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:visibility="gone"
-                android:layout_centerInParent="true"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"/>
+
+
 
         </LinearLayout>
     </ScrollView>
-
-    <Button
-        android:id="@+id/signup_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sign Up"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"/>
-
 </RelativeLayout>

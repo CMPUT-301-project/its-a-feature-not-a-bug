@@ -64,15 +64,12 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
     private TextView eventHost;
     private TextView eventDescription;
     private ImageView eventPoster;
-    private RecyclerView attendeesRecyclerView;
+//    private RecyclerView attendeesRecyclerView;
     private RecyclerView announcementRecyclerView;
     private Button signUpButton;
-    private Button organizerMenuButton;
-    private ImageView qrCodeImageView;
 
     // Adapter attributes
-    private AttendeeAdapter attendeeAdapter;
-    private ArrayList<User> attendees;
+//    private ArrayList<User> attendees;
     private AnnouncementAdapter announcementAdapter;
     private ArrayList<Announcement> announcements;
 
@@ -101,9 +98,6 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
 
         }
 
-        ImageView deleteEventButton = findViewById(R.id.deleteEventButton);
-//        deleteEventButton.setOnClickListener(v -> showDeleteEventOptionsDialog());
-
         // System.out.print("reached this point");
         androidId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -119,7 +113,6 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
         eventHost = findViewById(R.id.eventHost);
         eventDate = findViewById(R.id.eventDate);
         eventDescription = findViewById(R.id.eventDescription);
-        organizerMenuButton = findViewById(R.id.button_organizer_menu);
 
         // get user data from database
         usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -129,9 +122,6 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         if (androidId.equals(document.getId())) {
                             currentUser = document.toObject(User.class);
-                            if (!currentUser.getUserId().equals(currentEvent.getHost())) {
-                                organizerMenuButton.setVisibility(View.GONE);
-                            }
                             Log.d("Brayden", "currentUser: " + currentUser.getUserId());
                             break;
                         }
@@ -142,25 +132,16 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
             }
         });
 
-        // get attendees
-        attendees = new ArrayList<>();
-        if (currentEvent.getSignedAttendees() != null && !currentEvent.getSignedAttendees().isEmpty()) {
-            Log.d("Brayden", "got here");
-            populateSignedAttendees();
-        }
-        attendeeAdapter = new AttendeeAdapter(attendees, currentEvent);
-        attendeesRecyclerView = findViewById(R.id.attendeesRecyclerView);
-        attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        attendeesRecyclerView.setAdapter(attendeeAdapter);
-
-        organizerMenuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent organizerMenuIntent = new Intent(getApplicationContext(), OrganizerMenuActivity.class);
-                organizerMenuIntent.putExtra("event", currentEvent);
-                startActivity(organizerMenuIntent);
-            }
-        });
+//        // get attendees
+//        attendees = new ArrayList<>();
+//        if (currentEvent.getSignedAttendees() != null && !currentEvent.getSignedAttendees().isEmpty()) {
+//            Log.d("Brayden", "got here");
+//            populateSignedAttendees();
+//        }
+//        attendeeAdapter = new AttendeeAdapter(attendees, currentEvent);
+//        attendeesRecyclerView = findViewById(R.id.attendeesRecyclerView);
+//        attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        attendeesRecyclerView.setAdapter(attendeeAdapter);
 
         announcements = new ArrayList<>();
         if (currentEvent.getAnnouncements() != null && !currentEvent.getAnnouncements().isEmpty()) {
@@ -172,12 +153,8 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
         announcementRecyclerView.setAdapter(announcementAdapter);
 
         // Initialize the ImageView and Button for QR code
-        qrCodeImageView = findViewById(R.id.qrCodeImageView);
+//        qrCodeImageView = findViewById(R.id.qrCodeImageView);
         // Initialize and set OnClickListener for the Show QR Code button
-        Button btnShowQRCode = findViewById(R.id.btnShowQRCode);
-
-        btnShowQRCode.setOnClickListener(v -> showQROptionsDialog());
-
 
         signUpButton = findViewById(R.id.signup_button);
         signUpButton.setOnClickListener(new View.OnClickListener() {
@@ -198,7 +175,6 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
             // Set a placeholder image if no image is available
             eventPoster.setImageResource(R.drawable.default_poster);
         }
-
     }
 
 //    private void showDeleteEventOptionsDialog() {
@@ -298,19 +274,11 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
         if (currentUser != null) {
             if (currentEvent.getAttendeeLimit() == null || currentEvent.getNumberSignedAttendees() < currentEvent.getAttendeeLimit()) {
                 if (!currentEvent.getSignedAttendees().contains(currentUser.getUserId())) {
-                    // Add the current user's name to the list of attendees
-                    attendees.add(currentUser);
-
-                    // Set the updated list of attendees to the event
-                    ArrayList<String> formattedAttendees = new ArrayList<>();
-                    for (User user : attendees) {
-                        formattedAttendees.add(user.getUserId());
-                    }
-                    currentEvent.setSignedAttendees(formattedAttendees);
+                    currentEvent.addSignedAttendee(currentUser.getUserId());
 
                     // Update the Firestore document for the event with the names of attendees and attendee count
                     eventsRef.document(currentEvent.getTitle())
-                            .update("signedAttendees", formattedAttendees)
+                            .update("signedAttendees", currentEvent.getSignedAttendees())
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -318,8 +286,6 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
 
                                     // Successfully updated the list of attendees and attendee count in the database
                                     Toast.makeText(AttendeeEventDetailsActivity.this, "Signed up for event", Toast.LENGTH_SHORT).show();
-                                    // Notify the adapter of the data change
-                                    attendeeAdapter.notifyDataSetChanged();
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
@@ -339,54 +305,25 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public void showQROptionsDialog() {
-        // hide QR code if displayed on the screen
-        if (qrCodeImageView.getVisibility() == View.VISIBLE) {
-            qrCodeImageView.setVisibility(View.GONE);
-            return;
-        }
-
-        final CharSequence[] options = {"Promotional QR", "Check-in QR"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Which QR Code would you like to see?");
-        builder.setItems(options, (dialog, which) -> {
-            if (which == 0) {
-                // "Promotional QR" was clicked
-                // Generate and show the QR code if it's not already visible
-                Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(currentEvent, 200); // Adjust size as needed
-                qrCodeImageView.setImageBitmap(qrCodeBitmap);
-                qrCodeImageView.setVisibility(View.VISIBLE);
-            } else if (which == 1) {
-                // "Check-in QR" was clicked
-                // Generate and show the QR code if it's not already visible
-                Bitmap qrCodeBitmap = QRCodeGenerator.generateCheckInQRCode(currentEvent, 200); // Adjust size as needed
-                qrCodeImageView.setImageBitmap(qrCodeBitmap);
-                qrCodeImageView.setVisibility(View.VISIBLE);
-            }
-        });
-        builder.show();
-    }
-
-    public void populateSignedAttendees() {
-        ArrayList<String> attendeesData = currentEvent.getSignedAttendees();
-        usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        User user = document.toObject(User.class);
-                        if (attendeesData.contains(user.getUserId())) {
-                            attendees.add(user);
-                        }
-                    }
-                    attendeeAdapter.notifyDataSetChanged();
-                } else {
-                    Log.d("Firestore", "Error getting documents: ", task.getException());
-                }
-            }
-        });
-    }
+//    public void populateSignedAttendees() {
+//        ArrayList<String> attendeesData = currentEvent.getSignedAttendees();
+//        usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    for (QueryDocumentSnapshot document : task.getResult()) {
+//                        User user = document.toObject(User.class);
+//                        if (attendeesData.contains(user.getUserId())) {
+//                            attendees.add(user);
+//                        }
+//                    }
+//                    attendeeAdapter.notifyDataSetChanged();
+//                } else {
+//                    Log.d("Firestore", "Error getting documents: ", task.getException());
+//                }
+//            }
+//        });
+//    }
 
     public void populateAnnouncements() {
         ArrayList<String> announcementsData = currentEvent.getAnnouncements();
