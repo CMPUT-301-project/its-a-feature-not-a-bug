@@ -54,8 +54,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
     private RecyclerView attendeesRecyclerView;
     private RecyclerView announcementRecyclerView;
     private Button signUpButton;
-    private Button organizerMenuButton;
-    private ImageView qrCodeImageView;
 
     // Adapter attributes
     private AttendeeAdapter attendeeAdapter;
@@ -77,6 +75,7 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_admin_event_details);
         eventPoster = findViewById(R.id.eventImage);
         eventTitle = findViewById(R.id.eventTitle);
@@ -89,6 +88,7 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
         usersRef = db.collection("users");
+
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -111,6 +111,7 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
         if (currentEvent != null) {
             displayInfo();
         }
+
 
 
 //        if (currentEvent != null) {
@@ -142,6 +143,7 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
             }
         });
 
+
         // get attendees
         attendees = new ArrayList<>();
         if (currentEvent.getSignedAttendees() != null && !currentEvent.getSignedAttendees().isEmpty()) {
@@ -152,7 +154,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
         attendeesRecyclerView = findViewById(R.id.attendeesRecyclerView);
         attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         attendeesRecyclerView.setAdapter(attendeeAdapter);
-
 
 
         displayInfo();

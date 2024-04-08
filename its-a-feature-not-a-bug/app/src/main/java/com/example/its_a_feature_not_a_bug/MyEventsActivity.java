@@ -1,7 +1,10 @@
 package com.example.its_a_feature_not_a_bug;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -9,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -27,6 +31,16 @@ public class MyEventsActivity extends AppCompatActivity {
         myEventsListView = findViewById(R.id.list_view_my_events);
         backButton = findViewById(R.id.back_button);
         noEventsTextView = findViewById(R.id.text_view_no_events);
+
+        // Enable the action bar and display the back button
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
+            ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
+            actionBar.setBackgroundDrawable(colorDrawable);
+            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "MY EVENTS" + "</b></font>"));
+        }
 
         // Retrieve myEventsList from intent
         Intent intent = getIntent();
