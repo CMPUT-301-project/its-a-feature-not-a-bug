@@ -92,6 +92,10 @@ public class AttendeesActivity extends AppCompatActivity {
         checkedAttendeesAdapter = new AttendeeAdapter(checkedAttendees, currentEvent);
         checkedAttendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         checkedAttendeesRecyclerView.setAdapter(checkedAttendeesAdapter);
+
+        // update headers with numbers of attendees
+        signedAttendeesHeader.setText(currentEvent.getNumberSignedAttendees() + " Signed Attendees");
+        checkedAttendeesHeader.setText(currentEvent.getNumberCheckIns() + " Checked-in Attendees");
     }
 
     private void populateSignedAttendees() {
