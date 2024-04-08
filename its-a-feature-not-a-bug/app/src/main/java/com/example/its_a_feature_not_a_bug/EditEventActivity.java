@@ -46,8 +46,6 @@ public class EditEventActivity extends AppCompatActivity {
     private ImageView imageViewEventPoster;
     private Button buttonChangePoster, buttonSaveEventDetails;
 
-//    private static final int EDIT_EVENT_REQUEST_CODE = 1;
-//    private static final int IMAGE_PICKER_REQUEST_CODE = 2; // Choose a unique request code
 
     private ActivityResultLauncher<Intent> imagePickerLauncher;
 
@@ -56,7 +54,6 @@ public class EditEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_event);
 
-        // Initialize your fields
         editTextEventTitle = findViewById(R.id.editTextEventTitle);
         editTextEventDescription = findViewById(R.id.editTextEventDescription);
         editTextAttendeeLimit = findViewById(R.id.editTextAttendeeLimit);
@@ -81,8 +78,6 @@ public class EditEventActivity extends AppCompatActivity {
         });
 
 
-
-        // Get the current event passed from OrganizerEventDetailsActivity
         currentEvent = (Event) getIntent().getSerializableExtra("event");
         populateFields(currentEvent);
 
@@ -111,7 +106,6 @@ public class EditEventActivity extends AppCompatActivity {
                     if (!task.isSuccessful()) {
                         throw task.getException();
                     }
-                    // Continue with the task to get the download URL
                     return fileRef.getDownloadUrl();
                 }).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -134,7 +128,7 @@ public class EditEventActivity extends AppCompatActivity {
     private void populateFields(Event event) {
         editTextEventTitle.setText(event.getTitle());
         editTextEventDescription.setText(event.getDescription());
-        // Attendee limit and switch logic
+
         if (event.getAttendeeLimit() != null) {
             switchAttendeeLimit.setChecked(true);
             editTextAttendeeLimit.setVisibility(View.VISIBLE);
@@ -146,46 +140,36 @@ public class EditEventActivity extends AppCompatActivity {
 
         switchAttendeeLimit.setOnCheckedChangeListener((compoundButton, b) -> editTextAttendeeLimit.setVisibility(b ? View.VISIBLE : View.INVISIBLE));
 
-        // Date and Time - Initialize with current event date/time
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(event.getDate());
         datePickerEventDate.updateDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         timePickerEventTime.setCurrentHour(calendar.get(Calendar.HOUR_OF_DAY));
         timePickerEventTime.setCurrentMinute(calendar.get(Calendar.MINUTE));
-
-        // Update poster image if necessary. You may want to use Glide or another image loading library
-        // Glide.with(this).load(currentEvent.getImageUrl()).into(imageViewEventPoster);
     }
 
     private void saveEventDetails() {
-        // Extract edited fields, validate them and construct a new Event object or update currentEvent
         String title = editTextEventTitle.getText().toString();
         String description = editTextEventDescription.getText().toString();
         Integer attendeeLimit = switchAttendeeLimit.isChecked() ? Integer.valueOf(editTextAttendeeLimit.getText().toString()) : null;
 
-        // Combine date and time from DatePicker and TimePicker into a Date object
         Calendar calendar = Calendar.getInstance();
         calendar.set(datePickerEventDate.getYear(), datePickerEventDate.getMonth(), datePickerEventDate.getDayOfMonth(), timePickerEventTime.getCurrentHour(), timePickerEventTime.getCurrentMinute());
         Date eventDate = calendar.getTime();
 
-        // Update the event object
         currentEvent.setTitle(title);
         currentEvent.setDescription(description);
         currentEvent.setDate(eventDate);
         currentEvent.setAttendeeLimit(attendeeLimit);
-        // Note: You'll also need to handle the event poster update logic
 
         if (selectedImageUri != null) {
             uploadImageToFirebaseStorage(selectedImageUri, imageUrl -> {
-                // This callback will be triggered after image upload is successful
                 currentEvent.setImageId(imageUrl);
-                updateEventInFirestore(currentEvent); // Update Firestore with the complete event including the new image URL
+                updateEventInFirestore(currentEvent);
             });
         } else {
-            updateEventInFirestore(currentEvent); // No new image, just update the event details
+            updateEventInFirestore(currentEvent);
         }
 
-        // Return the modified event
         Intent returnIntent = new Intent();
         returnIntent.putExtra("editedEvent", currentEvent);
         setResult(RESULT_OK, returnIntent);
@@ -195,12 +179,10 @@ public class EditEventActivity extends AppCompatActivity {
 
     private void updateEventInFirestore(Event event) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        // Assuming you use a unique ID for each event document. Adjust according to your Firestore structure.
         db.collection("events").document(event.getTitle())
                 .set(event)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(EditEventActivity.this, "Event updated successfully.", Toast.LENGTH_SHORT).show();
-                    // Optionally, finish activity or update UI as needed
                 })
                 .addOnFailureListener(e -> Toast.makeText(EditEventActivity.this, "Error updating event: " + e.getMessage(), Toast.LENGTH_LONG).show());
     }

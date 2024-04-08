@@ -80,15 +80,12 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Fetch event from extras
         currentEvent = (Event) getIntent().getSerializableExtra("event");
 
-        // Set views
         setContentView(R.layout.activity_organizer_event_details);
         attendeesButton = findViewById(R.id.button_attendees);
         mapButton = findViewById(R.id.button_map);
         qrCodeButton = findViewById(R.id.button_qr_codes);
-//        deleteEventButton = findViewById(R.id.deleteEventButton);
         editEventButton = findViewById(R.id.editEventButton);
         eventPoster = findViewById(R.id.eventImage);
         eventTitle = findViewById(R.id.eventTitle);
@@ -97,7 +94,7 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         eventDescription = findViewById(R.id.eventDescription);
         qrCodeImageView = findViewById(R.id.qrCodeImageView);
 
-        // Set action bar
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -125,14 +122,12 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         announcementRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         announcementRecyclerView.setAdapter(announcementAdapter);
 
-        // Populate event views
         populateViews();
 
-        // Set click listeners
         editEventButton.setOnClickListener(v -> {
             Intent editEventIntent = new Intent(OrganizerEventDetailsActivity.this, EditEventActivity.class);
             editEventIntent.putExtra("event", currentEvent);
-            startActivityForResult(editEventIntent, EDIT_EVENT_REQUEST_CODE); // EDIT_EVENT_REQUEST_CODE is an integer constant that identifies the request
+            startActivityForResult(editEventIntent, EDIT_EVENT_REQUEST_CODE);
         });
 
 
@@ -218,16 +213,12 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
                     }
                 });
 
-        // Format and display the date
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
         String formattedDate = dateFormat.format(currentEvent.getDate());
 
-        // Format and display the time
         SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
         String formattedTime = timeFormat.format(currentEvent.getDate());
 
-        // Assuming 'date' TextView is used to show both date and time together
-        // You might want to separate them or adjust according to your layout needs
         eventDate.setText(String.format("%s at %s", formattedDate, formattedTime));
 
         eventDescription.setText(currentEvent.getDescription());
@@ -246,15 +237,11 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         builder.setTitle("Which QR Code would you like to see?");
         builder.setItems(options, (dialog, which) -> {
             if (which == 0) {
-                // "Promotional QR" was clicked
-                // Generate and show the QR code if it's not already visible
-                Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(currentEvent, 200); // Adjust size as needed
+                Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(currentEvent, 200);
                 qrCodeImageView.setImageBitmap(qrCodeBitmap);
                 qrCodeImageView.setVisibility(View.VISIBLE);
             } else if (which == 1) {
-                // "Check-in QR" was clicked
-                // Generate and show the QR code if it's not already visible
-                Bitmap qrCodeBitmap = QRCodeGenerator.generateCheckInQRCode(currentEvent, 200); // Adjust size as needed
+                Bitmap qrCodeBitmap = QRCodeGenerator.generateCheckInQRCode(currentEvent, 200);
                 qrCodeImageView.setImageBitmap(qrCodeBitmap);
                 qrCodeImageView.setVisibility(View.VISIBLE);
             }
@@ -275,8 +262,6 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
 
     private void updateEventInFirestore(Event editedEvent) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        // Assuming 'events' is your collection and you're using event title as the document ID
-        // This is just an example, adjust according to your actual document structure and identifier
         db.collection("events").document(editedEvent.getTitle()).set(editedEvent)
                 .addOnSuccessListener(unused -> Toast.makeText(this, "Event updated successfully.", Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(this, "Error updating event.", Toast.LENGTH_SHORT).show());
