@@ -173,6 +173,11 @@ public class UpdateProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This implements the back button functionality for the action bar.
+     * @param item The menu item that was selected
+     * @return whether the back button was selected
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -183,6 +188,11 @@ public class UpdateProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * This uploads an image to Firebase.
+     * @param newUser the user's profile
+     * @param uploadListener the upload listener
+     */
     private void uploadImageToFirebaseStorage(User newUser, OnImageUploadListener uploadListener) {
         StorageReference storageReference = storageRef.child("profile_pics/" + UUID.randomUUID().toString() + ".jpg");
         profilePicture.setDrawingCacheEnabled(true);
@@ -210,6 +220,10 @@ public class UpdateProfileActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This uploads the updated profile to Firebase.
+     * @param newUser
+     */
     public void updateProfile(User newUser) {
         // Create a map to store data
         Map<String, Object> data = new HashMap<>();
@@ -236,6 +250,9 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * This populates the user's data.
+     */
     public void populateData() {
         // fill views with user's data
         if (currentUser.getFullName() != null && !currentUser.getFullName().isEmpty()) {
@@ -261,6 +278,9 @@ public class UpdateProfileActivity extends AppCompatActivity {
         Log.d("Firestore", "Fetched user data");
     }
 
+    /**
+     * This shows the dialog that confirms profile picture deletion.
+     */
     private void showDeleteConfirmationDialog() {
         if (currentUser.getImageId() != null) {
             new AlertDialog.Builder(this)
@@ -272,6 +292,9 @@ public class UpdateProfileActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This removes the user's profile picture from Firebase.
+     */
     public void removeProfilePicture() {
         // remove profile picture from image view
         selectedImageUri = null;
@@ -315,6 +338,9 @@ public class UpdateProfileActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * This is the image upload listener.
+     */
     interface OnImageUploadListener {
         void onImageUploadSuccess(String imageURL);
         void onImageUploadFailure(String errorMessage);

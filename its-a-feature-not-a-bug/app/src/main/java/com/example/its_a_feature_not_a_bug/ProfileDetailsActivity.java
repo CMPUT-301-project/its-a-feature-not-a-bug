@@ -27,6 +27,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+/**
+ * This is the activity that allows an admin to browse profiles.
+ */
 public class ProfileDetailsActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
@@ -89,6 +92,11 @@ public class ProfileDetailsActivity extends AppCompatActivity {
         deleteProfileButton.setOnClickListener(v -> showDeleteOptionsDialog());
     }
 
+    /**
+     * This implements the back button functionality for the action bar.
+     * @param item The menu item that was selected
+     * @return whether the back button was selected
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -99,15 +107,9 @@ public class ProfileDetailsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    private void showDeleteConfirmationDialog() {
-//        new AlertDialog.Builder(this)
-//                .setTitle("Delete Profile")
-//                .setMessage("Are you sure you want to delete this profile?")
-//                .setPositiveButton("OK", (dialog, which) -> deleteProfile())
-//                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-//                .show();
-//    }
-
+    /**
+     * This displays the dialog of delete options.
+     */
     private void showDeleteOptionsDialog() {
         final CharSequence[] options = {"Profile Picture", "Profile"};
 
@@ -125,6 +127,9 @@ public class ProfileDetailsActivity extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+     * This shows the confirmation dialog for deleting a profile picture.
+     */
     private void showConfirmDeleteProfilePictureDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Profile Picture")
@@ -134,6 +139,9 @@ public class ProfileDetailsActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * This shows the confirmation dialog for deleting a profile.
+     */
     private void showConfirmDeleteProfileDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Profile")
@@ -143,6 +151,9 @@ public class ProfileDetailsActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * This removes the profile picture from Firebase.
+     */
     private void removeProfilePicture() {
         // Assuming you're setting the profile picture to a default in your database,
         // add the logic here. For now, we'll just update the ImageView.
@@ -163,7 +174,9 @@ public class ProfileDetailsActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * This deletes the profile from Firebase.
+     */
     private void deleteProfile() {
         String profileIdentifier = profile.getUserId();
 
