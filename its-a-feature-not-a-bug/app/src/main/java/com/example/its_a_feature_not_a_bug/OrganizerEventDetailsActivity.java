@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -54,7 +55,7 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
     private Button attendeesButton;
     private Button mapButton;
     private Button qrCodeButton;
-    private ImageView deleteEventButton;
+//    private ImageView deleteEventButton;
     private ImageView editEventButton;
     private ImageView eventPoster;
     private TextView eventTitle;
@@ -72,19 +73,19 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
     // Current attributes
     private Event currentEvent;
 
+    private static final int EDIT_EVENT_REQUEST_CODE = 1;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Fetch event from extras
         currentEvent = (Event) getIntent().getSerializableExtra("event");
 
-        // Set views
         setContentView(R.layout.activity_organizer_event_details);
         attendeesButton = findViewById(R.id.button_attendees);
         mapButton = findViewById(R.id.button_map);
         qrCodeButton = findViewById(R.id.button_qr_codes);
-        deleteEventButton = findViewById(R.id.deleteEventButton);
         editEventButton = findViewById(R.id.editEventButton);
         eventPoster = findViewById(R.id.eventImage);
         eventTitle = findViewById(R.id.eventTitle);
@@ -93,7 +94,7 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         eventDescription = findViewById(R.id.eventDescription);
         qrCodeImageView = findViewById(R.id.qrCodeImageView);
 
-        // Set action bar
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -121,25 +122,15 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         announcementRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         announcementRecyclerView.setAdapter(announcementAdapter);
 
-        // Populate event views
         populateViews();
 
-        // Set click listeners
-        editEventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent editEventIntent = new Intent(OrganizerEventDetailsActivity.this, EditEventActivity.class);
-                editEventIntent.putExtra("event", currentEvent);
-                startActivity(editEventIntent);
-            }
+        editEventButton.setOnClickListener(v -> {
+            Intent editEventIntent = new Intent(OrganizerEventDetailsActivity.this, EditEventActivity.class);
+            editEventIntent.putExtra("event", currentEvent);
+            startActivityForResult(editEventIntent, EDIT_EVENT_REQUEST_CODE);
         });
 
-        deleteEventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteEvent();
-            }
-        });
+
 
         attendeesButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -222,55 +213,15 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
                     }
                 });
 
-        // Format and display the date
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
         String formattedDate = dateFormat.format(currentEvent.getDate());
 
-        // Format and display the time
         SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
         String formattedTime = timeFormat.format(currentEvent.getDate());
 
-        // Assuming 'date' TextView is used to show both date and time together
-        // You might want to separate them or adjust according to your layout needs
         eventDate.setText(String.format("%s at %s", formattedDate, formattedTime));
 
         eventDescription.setText(currentEvent.getDescription());
-    }
-
-    /**
-     * This deletes the current event.
-     */
-    private void deleteEvent() {
-        // delete image if event has one
-        if (currentEvent.getImageId() != null) {
-            String imageToDelete = currentEvent.getImageId();
-            storageRef = storage.getReferenceFromUrl(imageToDelete);
-            storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void unused) {
-                    Log.d("Firestore", "Image Deleted");
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.e("Firestore", "Error deleting image", e);
-                }
-            });
-        }
-
-        // delete database entry
-        eventsRef.document(currentEvent.getTitle()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Toast.makeText(OrganizerEventDetailsActivity.this, "Event deleted successfully", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(OrganizerEventDetailsActivity.this, "Error deleting event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     public void showQROptionsDialog() {
@@ -286,19 +237,44 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         builder.setTitle("Which QR Code would you like to see?");
         builder.setItems(options, (dialog, which) -> {
             if (which == 0) {
-                // "Promotional QR" was clicked
-                // Generate and show the QR code if it's not already visible
-                Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(currentEvent, 200); // Adjust size as needed
+                Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(currentEvent, 200);
                 qrCodeImageView.setImageBitmap(qrCodeBitmap);
                 qrCodeImageView.setVisibility(View.VISIBLE);
             } else if (which == 1) {
-                // "Check-in QR" was clicked
-                // Generate and show the QR code if it's not already visible
-                Bitmap qrCodeBitmap = QRCodeGenerator.generateCheckInQRCode(currentEvent, 200); // Adjust size as needed
+                Bitmap qrCodeBitmap = QRCodeGenerator.generateCheckInQRCode(currentEvent, 200);
                 qrCodeImageView.setImageBitmap(qrCodeBitmap);
                 qrCodeImageView.setVisibility(View.VISIBLE);
             }
         });
         builder.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EDIT_EVENT_REQUEST_CODE && resultCode == RESULT_OK) {
+            Event editedEvent = (Event) data.getSerializableExtra("editedEvent");
+            if (editedEvent != null) {
+                updateEventInFirestore(editedEvent);
+            }
+        }
+    }
+
+    private void updateEventInFirestore(Event editedEvent) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("events").document(editedEvent.getTitle()).set(editedEvent)
+                .addOnSuccessListener(unused -> Toast.makeText(this, "Event updated successfully.", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(this, "Error updating event.", Toast.LENGTH_SHORT).show());
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

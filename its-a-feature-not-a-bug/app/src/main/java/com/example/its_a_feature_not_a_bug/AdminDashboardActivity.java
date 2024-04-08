@@ -43,7 +43,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
         buttonEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Navigate to the events management activity
                 Intent intent = new Intent(AdminDashboardActivity.this, AdminBrowseEventsActivity.class);
                 startActivity(intent);
             }
@@ -52,8 +51,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
         buttonProfiles.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Navigate to the profiles management activity
-                // You'll need to create this activity if it doesn't exist
                 Intent intent = new Intent(AdminDashboardActivity.this, AdminBrowseProfilesActivity.class);
                 startActivity(intent);
             }
@@ -66,11 +63,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                // This ID represents the Home or Up button. In the case of this
-                // activity, the Up button is shown. Use NavUtils to allow users
-                // to navigate up one level in the application structure. For
-                // more details, see the Navigation pattern on Android Design:
-                // http://developer.android.com/design/patterns/navigation.html#up-vs-back
                 onBackPressed();
                 return true;
         }
