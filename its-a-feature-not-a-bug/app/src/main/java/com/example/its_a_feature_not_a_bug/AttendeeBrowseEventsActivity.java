@@ -220,8 +220,8 @@ public class AttendeeBrowseEventsActivity extends AppCompatActivity implements A
 
                                             List<Double> gpsCoordinates = Arrays.asList(Double.valueOf(locationInformation.getLatitude()), Double.valueOf(locationInformation.getLongitude()));
                                             idLocationMap.put(locationInformation.getTitle(), gpsCoordinates);
-                                            Log.d("Location Information", "ID: " + locationInformation.getTitle()
-                                            + " Coordinates = " + locationInformation.getLatitude() + " " + locationInformation.getLongitude());
+                                            Log.d("Location Information", "Even title" + event.getTitle() + "Attendee ID: " + locationInformation.getTitle()
+                                            + " Coordinates = " + locationInformation.getLatitude() + " , " + locationInformation.getLongitude());
                                         }
                                         event.setAttendeeLocations(idLocationMap);
                                         Log.d("Firebase", "attendee locations added");
