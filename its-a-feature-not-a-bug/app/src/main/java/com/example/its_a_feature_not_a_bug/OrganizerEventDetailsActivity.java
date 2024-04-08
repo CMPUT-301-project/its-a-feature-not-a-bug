@@ -1,13 +1,18 @@
 package com.example.its_a_feature_not_a_bug;
 
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +31,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,7 +45,10 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
     // Firebase attributes
     private FirebaseFirestore db;
     private CollectionReference usersRef;
+    private CollectionReference eventsRef;
     private CollectionReference announcementsRef;
+    private FirebaseStorage storage;
+    private StorageReference storageRef;
 
     // View attributes
     private Button attendeesButton;
@@ -52,6 +62,7 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
     private TextView eventDate;
     private TextView eventDescription;
     private RecyclerView announcementRecyclerView;
+    private ImageView qrCodeImageView;
 
 
     // Adapter attributes
@@ -80,6 +91,7 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         eventHost = findViewById(R.id.eventHost);
         eventDate = findViewById(R.id.eventDate);
         eventDescription = findViewById(R.id.eventDescription);
+        qrCodeImageView = findViewById(R.id.qrCodeImageView);
 
         // Set action bar
         ActionBar actionBar = getSupportActionBar();
@@ -95,7 +107,9 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         // connect to Firebase
         db = FirebaseFirestore.getInstance();
         usersRef = db.collection("users");
+        eventsRef = db.collection("events");
         announcementsRef = db.collection("announcements");
+        storage = FirebaseStorage.getInstance();
 
         // Set adapters and populate relevant data
         announcements = new ArrayList<>();
@@ -110,6 +124,45 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         // Populate event views
         populateViews();
 
+        // Set click listeners
+        editEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent editEventIntent = new Intent(OrganizerEventDetailsActivity.this, EditEventActivity.class);
+                editEventIntent.putExtra("event", currentEvent);
+                startActivity(editEventIntent);
+            }
+        });
+
+        deleteEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteEvent();
+            }
+        });
+
+        attendeesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent showAttendeesIntent = new Intent(OrganizerEventDetailsActivity.this, AttendeesActivity.class);
+                showAttendeesIntent.putExtra("event", currentEvent);
+                startActivity(showAttendeesIntent);
+            }
+        });
+
+        qrCodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showQROptionsDialog();
+            }
+        });
+
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // implement map functionality here
+            }
+        });
     }
 
     /**
@@ -182,5 +235,70 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         eventDate.setText(String.format("%s at %s", formattedDate, formattedTime));
 
         eventDescription.setText(currentEvent.getDescription());
+    }
+
+    /**
+     * This deletes the current event.
+     */
+    private void deleteEvent() {
+        // delete image if event has one
+        if (currentEvent.getImageId() != null) {
+            String imageToDelete = currentEvent.getImageId();
+            storageRef = storage.getReferenceFromUrl(imageToDelete);
+            storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Log.d("Firestore", "Image Deleted");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e("Firestore", "Error deleting image", e);
+                }
+            });
+        }
+
+        // delete database entry
+        eventsRef.document(currentEvent.getTitle()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Toast.makeText(OrganizerEventDetailsActivity.this, "Event deleted successfully", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(OrganizerEventDetailsActivity.this, "Error deleting event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void showQROptionsDialog() {
+        // hide QR code if displayed on the screen
+        if (qrCodeImageView.getVisibility() == View.VISIBLE) {
+            qrCodeImageView.setVisibility(View.GONE);
+            return;
+        }
+
+        final CharSequence[] options = {"Promotional QR", "Check-in QR"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Which QR Code would you like to see?");
+        builder.setItems(options, (dialog, which) -> {
+            if (which == 0) {
+                // "Promotional QR" was clicked
+                // Generate and show the QR code if it's not already visible
+                Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(currentEvent, 200); // Adjust size as needed
+                qrCodeImageView.setImageBitmap(qrCodeBitmap);
+                qrCodeImageView.setVisibility(View.VISIBLE);
+            } else if (which == 1) {
+                // "Check-in QR" was clicked
+                // Generate and show the QR code if it's not already visible
+                Bitmap qrCodeBitmap = QRCodeGenerator.generateCheckInQRCode(currentEvent, 200); // Adjust size as needed
+                qrCodeImageView.setImageBitmap(qrCodeBitmap);
+                qrCodeImageView.setVisibility(View.VISIBLE);
+            }
+        });
+        builder.show();
     }
 }

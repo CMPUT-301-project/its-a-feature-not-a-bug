@@ -1,12 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <!-- activity_attendees.xml -->
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/text_view_signed_attendees_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Signed Attendees"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@id/attendeesRecyclerView"/>
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/attendeesRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/text_view_signed_attendees_header"/>
 
+    <TextView
+        android:id="@+id/text_view_checked_attendees_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Checked-in Attendees"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintTop_toBottomOf="@id/attendeesRecyclerView"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_checked_attendees"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/text_view_checked_attendees_header"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
