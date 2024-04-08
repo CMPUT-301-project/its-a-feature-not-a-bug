@@ -1,3 +1,6 @@
+// This source code file implements the user check-in activity.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.content.Intent;
@@ -37,6 +40,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This implements the activity for a user to check-in to an event.
+ */
 public class UserCheckInActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
@@ -154,7 +160,9 @@ public class UserCheckInActivity extends AppCompatActivity {
         });
     }
 
-    // update data or exit activity depending on user response
+    /**
+     * This updates the Firebase data for the event.
+     */
     public void checkInUser() {
         Map<String, Object> data = new HashMap<>();
 
@@ -194,6 +202,9 @@ public class UserCheckInActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * This populates the event data views.
+     */
     public void populateEventData() {
         if (checkInEvent.getImageId() != null) {
             Glide.with(this)
@@ -214,6 +225,10 @@ public class UserCheckInActivity extends AppCompatActivity {
             eventDescription.setText(checkInEvent.getDescription());
         }
     }
+
+    /**
+     * This stores the user's location in Firebase.
+     */
     public void storeUserLocation() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
