@@ -1,3 +1,7 @@
+// This source code file implements the functionality to display events that the current
+// user has signed up for.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.content.Intent;
@@ -18,6 +22,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
+/**
+ * This displays the events that a user is signed up for.
+ */
 public class MyEventsActivity extends AppCompatActivity {
 
     private ListView myEventsListView;

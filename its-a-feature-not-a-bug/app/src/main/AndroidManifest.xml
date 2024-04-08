@@ -109,9 +109,6 @@
         <activity android:name=".AttendeesActivity">
         </activity>
 
-        <activity android:name=".OrganizerMenuActivity">
-        </activity>
-
         <activity android:name=".OrganizerMapActivity">
         </activity>
 

@@ -1,3 +1,7 @@
+// This source code file implements the functionality for an organizer to browse events that
+// they created.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.content.Intent;
@@ -134,6 +138,10 @@ public class OrganizerBrowseEventsActivity extends AppCompatActivity implements 
         });
     }
 
+    /**
+     * This uploads an event to Firebase.
+     * @param event The new event that was added.
+     */
     @Override
     public void addEvent(Event event) {
         // Adds event to the Firestore collection

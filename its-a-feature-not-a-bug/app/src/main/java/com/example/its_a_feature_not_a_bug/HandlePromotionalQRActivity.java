@@ -1,3 +1,7 @@
+// This source code file implements the functionality to handle a promotional QR code, sending the
+// user to the correct location in the app.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.content.Intent;
@@ -15,6 +19,9 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * This implements the activity that handles a promotional QR code.
+ */
 public class HandlePromotionalQRActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference eventsRef;

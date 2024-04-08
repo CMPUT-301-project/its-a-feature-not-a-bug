@@ -1,3 +1,6 @@
+// This source code file implements the functionality to handle a scanned check-in QR code, sending the
+// user to the correct location in the app.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.content.Intent;
@@ -15,6 +18,9 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * This implements the functionality to handle a check-in QR code.
+ */
 public class HandleCheckInQRActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference eventsRef;

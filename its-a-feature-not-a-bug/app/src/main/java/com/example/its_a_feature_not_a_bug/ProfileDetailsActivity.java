@@ -1,3 +1,6 @@
+// This implements the functionality for an admin to view a profile's details.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.app.AlertDialog;

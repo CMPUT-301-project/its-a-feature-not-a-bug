@@ -70,40 +70,6 @@ public class AttendeeBrowseEventsActivity extends AppCompatActivity {
     private ArrayList<String> signedAttendees = new ArrayList<>();
     private ArrayList<String> attendees = new ArrayList<String>();
 
-//    /**
-//     * This method adds an event to the Firebase Firestore
-//     * @param event the event to be added
-//     */
-//    @Override
-//    public void addEvent(Event event) {
-//        // Adds event to the Firestore collection
-//
-//        Map<String, Object> data = new HashMap<>();
-//        data.put("host", event.getHost());
-//        data.put("date", event.getDate());
-//        data.put("description", event.getDescription());
-//        data.put("imageId", event.getImageId());
-//
-//        // Include attendee limit if available
-//        if (event.getAttendeeLimit() > 0) {
-//            data.put("attendeeLimit", event.getAttendeeLimit());
-//        }
-//
-//        eventsRef.document(event.getTitle())
-//                .set(data)
-//                .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void unused) {
-//                        Log.d("Firestore", "DocumentSnapshot successfully written");
-//                    }
-//                }).addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Log.e("Firestore", "Failed to upload event", e);
-//                    }
-//                });
-//    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -271,11 +237,6 @@ public class AttendeeBrowseEventsActivity extends AppCompatActivity {
         ArrayList<Event> myEvents = new ArrayList<>();
         for (Event event : eventDataList) {
             if (event.getSignedAttendees() != null) {
-//                for (String attendeeId : event.getSignedAttendees()) {
-//                    if (attendeeId.equals(androidId)) {
-//                        myEvents.add(event);
-//                    }
-//                }
                 if (event.hasSignedAttendee(androidId)) {
                     myEvents.add(event);
                 }

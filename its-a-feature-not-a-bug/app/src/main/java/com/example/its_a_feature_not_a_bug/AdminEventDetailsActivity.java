@@ -48,7 +48,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
     private CollectionReference usersRef;
-    private CollectionReference announcementsRef;
 
     // View attributes
     private TextView eventTitle;
@@ -56,15 +55,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
     private TextView eventHost;
     private TextView eventDescription;
     private ImageView eventPoster;
-    private RecyclerView attendeesRecyclerView;
-    private RecyclerView announcementRecyclerView;
-    private Button signUpButton;
-
-    // Adapter attributes
-    private AttendeeAdapter attendeeAdapter;
-    private ArrayList<User> attendees;
-    private AnnouncementAdapter announcementAdapter;
-    private ArrayList<Announcement> announcements;
 
     // Current attributes
     private User currentUser;
@@ -117,16 +107,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
             displayInfo();
         }
 
-
-
-//        if (currentEvent != null) {
-//            Log.d("IntentDebug", "Received event: " + currentEvent.toString());
-//            displayInfo();
-//        } else {
-//            Log.d("IntentDebug", "Received null event");
-//            // Optionally, handle the case where the event is null, e.g., by closing the activity or showing an error message
-//        }
-
         // get user data from database
         usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -135,10 +115,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         if (androidId.equals(document.getId())) {
                             currentUser = document.toObject(User.class);
-                            if (!currentUser.getUserId().equals(currentEvent.getHost())) {
-//                                organizerMenuButton.setVisibility(View.GONE);
-                            }
-                            Log.d("Brayden", "currentUser: " + currentUser.getUserId());
                             break;
                         }
                     }
@@ -147,19 +123,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-        // get attendees
-        attendees = new ArrayList<>();
-        if (currentEvent.getSignedAttendees() != null && !currentEvent.getSignedAttendees().isEmpty()) {
-            Log.d("Brayden", "got here");
-            populateSignedAttendees();
-        }
-        attendeeAdapter = new AttendeeAdapter(attendees, currentEvent);
-        attendeesRecyclerView = findViewById(R.id.attendeesRecyclerView);
-        attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        attendeesRecyclerView.setAdapter(attendeeAdapter);
-
 
         displayInfo();
 
@@ -300,6 +263,7 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
                         Log.e("Firestore", "Failed to fetch host name", e);
                     }
                 });
+
         // Format and display the date
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
         String formattedDate = dateFormat.format(currentEvent.getDate());
@@ -309,57 +273,9 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
         String formattedTime = timeFormat.format(currentEvent.getDate());
 
         // Assuming 'date' TextView is used to show both date and time together
-        // You might want to separate them or adjust according to your layout needs
         eventDate.setText(String.format("%s at %s", formattedDate, formattedTime));
 
         eventDescription.setText(currentEvent.getDescription());
-    }
-
-
-    /**
-     * This populates the view of signed attendees with Firebase data.
-     */
-    public void populateSignedAttendees() {
-        ArrayList<String> attendeesData = currentEvent.getSignedAttendees();
-        usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        User user = document.toObject(User.class);
-                        if (attendeesData.contains(user.getUserId())) {
-                            attendees.add(user);
-                        }
-                    }
-                    attendeeAdapter.notifyDataSetChanged();
-                } else {
-                    Log.d("Firestore", "Error getting documents: ", task.getException());
-                }
-            }
-        });
-    }
-
-    /**
-     * This populates the view of event announcements.
-     */
-    public void populateAnnouncements() {
-        ArrayList<String> announcementsData = currentEvent.getAnnouncements();
-        announcementsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Announcement announcement = document.toObject(Announcement.class);
-                        if (announcementsData.contains(announcement.getAnnouncementId())) {
-                            announcements.add(announcement);
-                        }
-                    }
-                    announcementAdapter.notifyDataSetChanged();
-                } else {
-                    Log.d("Firestore", "Error getting documents: ", task.getException());
-                }
-            }
-        });
     }
 
     /**
@@ -376,5 +292,4 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 }
