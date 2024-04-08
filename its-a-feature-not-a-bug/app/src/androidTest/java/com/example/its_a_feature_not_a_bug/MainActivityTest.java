@@ -59,11 +59,34 @@ public class MainActivityTest {
         // Close soft keyboard
         Espresso.closeSoftKeyboard();
         onView(withText("OK")).perform(click());
+        // Sleep for 2 seconds
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         // Click on the event CRYING
         onView(withText("CRYING")).perform(click());
         // Click on Delete Event
         onView(withId(R.id.deleteEventButton)).perform(click());
         onView(withText("CRYING")).check(doesNotExist());
+    }
+    public void testUpdateProfile(){
+        // Start Activity
+        ActivityScenario.launch(MainActivity.class);
+        // Click on Organizer button
+        onView(withId(R.id.button_organizer_login)).perform(click());
+        // Click on Profile button
+        onView(withId(R.id.button_profile)).perform(click());
+        // Type "Jingyang" in the editTest
+        onView(withId(R.id.editTextFullName)).perform(ViewActions.typeText("Jingyang"));
+        // Press submit button buttonSubmit
+        onView(withId(R.id.buttonSubmit)).perform(click());
+        onView(withText("Jingyang")).check(matches(isDisplayed()));
+
+
+
+
     }
 }
 
