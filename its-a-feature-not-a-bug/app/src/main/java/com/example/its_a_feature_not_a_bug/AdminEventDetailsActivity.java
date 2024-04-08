@@ -77,12 +77,16 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.event_details);
+        setContentView(R.layout.activity_admin_event_details);
+        eventPoster = findViewById(R.id.eventImage);
+        eventTitle = findViewById(R.id.eventTitle);
+        eventHost = findViewById(R.id.eventHost);
+        eventDate = findViewById(R.id.eventDate);
+        eventDescription = findViewById(R.id.eventDescription);
 
         db = FirebaseFirestore.getInstance();
-
-
-
+        eventsRef = db.collection("events");
+        usersRef = db.collection("users");
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -101,24 +105,19 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
         androidId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
         Intent intent = getIntent();
-        currentEvent = (Event) intent.getSerializableExtra("event");
-
-        // Extract the event object from the intent
-        Event currentEvent = (Event) getIntent().getSerializableExtra("event");
+        currentEvent = (Event) getIntent().getSerializableExtra("event");
         if (currentEvent != null) {
             displayInfo();
         }
 
-        eventsRef = db.collection("events");
-        usersRef = db.collection("users");
-        announcementsRef = db.collection("announcements");
 
-        eventPoster = findViewById(R.id.eventImage);
-        eventTitle = findViewById(R.id.eventTitle);
-        eventHost = findViewById(R.id.eventHost);
-        eventDate = findViewById(R.id.eventDate);
-        eventDescription = findViewById(R.id.eventDescription);
-        organizerMenuButton = findViewById(R.id.button_organizer_menu);
+//        if (currentEvent != null) {
+//            Log.d("IntentDebug", "Received event: " + currentEvent.toString());
+//            displayInfo();
+//        } else {
+//            Log.d("IntentDebug", "Received null event");
+//            // Optionally, handle the case where the event is null, e.g., by closing the activity or showing an error message
+//        }
 
         // get user data from database
         usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -129,7 +128,7 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
                         if (androidId.equals(document.getId())) {
                             currentUser = document.toObject(User.class);
                             if (!currentUser.getUserId().equals(currentEvent.getHost())) {
-                                organizerMenuButton.setVisibility(View.GONE);
+//                                organizerMenuButton.setVisibility(View.GONE);
                             }
                             Log.d("Brayden", "currentUser: " + currentUser.getUserId());
                             break;
@@ -152,39 +151,7 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
         attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         attendeesRecyclerView.setAdapter(attendeeAdapter);
 
-        organizerMenuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent organizerMenuIntent = new Intent(getApplicationContext(), OrganizerMenuActivity.class);
-                organizerMenuIntent.putExtra("event", currentEvent);
-                startActivity(organizerMenuIntent);
-            }
-        });
 
-        announcements = new ArrayList<>();
-        if (currentEvent.getAnnouncements() != null && !currentEvent.getAnnouncements().isEmpty()) {
-            populateAnnouncements();
-        }
-        announcementAdapter = new AnnouncementAdapter(announcements);
-        announcementRecyclerView = findViewById(R.id.announcementsRecyclerView);
-        announcementRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        announcementRecyclerView.setAdapter(announcementAdapter);
-
-        // Initialize the ImageView and Button for QR code
-        qrCodeImageView = findViewById(R.id.qrCodeImageView);
-        // Initialize and set OnClickListener for the Show QR Code button
-        Button btnShowQRCode = findViewById(R.id.btnShowQRCode);
-
-        btnShowQRCode.setOnClickListener(v -> showQROptionsDialog());
-
-
-        signUpButton = findViewById(R.id.signup_button);
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signUpForEvent();
-            }
-        });
 
         displayInfo();
 
@@ -301,6 +268,7 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if (documentSnapshot.exists()) {
                             User user = documentSnapshot.toObject(User.class);
+                            Log.d("Testing", user.getFullName());
                             eventHost.setText(user.getFullName());
                         } else {
                             Log.d("Firestore", "Document does not exist");
@@ -327,82 +295,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
         eventDescription.setText(currentEvent.getDescription());
     }
 
-    /**
-     * This allows a user to sign up for an event.
-     */
-    private void signUpForEvent() {
-        if (currentUser != null) {
-            if (currentEvent.getAttendeeLimit() == null || currentEvent.getNumberSignedAttendees() < currentEvent.getAttendeeLimit()) {
-                if (!currentEvent.getSignedAttendees().contains(currentUser.getUserId())) {
-                    // Add the current user's name to the list of attendees
-                    attendees.add(currentUser);
-
-                    // Set the updated list of attendees to the event
-                    ArrayList<String> formattedAttendees = new ArrayList<>();
-                    for (User user : attendees) {
-                        formattedAttendees.add(user.getUserId());
-                    }
-                    currentEvent.setSignedAttendees(formattedAttendees);
-
-                    // Update the Firestore document for the event with the names of attendees and attendee count
-                    eventsRef.document(currentEvent.getTitle())
-                            .update("signedAttendees", formattedAttendees)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void unused) {
-//                                    currentUser.signUpForEvent(event);
-
-                                    // Successfully updated the list of attendees and attendee count in the database
-                                    Toast.makeText(AdminEventDetailsActivity.this, "Signed up for event", Toast.LENGTH_SHORT).show();
-                                    // Notify the adapter of the data change
-                                    attendeeAdapter.notifyDataSetChanged();
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    // Failed to update the list of attendees and attendee count in the database
-                                    Toast.makeText(AdminEventDetailsActivity.this, "Failed to sign up for event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                } else {
-                    Toast.makeText(AdminEventDetailsActivity.this, "Already signed up for this event", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                // Attendee limit reached
-                Toast.makeText(AdminEventDetailsActivity.this, "Attendee limit reached for this event", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    public void showQROptionsDialog() {
-        // hide QR code if displayed on the screen
-        if (qrCodeImageView.getVisibility() == View.VISIBLE) {
-            qrCodeImageView.setVisibility(View.GONE);
-            return;
-        }
-
-        final CharSequence[] options = {"Promotional QR", "Check-in QR"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Which QR Code would you like to see?");
-        builder.setItems(options, (dialog, which) -> {
-            if (which == 0) {
-                // "Promotional QR" was clicked
-                // Generate and show the QR code if it's not already visible
-                Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(currentEvent, 200); // Adjust size as needed
-                qrCodeImageView.setImageBitmap(qrCodeBitmap);
-                qrCodeImageView.setVisibility(View.VISIBLE);
-            } else if (which == 1) {
-                // "Check-in QR" was clicked
-                // Generate and show the QR code if it's not already visible
-                Bitmap qrCodeBitmap = QRCodeGenerator.generateCheckInQRCode(currentEvent, 200); // Adjust size as needed
-                qrCodeImageView.setImageBitmap(qrCodeBitmap);
-                qrCodeImageView.setVisibility(View.VISIBLE);
-            }
-        });
-        builder.show();
-    }
 
     public void populateSignedAttendees() {
         ArrayList<String> attendeesData = currentEvent.getSignedAttendees();
@@ -417,26 +309,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
                         }
                     }
                     attendeeAdapter.notifyDataSetChanged();
-                } else {
-                    Log.d("Firestore", "Error getting documents: ", task.getException());
-                }
-            }
-        });
-    }
-
-    public void populateAnnouncements() {
-        ArrayList<String> announcementsData = currentEvent.getAnnouncements();
-        announcementsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Announcement announcement = document.toObject(Announcement.class);
-                        if (announcementsData.contains(announcement.getAnnouncementId())) {
-                            announcements.add(announcement);
-                        }
-                    }
-                    announcementAdapter.notifyDataSetChanged();
                 } else {
                     Log.d("Firestore", "Error getting documents: ", task.getException());
                 }

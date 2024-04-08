@@ -60,6 +60,9 @@
         <activity android:name=".OrganizerEventDetailsActivity">
         </activity>
 
+        <activity android:name=".AdminEventDetailsActivity">
+        </activity>
+
         <activity android:name=".AdminBrowseProfilesActivity"
             android:parentActivityName=".AdminDashboardActivity">
         </activity>
