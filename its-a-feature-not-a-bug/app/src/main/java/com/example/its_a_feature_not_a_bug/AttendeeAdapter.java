@@ -48,8 +48,6 @@ public class AttendeeAdapter extends RecyclerView.Adapter<AttendeeAdapter.Attend
     public void onBindViewHolder(@NonNull AttendeeViewHolder holder, int position) {
         User attendee = attendees.get(position);
         String name = attendee.getFullName();
-//        String stringNumTimesCheckIn = "Checked in: " + attendee.getNumTimesCheckedIn(this.event);
-//        String info = name + "\t" + stringNumTimesCheckIn;
         holder.attendeeInfo.setText(name);
     }
 

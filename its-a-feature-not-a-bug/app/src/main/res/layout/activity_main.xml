@@ -33,11 +33,20 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
-            android:id="@+id/button_user_login"
+            android:id="@+id/button_attendee_login"
             android:layout_width="200dp"
             android:layout_height="60dp"
             android:layout_marginBottom="20dp"
-            android:text="@string/user"
+            android:text="@string/attendee"
+            android:textSize="22sp"
+            android:backgroundTint="#368C6E"/>
+
+        <Button
+            android:id="@+id/button_organizer_login"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:layout_marginBottom="20dp"
+            android:text="@string/organizer"
             android:textSize="22sp"
             android:backgroundTint="#368C6E"/>
 

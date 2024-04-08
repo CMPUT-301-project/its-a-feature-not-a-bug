@@ -47,7 +47,7 @@ public class MyEventsActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // Start EventDetailsActivity and pass event object for the clicked item
                     Event clickedEvent = myEventsList.get(position);
-                    Intent intent = new Intent(MyEventsActivity.this, EventDetailsActivity.class);
+                    Intent intent = new Intent(MyEventsActivity.this, AttendeeEventDetailsActivity.class);
                     intent.putExtra("event", clickedEvent);
                     startActivity(intent);
                 }
