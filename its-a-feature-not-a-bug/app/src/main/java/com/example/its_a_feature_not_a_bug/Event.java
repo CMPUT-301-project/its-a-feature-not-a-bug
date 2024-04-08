@@ -6,6 +6,7 @@ package com.example.its_a_feature_not_a_bug;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,7 +24,7 @@ public class Event implements Serializable {
     private ArrayList<String> checkedInAttendees; // list of users checked into the event
     private ArrayList<String> announcements; // list of event annoucements
 
-    private ArrayList<Map<String, Object>> attendeeLocations;
+    private Map<String, List<Double>> attendeeLocations;
 
 // Constructors
 
@@ -344,11 +345,11 @@ public class Event implements Serializable {
         return announcements.size();
     }
 
-    public ArrayList<Map<String, Object>> getAttendeeLocations() {
+    public Map<String, List<Double>> getAttendeeLocations() {
         return attendeeLocations;
     }
 
-    public void setAttendeeLocations(ArrayList<Map<String, Object>> attendeeLocations) {
+    public void setAttendeeLocations(Map<String, List<Double>> attendeeLocations) {
         this.attendeeLocations = attendeeLocations;
     }
 }

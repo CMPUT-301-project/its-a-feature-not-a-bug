@@ -84,7 +84,7 @@ public class UserCheckInActivity extends AppCompatActivity {
         usersRef = db.collection("users");
         locationsRef = db.collection("events")
                 .document(checkInEvent.getTitle()) // Assuming the event title is unique
-                .collection("AttendeeLocations");
+                .collection("Attendee Locations");
 
         // fetch current user build number
         androidId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);

@@ -3,6 +3,7 @@
 
 package com.example.its_a_feature_not_a_bug;
 
+
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -38,7 +39,9 @@ import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -201,7 +204,7 @@ public class AttendeeBrowseEventsActivity extends AppCompatActivity implements A
                         Log.d("Firestore", String.format("Event(%s, %s) fetched", event.getTitle(), event.getHost()));
 
                         // Get reference to AttendeeLocations subcollection
-                        CollectionReference attendeeLocationsRef = doc.getReference().collection("AttendeeLocations");
+                        CollectionReference attendeeLocationsRef = doc.getReference().collection("Attendee Locations");
 
                         // Retrieve data asynchronously
                         attendeeLocationsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -210,13 +213,18 @@ public class AttendeeBrowseEventsActivity extends AppCompatActivity implements A
                                 if (task.isSuccessful()) {
                                     QuerySnapshot attendeeLocationsSnapshot = task.getResult();
                                     if (attendeeLocationsSnapshot != null && !attendeeLocationsSnapshot.isEmpty()) {
-                                        // Process attendee locations
-                                        ArrayList<Map<String, Object>> attendeeLocations = new ArrayList<>();
+                                        Map<String, List<Double>> idLocationMap = new HashMap<>();
                                         for (QueryDocumentSnapshot attendeeLocationDoc : attendeeLocationsSnapshot) {
-                                            attendeeLocations.add(attendeeLocationDoc.getData());
+                                            AttendeeLocationInformation locationInformation = attendeeLocationDoc.toObject(AttendeeLocationInformation.class);
+                                            locationInformation.setTitle(attendeeLocationDoc.getId());
+
+                                            List<Double> gpsCoordinates = Arrays.asList(Double.valueOf(locationInformation.getLatitude()), Double.valueOf(locationInformation.getLongitude()));
+                                            idLocationMap.put(locationInformation.getTitle(), gpsCoordinates);
+                                            Log.d("Location Information", "ID: " + locationInformation.getTitle()
+                                            + " Coordinates = " + locationInformation.getLatitude() + " " + locationInformation.getLongitude());
                                         }
-                                        event.setAttendeeLocations(attendeeLocations);
-                                        Log.d("", "attendee locations added");
+                                        event.setAttendeeLocations(idLocationMap);
+                                        Log.d("Firebase", "attendee locations added");
                                     } else {
                                         Log.d("", "AttendeeLocations subcollection is empty for event: " + event.getTitle());
                                     }
