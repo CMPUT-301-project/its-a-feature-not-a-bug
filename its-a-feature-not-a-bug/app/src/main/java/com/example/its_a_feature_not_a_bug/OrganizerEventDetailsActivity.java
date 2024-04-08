@@ -55,7 +55,8 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
     private Button attendeesButton;
     private Button mapButton;
     private Button qrCodeButton;
-//    private ImageView deleteEventButton;
+    private Button newAnnouncementButton;
+    private ImageView deleteEventButton;
     private ImageView editEventButton;
     private ImageView eventPoster;
     private TextView eventTitle;
@@ -87,6 +88,8 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         mapButton = findViewById(R.id.button_map);
         qrCodeButton = findViewById(R.id.button_qr_codes);
         editEventButton = findViewById(R.id.editEventButton);
+        deleteEventButton = findViewById(R.id.deleteEventButton);
+        newAnnouncementButton = findViewById(R.id.button_new_announcement);
         eventPoster = findViewById(R.id.eventImage);
         eventTitle = findViewById(R.id.eventTitle);
         eventHost = findViewById(R.id.eventHost);
@@ -130,7 +133,12 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
             startActivityForResult(editEventIntent, EDIT_EVENT_REQUEST_CODE);
         });
 
-
+        deleteEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteEvent();
+            }
+        });
 
         attendeesButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,6 +153,13 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showQROptionsDialog();
+            }
+        });
+
+        newAnnouncementButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AddAnnouncementFragment(currentEvent).show(getSupportFragmentManager(), "Add Announcement");
             }
         });
 
@@ -175,6 +190,42 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
                 } else {
                     Log.d("Firestore", "Error getting documents: ", task.getException());
                 }
+            }
+        });
+    }
+
+    /**
+     * This deletes the current event.
+     */
+    private void deleteEvent() {
+        // delete image if event has one
+        if (currentEvent.getImageId() != null) {
+            String imageToDelete = currentEvent.getImageId();
+            storageRef = storage.getReferenceFromUrl(imageToDelete);
+            storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Log.d("Firestore", "Image Deleted");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e("Firestore", "Error deleting image", e);
+                }
+            });
+        }
+
+        // delete database entry
+        eventsRef.document(currentEvent.getTitle()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Toast.makeText(OrganizerEventDetailsActivity.this, "Event deleted successfully", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(OrganizerEventDetailsActivity.this, "Error deleting event: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
