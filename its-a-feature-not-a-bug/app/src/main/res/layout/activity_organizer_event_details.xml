@@ -34,18 +34,21 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:clickable="true"
-                    android:focusable="true" />
+                    android:focusable="true"
+                    android:elevation="8dp"/>
 
                 <ImageView
                     android:id="@+id/editEventButton"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/ic_edit"
+                    android:src="@drawable/edit_icon"
                     android:layout_gravity="start|top"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:clickable="true"
-                    android:focusable="true" />
+                    android:focusable="true"
+                    android:elevation="8dp"/>
+
             </FrameLayout>
 
             <TextView
@@ -80,7 +83,7 @@
 
             <TextView
                 android:id="@+id/text_view_event_announcement_header"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="28sp"
                 android:layout_marginTop="8dp"
@@ -129,6 +132,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Map"/>
+
+        <Button
+            android:id="@+id/button_new_announcement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Announcement"/>
 
     </LinearLayout>
 

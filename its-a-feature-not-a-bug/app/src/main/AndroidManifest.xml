@@ -73,6 +73,9 @@
         <activity android:name=".ProfileDetailsActivity">
         </activity>
 
+        <activity android:name=".EditEventActivity">
+        </activity>
+
         <activity android:name=".QRCodeScanner"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true"
