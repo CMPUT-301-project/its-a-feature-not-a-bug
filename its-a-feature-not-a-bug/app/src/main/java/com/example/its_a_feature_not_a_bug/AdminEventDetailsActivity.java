@@ -54,8 +54,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
     private RecyclerView attendeesRecyclerView;
     private RecyclerView announcementRecyclerView;
     private Button signUpButton;
-    private Button organizerMenuButton;
-    private ImageView qrCodeImageView;
 
     // Adapter attributes
     private AttendeeAdapter attendeeAdapter;
@@ -81,9 +79,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
-
-
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -94,8 +89,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
 
         }
 
-        ImageView deleteEventButton = findViewById(R.id.deleteEventButton);
-        deleteEventButton.setOnClickListener(v -> showDeleteEventOptionsDialog());
 
         // System.out.print("reached this point");
         androidId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -118,28 +111,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
         eventHost = findViewById(R.id.eventHost);
         eventDate = findViewById(R.id.eventDate);
         eventDescription = findViewById(R.id.eventDescription);
-        organizerMenuButton = findViewById(R.id.button_organizer_menu);
-
-        // get user data from database
-        usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        if (androidId.equals(document.getId())) {
-                            currentUser = document.toObject(User.class);
-                            if (!currentUser.getUserId().equals(currentEvent.getHost())) {
-                                organizerMenuButton.setVisibility(View.GONE);
-                            }
-                            Log.d("Brayden", "currentUser: " + currentUser.getUserId());
-                            break;
-                        }
-                    }
-                } else {
-                    Log.d("Firestore", "Error getting documents: ", task.getException());
-                }
-            }
-        });
 
         // get attendees
         attendees = new ArrayList<>();
@@ -152,15 +123,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
         attendeesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         attendeesRecyclerView.setAdapter(attendeeAdapter);
 
-        organizerMenuButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent organizerMenuIntent = new Intent(getApplicationContext(), OrganizerMenuActivity.class);
-                organizerMenuIntent.putExtra("event", currentEvent);
-                startActivity(organizerMenuIntent);
-            }
-        });
-
         announcements = new ArrayList<>();
         if (currentEvent.getAnnouncements() != null && !currentEvent.getAnnouncements().isEmpty()) {
             populateAnnouncements();
@@ -169,14 +131,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
         announcementRecyclerView = findViewById(R.id.announcementsRecyclerView);
         announcementRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         announcementRecyclerView.setAdapter(announcementAdapter);
-
-        // Initialize the ImageView and Button for QR code
-        qrCodeImageView = findViewById(R.id.qrCodeImageView);
-        // Initialize and set OnClickListener for the Show QR Code button
-        Button btnShowQRCode = findViewById(R.id.btnShowQRCode);
-
-        btnShowQRCode.setOnClickListener(v -> showQROptionsDialog());
-
 
         signUpButton = findViewById(R.id.signup_button);
         signUpButton.setOnClickListener(new View.OnClickListener() {
@@ -373,35 +327,6 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
                 Toast.makeText(AdminEventDetailsActivity.this, "Attendee limit reached for this event", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    public void showQROptionsDialog() {
-        // hide QR code if displayed on the screen
-        if (qrCodeImageView.getVisibility() == View.VISIBLE) {
-            qrCodeImageView.setVisibility(View.GONE);
-            return;
-        }
-
-        final CharSequence[] options = {"Promotional QR", "Check-in QR"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Which QR Code would you like to see?");
-        builder.setItems(options, (dialog, which) -> {
-            if (which == 0) {
-                // "Promotional QR" was clicked
-                // Generate and show the QR code if it's not already visible
-                Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(currentEvent, 200); // Adjust size as needed
-                qrCodeImageView.setImageBitmap(qrCodeBitmap);
-                qrCodeImageView.setVisibility(View.VISIBLE);
-            } else if (which == 1) {
-                // "Check-in QR" was clicked
-                // Generate and show the QR code if it's not already visible
-                Bitmap qrCodeBitmap = QRCodeGenerator.generateCheckInQRCode(currentEvent, 200); // Adjust size as needed
-                qrCodeImageView.setImageBitmap(qrCodeBitmap);
-                qrCodeImageView.setVisibility(View.VISIBLE);
-            }
-        });
-        builder.show();
     }
 
     public void populateSignedAttendees() {
