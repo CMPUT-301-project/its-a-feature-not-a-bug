@@ -3,6 +3,7 @@
 
 package com.example.its_a_feature_not_a_bug;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -74,6 +75,18 @@ public class MainActivity extends AppCompatActivity {
         // Request camera permissions
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.CAMERA}, 50);
+        }
+
+        // Request location permissions
+        String[][] locationPermissions = {
+                {android.Manifest.permission.ACCESS_FINE_LOCATION, "51"},
+                {android.Manifest.permission.INTERNET, "53"},
+                {Manifest.permission.WRITE_EXTERNAL_STORAGE, "54"}
+        };
+        for (String[] permission : locationPermissions) {
+            if (ActivityCompat.checkSelfPermission(this, permission[0]) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{permission[0]}, Integer.parseInt(permission[1]));
+            }
         }
 
         // connect to Firebase

@@ -1,17 +1,24 @@
 package com.example.its_a_feature_not_a_bug;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -20,7 +27,8 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
-
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +36,13 @@ import java.util.Map;
 public class UserCheckInActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
+
+    private static final int REQUEST_CODE_LOCATION = 1001;
+
+    private FusedLocationProviderClient fusedLocationClient;
     private CollectionReference usersRef;
+
+    private CollectionReference locationsRef;
 
 
     private String androidId;
@@ -44,6 +58,9 @@ public class UserCheckInActivity extends AppCompatActivity {
     private Button declineButton;
     private Button confirmButton;
 
+    private Switch geolocationSwitch;
+    private boolean blockLocation = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +74,7 @@ public class UserCheckInActivity extends AppCompatActivity {
         eventDescription = findViewById(R.id.text_view_event_description);
         declineButton = findViewById(R.id.button_deny_checkin);
         confirmButton = findViewById(R.id.button_confirm_checkin);
+        geolocationSwitch = findViewById(R.id.switchGeolocation);
 
         // fetch event from intent extras
         Intent intent = getIntent();
@@ -67,8 +85,12 @@ public class UserCheckInActivity extends AppCompatActivity {
 
         // connect to database and collections
         db = FirebaseFirestore.getInstance();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         eventsRef = db.collection("events");
         usersRef = db.collection("users");
+        locationsRef = db.collection("events")
+                .document(checkInEvent.getTitle()) // Assuming the event title is unique
+                .collection("Attendee Locations");
 
         // fetch current user build number
         androidId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -101,6 +123,19 @@ public class UserCheckInActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 checkInUser();
+                if (!blockLocation) {
+                    storeUserLocation();
+                }
+            }
+        });
+
+        // Set switch initial state
+        geolocationSwitch.setChecked(!blockLocation);
+        geolocationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // Update the value of blockLocation based on the switch state
+                blockLocation = !isChecked;
             }
         });
     }
@@ -163,6 +198,42 @@ public class UserCheckInActivity extends AppCompatActivity {
         }
         if (checkInEvent.getDescription() != null && !checkInEvent.getDescription().isEmpty()) {
             eventDescription.setText(checkInEvent.getDescription());
+        }
+    }
+    public void storeUserLocation() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                Map<String, Object> locationData = new HashMap<>();
+                                locationData.put("latitude", location.getLatitude());
+                                locationData.put("longitude", location.getLongitude());
+
+                                // Store the user's location data in the AttendeeLocations subcollection
+                                locationsRef.document(androidId)
+                                        .set(locationData)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Toast.makeText(UserCheckInActivity.this, "Location stored successfully", Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Toast.makeText(UserCheckInActivity.this, "Failed to store location", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            } else {
+                                Toast.makeText(UserCheckInActivity.this, "Location is null", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION);
         }
     }
 }
