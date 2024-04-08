@@ -29,6 +29,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
@@ -87,12 +88,9 @@ public class OrganizerMapActivity extends AppCompatActivity {
         backButton = findViewById(R.id.back_button_map);
 
         //map calibration
+        mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapView.setTilesScaledToDpi(true);
-        rotationGestureOverlay = new RotationGestureOverlay(mapView);
-        rotationGestureOverlay.setEnabled(true);
         mapView.setMultiTouchControls(true);
-        mapView.getOverlays().add(rotationGestureOverlay);
-
         // Fetch current event
         currentEvent = (Event) getIntent().getSerializableExtra("event");
 
@@ -117,6 +115,11 @@ public class OrganizerMapActivity extends AppCompatActivity {
         mapController = mapView.getController();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         centerMapLocation();
+
+        rotationGestureOverlay = new RotationGestureOverlay(mapView);
+        rotationGestureOverlay.setEnabled(true);
+        mapView.getOverlays().add(rotationGestureOverlay);
+
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,6 +213,7 @@ public class OrganizerMapActivity extends AppCompatActivity {
                 List<Double> coordinates = attendeeLocations.get(user.getUserId());
                 double latitude = coordinates.get(0);
                 double longitude = coordinates.get(1);
+                Log.d("Populating markers for each attendee", "attendee: " + user.getFullName());
 
                 // Create OverlayItem with user's information
                 OverlayItem overlayItem = new OverlayItem(user.getFullName(), user.getEmail(),
@@ -219,7 +223,7 @@ public class OrganizerMapActivity extends AppCompatActivity {
         }
 
         // Create the ItemizedOverlay
-        this.mapOverlay = new ItemizedIconOverlay<>(items,
+        mapOverlay = new ItemizedIconOverlay<>(items,
                 new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
                     @Override
                     public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
@@ -242,7 +246,7 @@ public class OrganizerMapActivity extends AppCompatActivity {
                 }, getApplicationContext());
 
         // Add the ItemizedOverlay to the MapView's overlays
-        this.mapView.getOverlays().add(this.mapOverlay);
+        mapView.getOverlays().add(mapOverlay);
     }
 
     private String getUserPhoneNumber(String fullName) {
@@ -269,7 +273,7 @@ public class OrganizerMapActivity extends AppCompatActivity {
                                 Log.d("OrganizerMapActivity", "got location");
                                 // Create a GeoPoint object with the obtained coordinates
                                 GeoPoint userLocation = new GeoPoint(lastLocation.getLatitude(), lastLocation.getLongitude());
-                                mapController.setZoom(5.); //zoom in a bit
+                                mapController.setZoom(9.); //zoom in a bit
                                 // Set the center of the map to the user's location
                                 mapController.setCenter(userLocation);
                             }
