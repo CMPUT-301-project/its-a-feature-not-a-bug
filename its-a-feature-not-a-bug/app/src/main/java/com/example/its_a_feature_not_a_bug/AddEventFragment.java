@@ -217,16 +217,9 @@ public class AddEventFragment extends DialogFragment {
         });
     }
 
-    private void displayQRCode(Bitmap qrCodeBitmap) {
-        getActivity().runOnUiThread(() -> {
-            ImageView qrCodeImageView = getActivity().findViewById(R.id.qrCodeImageView);
-            if (qrCodeImageView != null) {
-                qrCodeImageView.setImageBitmap(qrCodeBitmap);
-                qrCodeImageView.setVisibility(View.VISIBLE);
-            }
-        });
-    }
-
+    /**
+     * This implements the functionality to wait for Firebase upload to complete
+     */
     interface OnImageUploadListener {
         void onImageUploadSuccess(String imageURL);
         void onImageUploadFailure(String errorMessage);

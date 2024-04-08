@@ -101,34 +101,13 @@ public class AdminBrowseProfilesActivity extends AppCompatActivity implements Pr
         Intent intent = new Intent(AdminBrowseProfilesActivity.this, ProfileDetailsActivity.class);
         intent.putExtra("profile", profile);
         startActivity(intent);
-//        new AlertDialog.Builder(this)
-//                .setTitle("Delete Profile")
-//                .setMessage("Are you sure you want to delete this profile?")
-//                .setPositiveButton("Yes", (dialog, which) -> deleteProfile(profile))
-//                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
-//                .create().show();
     }
 
     /**
-     * Deletes a profile from the database.
-//     * @param profile the profile to be deleted.
+     * This implements the back button functionality for the action bar.
+     * @param item The menu item that was selected
+     * @return whether the back button was selected
      */
-//    private void deleteProfile(Profile profile) {
-//        // Here you should use a unique identifier for the profile to delete.
-//        // This could be a userID or any unique field in your Profile model.
-//        // For demonstration purposes, let's assume you have a unique ID and it's accessible via profile.getId()
-//        String profileId = profile.getFullName(); // Adjust according to your unique identifier
-//
-//        db.collection("profiles").document(profileId)
-//                .delete()
-//                .addOnSuccessListener(aVoid -> {
-//                    Toast.makeText(AdminBrowseProfilesActivity.this, "Profile deleted successfully", Toast.LENGTH_SHORT).show();
-//                    profileList.remove(profile);
-//                    profileAdapter.notifyDataSetChanged();
-//                })
-//                .addOnFailureListener(e -> Toast.makeText(AdminBrowseProfilesActivity.this, "Error deleting profile", Toast.LENGTH_SHORT).show());
-//    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

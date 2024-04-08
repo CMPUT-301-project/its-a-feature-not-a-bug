@@ -1,8 +1,10 @@
+// This source code file implements the functionality for an admin to view event details.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -39,6 +41,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+/**
+ * This class implements the functionality for an admin to view an event's details.
+ */
 public class AdminEventDetailsActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
@@ -170,6 +175,9 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * This shows the dialog that asks what the admin wants to delete.
+     */
     private void showDeleteEventOptionsDialog() {
         final CharSequence[] options = {"Event Poster", "Event"};
 
@@ -185,6 +193,9 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+     * This shows the dialog that confirms event image deletion.
+     */
     private void showConfirmDeleteEventPosterDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Event Poster")
@@ -194,6 +205,9 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * This shows the dialog that confirms event deletion.
+     */
     private void showConfirmDeleteEventDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Event")
@@ -203,6 +217,9 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * This implements removing the event image from Firebase.
+     */
     private void removeEventPoster() {
         ImageView eventPosterImageView = findViewById(R.id.eventImage);
         eventPosterImageView.setImageResource(R.drawable.default_poster);
@@ -299,6 +316,9 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * This populates the view of signed attendees with Firebase data.
+     */
     public void populateSignedAttendees() {
         ArrayList<String> attendeesData = currentEvent.getSignedAttendees();
         usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -319,6 +339,34 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This populates the view of event announcements.
+     */
+    public void populateAnnouncements() {
+        ArrayList<String> announcementsData = currentEvent.getAnnouncements();
+        announcementsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Announcement announcement = document.toObject(Announcement.class);
+                        if (announcementsData.contains(announcement.getAnnouncementId())) {
+                            announcements.add(announcement);
+                        }
+                    }
+                    announcementAdapter.notifyDataSetChanged();
+                } else {
+                    Log.d("Firestore", "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
+    /**
+     * This implements the back button functionality for the action bar.
+     * @param item The menu item that was selected
+     * @return whether the back button was selected
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

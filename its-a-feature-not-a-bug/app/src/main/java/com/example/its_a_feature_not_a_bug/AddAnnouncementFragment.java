@@ -1,3 +1,6 @@
+// This source code file implements the fragment that adds an announcement to a specific event.
+// No outstanding issues.
+
 package com.example.its_a_feature_not_a_bug;
 
 import android.app.AlertDialog;
@@ -23,6 +26,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * This class implements the fragment that allows a user to add a new event to Firebase.
+ * It extends DialogFragment to inherit its basic functionality.
+ */
 public class AddAnnouncementFragment extends DialogFragment {
     // Firebase attributes
     private FirebaseFirestore db;
@@ -81,6 +88,10 @@ public class AddAnnouncementFragment extends DialogFragment {
         return alertDialog;
     }
 
+    /**
+     * This uploads an announcement to Firebase and update the event entry.
+     * @param announcement the announcement to be added
+     */
     private void addAnnouncement(Announcement announcement) {
         // set announcement data
         Map<String, Object> announcementData = new HashMap<>();
