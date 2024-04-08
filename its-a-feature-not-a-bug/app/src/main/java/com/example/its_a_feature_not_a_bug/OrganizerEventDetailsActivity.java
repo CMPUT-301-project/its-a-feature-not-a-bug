@@ -54,6 +54,7 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
     private Button attendeesButton;
     private Button mapButton;
     private Button qrCodeButton;
+    private Button newAnnouncementButton;
     private ImageView deleteEventButton;
     private ImageView editEventButton;
     private ImageView eventPoster;
@@ -86,6 +87,7 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         qrCodeButton = findViewById(R.id.button_qr_codes);
         deleteEventButton = findViewById(R.id.deleteEventButton);
         editEventButton = findViewById(R.id.editEventButton);
+        newAnnouncementButton = findViewById(R.id.button_new_announcement);
         eventPoster = findViewById(R.id.eventImage);
         eventTitle = findViewById(R.id.eventTitle);
         eventHost = findViewById(R.id.eventHost);
@@ -154,6 +156,13 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showQROptionsDialog();
+            }
+        });
+
+        newAnnouncementButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AddAnnouncementFragment(currentEvent).show(getSupportFragmentManager(), "Add Announcement");
             }
         });
 
