@@ -109,14 +109,16 @@ public class OrganizerMapActivity extends AppCompatActivity {
         //only populate map if attendees have checked in
         if (currentEvent.getNumberCheckIns() > 0) {
             populateCheckedAttendees();
-            populateAttendeeLocations();
-            populateMapWithMarkers();
         }
 
         //Center map around organizer's location
         mapController = mapView.getController();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        centerMapLocation();
+//        centerMapLocation();
+        GeoPoint startPoint = new GeoPoint(53.5262, -113.5205); //UofA Campus
+        mapController.setZoom(15); //zoom in a bit
+        mapController.setCenter(startPoint);
+
 
         rotationGestureOverlay = new RotationGestureOverlay(mapView);
         rotationGestureOverlay.setEnabled(true);
@@ -173,6 +175,8 @@ public class OrganizerMapActivity extends AppCompatActivity {
                             Log.d("Brayden", user.getUserId());
                         }
                     }
+                    // After populating checked attendees, call the next method
+                    populateAttendeeLocations();
                 } else {
                     Log.d("Firestore", "Error getting documents: ", task.getException());
                 }
@@ -199,6 +203,8 @@ public class OrganizerMapActivity extends AppCompatActivity {
                                 attendeeLocations.put(locationInformation.getTitle(), gpsCoordinates);
                             }
                         }
+                        // After populating attendee locations, call the next method
+                        populateMapWithMarkers();
                     }
                 } else {
                     Log.e("Firestore", "Error getting attendee locations: ", task.getException());
@@ -275,7 +281,6 @@ public class OrganizerMapActivity extends AppCompatActivity {
                                 Log.d("OrganizerMapActivity", "got location");
                                 // Create a GeoPoint object with the obtained coordinates
                                 GeoPoint userLocation = new GeoPoint(lastLocation.getLatitude(), lastLocation.getLongitude());
-                                mapController.setZoom(9.); //zoom in a bit
                                 // Set the center of the map to the user's location
                                 mapController.setCenter(userLocation);
                             }
