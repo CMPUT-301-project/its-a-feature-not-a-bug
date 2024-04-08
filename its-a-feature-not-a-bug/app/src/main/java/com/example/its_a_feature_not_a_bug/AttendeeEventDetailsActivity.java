@@ -67,11 +67,8 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
     private RecyclerView attendeesRecyclerView;
     private RecyclerView announcementRecyclerView;
     private Button signUpButton;
-    private Button organizerMenuButton;
-    private ImageView qrCodeImageView;
 
     // Adapter attributes
-    private AttendeeAdapter attendeeAdapter;
     private ArrayList<User> attendees;
     private AnnouncementAdapter announcementAdapter;
     private ArrayList<Announcement> announcements;
