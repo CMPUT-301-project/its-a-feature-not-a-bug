@@ -46,6 +46,25 @@ public class MainActivityTest {
         onView(withText("OK")).perform(click());
         onView(withText("STUDYING")).check(matches(isDisplayed()));
     }
+    @Test
+    public void testDeleteEvent() {
+        // Start Activity
+        ActivityScenario.launch(MainActivity.class);
+        // Click on Organizer button
+        onView(withId(R.id.button_organizer_login)).perform(click());
+        // Click on Add Event button
+        onView(withId(R.id.button_new_event)).perform(click());
+        // Type "CRYING" in the editText
+        onView(withId(R.id.edit_text_event_title)).perform(ViewActions.typeText("CRYING"));
+        // Close soft keyboard
+        Espresso.closeSoftKeyboard();
+        onView(withText("OK")).perform(click());
+        // Click on the event CRYING
+        onView(withText("CRYING")).perform(click());
+        // Click on Delete Event
+        onView(withId(R.id.deleteEventButton)).perform(click());
+        onView(withText("CRYING")).check(doesNotExist());
+    }
 }
 
 
