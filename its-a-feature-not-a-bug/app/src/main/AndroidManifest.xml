@@ -106,6 +106,9 @@
         <activity android:name=".OrganizerMenuActivity">
         </activity>
 
+        <activity android:name=".OrganizerMapActivity">
+        </activity>
+
         <activity android:name=".NewUserActivity">
         </activity>
 
