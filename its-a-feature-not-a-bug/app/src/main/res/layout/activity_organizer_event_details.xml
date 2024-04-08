@@ -26,26 +26,17 @@
                     android:scaleType="centerCrop" />
 
                 <ImageView
-                    android:id="@+id/deleteEventButton"
+                    android:id="@+id/editEventButton"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/garbage_can"
+                    android:src="@drawable/edit_icon"
                     android:layout_gravity="end|top"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:clickable="true"
-                    android:focusable="true" />
+                    android:focusable="true"
+                    android:elevation="8dp"/>
 
-                <ImageView
-                    android:id="@+id/editEventButton"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_edit"
-                    android:layout_gravity="start|top"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:clickable="true"
-                    android:focusable="true" />
             </FrameLayout>
 
             <TextView
