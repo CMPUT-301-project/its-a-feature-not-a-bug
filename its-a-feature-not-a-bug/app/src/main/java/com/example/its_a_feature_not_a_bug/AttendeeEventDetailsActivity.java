@@ -268,7 +268,7 @@ public class AttendeeEventDetailsActivity extends AppCompatActivity {
     private void signUpForEvent() {
         if (currentUser != null) {
             if (currentEvent.getAttendeeLimit() == null || currentEvent.getNumberSignedAttendees() < currentEvent.getAttendeeLimit()) {
-                if (!currentEvent.getSignedAttendees().contains(currentUser.getUserId())) {
+                if (currentEvent.getSignedAttendees() == null || !currentEvent.getSignedAttendees().contains(currentUser.getUserId())) {
                     currentEvent.addSignedAttendee(currentUser.getUserId());
 
                     // Update the Firestore document for the event with the names of attendees and attendee count

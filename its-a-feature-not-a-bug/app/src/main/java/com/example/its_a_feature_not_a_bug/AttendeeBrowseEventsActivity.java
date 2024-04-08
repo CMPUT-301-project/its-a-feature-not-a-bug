@@ -47,7 +47,7 @@ import java.util.Map;
 /**
  * This class is an Activity that allows a user to navigate listed events
  */
-public class AttendeeBrowseEventsActivity extends AppCompatActivity implements AddEventDialogueListener {
+public class AttendeeBrowseEventsActivity extends AppCompatActivity {
     // Firebase attributes
     private FirebaseFirestore db;
     private CollectionReference eventsRef;
@@ -70,39 +70,39 @@ public class AttendeeBrowseEventsActivity extends AppCompatActivity implements A
     private ArrayList<String> signedAttendees = new ArrayList<>();
     private ArrayList<String> attendees = new ArrayList<String>();
 
-    /**
-     * This method adds an event to the Firebase Firestore
-     * @param event the event to be added
-     */
-    @Override
-    public void addEvent(Event event) {
-        // Adds event to the Firestore collection
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("host", event.getHost());
-        data.put("date", event.getDate());
-        data.put("description", event.getDescription());
-        data.put("imageId", event.getImageId());
-
-        // Include attendee limit if available
-        if (event.getAttendeeLimit() > 0) {
-            data.put("attendeeLimit", event.getAttendeeLimit());
-        }
-
-        eventsRef.document(event.getTitle())
-                .set(data)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Log.d("Firestore", "DocumentSnapshot successfully written");
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e("Firestore", "Failed to upload event", e);
-                    }
-                });
-    }
+//    /**
+//     * This method adds an event to the Firebase Firestore
+//     * @param event the event to be added
+//     */
+//    @Override
+//    public void addEvent(Event event) {
+//        // Adds event to the Firestore collection
+//
+//        Map<String, Object> data = new HashMap<>();
+//        data.put("host", event.getHost());
+//        data.put("date", event.getDate());
+//        data.put("description", event.getDescription());
+//        data.put("imageId", event.getImageId());
+//
+//        // Include attendee limit if available
+//        if (event.getAttendeeLimit() > 0) {
+//            data.put("attendeeLimit", event.getAttendeeLimit());
+//        }
+//
+//        eventsRef.document(event.getTitle())
+//                .set(data)
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void unused) {
+//                        Log.d("Firestore", "DocumentSnapshot successfully written");
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.e("Firestore", "Failed to upload event", e);
+//                    }
+//                });
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,7 +249,7 @@ public class AttendeeBrowseEventsActivity extends AppCompatActivity implements A
             @Override
             public void onClick(View view) {
                 androidId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-                ArrayList<Event> myEventsList = getMyEvents(androidId, eventDataList);
+                ArrayList<Event> myEventsList = getMyEvents(eventDataList);
                 Intent intent = new Intent(AttendeeBrowseEventsActivity.this, MyEventsActivity.class);
                 intent.putExtra("myEventsList", myEventsList);
                 startActivity(intent);
@@ -267,14 +267,17 @@ public class AttendeeBrowseEventsActivity extends AppCompatActivity implements A
         return super.onOptionsItemSelected(item);
     }
 
-    public ArrayList<Event> getMyEvents(String androidId, ArrayList <Event> eventDataList) {
+    public ArrayList<Event> getMyEvents(ArrayList <Event> eventDataList) {
         ArrayList<Event> myEvents = new ArrayList<>();
         for (Event event : eventDataList) {
             if (event.getSignedAttendees() != null) {
-                for (String attendeeId : event.getSignedAttendees()) {
-                    if (attendeeId.equalsIgnoreCase(androidId)) {
-                        myEvents.add(event);
-                    }
+//                for (String attendeeId : event.getSignedAttendees()) {
+//                    if (attendeeId.equals(androidId)) {
+//                        myEvents.add(event);
+//                    }
+//                }
+                if (event.hasSignedAttendee(androidId)) {
+                    myEvents.add(event);
                 }
             }
         }
