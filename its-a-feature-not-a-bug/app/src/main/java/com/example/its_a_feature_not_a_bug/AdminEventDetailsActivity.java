@@ -2,7 +2,6 @@ package com.example.its_a_feature_not_a_bug;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -75,7 +74,7 @@ public class AdminEventDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.event_details);
+        setContentView(R.layout.activity_attendee_event_details);
 
         db = FirebaseFirestore.getInstance();
 
