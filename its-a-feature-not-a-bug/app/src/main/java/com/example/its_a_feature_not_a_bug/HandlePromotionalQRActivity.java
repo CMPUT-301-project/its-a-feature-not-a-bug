@@ -32,7 +32,7 @@ public class HandlePromotionalQRActivity extends AppCompatActivity {
         startActivity(main_intent);
 
         // silently start BrowseEventsActivity
-        Intent browse_intent = new Intent(this, BrowseEventsActivity.class);
+        Intent browse_intent = new Intent(this, AttendeeBrowseEventsActivity.class);
         browse_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(browse_intent);
 
@@ -56,7 +56,7 @@ public class HandlePromotionalQRActivity extends AppCompatActivity {
                             Log.d("Brayden", "DocumentSnapshot data: " + document.getData());
                             promotionalEvent = document.toObject(Event.class);
                             promotionalEvent.setTitle(document.getId());
-                            Intent intent = new Intent(HandlePromotionalQRActivity.this, EventDetailsActivity.class);
+                            Intent intent = new Intent(HandlePromotionalQRActivity.this, AttendeeEventDetailsActivity.class);
                             intent.putExtra("event", promotionalEvent);
                             startActivity(intent);
                         } else {
