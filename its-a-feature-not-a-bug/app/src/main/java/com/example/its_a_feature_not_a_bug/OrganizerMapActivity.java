@@ -1,9 +1,11 @@
 package com.example.its_a_feature_not_a_bug;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +28,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.osmdroid.api.IMapController;
+import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
@@ -68,14 +71,23 @@ public class OrganizerMapActivity extends AppCompatActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Context ctx = getApplicationContext();
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+
         setContentView(R.layout.activity_organizer_map);
+
+        requestPermissionsIfNecessary(new String[]{
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+        });
 
         // Initialize views
         mapView = findViewById(R.id.map);
         backButton = findViewById(R.id.back_button_map);
 
         //map calibration
-        //mapView.setTilesScaledToDpi(true);
+        mapView.setTilesScaledToDpi(true);
         rotationGestureOverlay = new RotationGestureOverlay(mapView);
         rotationGestureOverlay.setEnabled(true);
         mapView.setMultiTouchControls(true);
