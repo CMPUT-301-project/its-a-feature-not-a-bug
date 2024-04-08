@@ -214,19 +214,31 @@ public class BrowseEventsActivity extends AppCompatActivity implements AddEventD
                         event.setTitle(doc.getId());
                         Log.d("Firestore", String.format("Event(%s, %s) fetched", event.getTitle(), event.getHost()));
 
-                        // Check if the subcollection exists and is not empty before accessing it
+                        // Get reference to AttendeeLocations subcollection
                         CollectionReference attendeeLocationsRef = doc.getReference().collection("AttendeeLocations");
-                        QuerySnapshot attendeeLocationsSnapshot = attendeeLocationsRef.get().getResult();
-                        if (attendeeLocationsSnapshot != null && !attendeeLocationsSnapshot.isEmpty()) {
-                            ArrayList<Map<String, Object>> attendeeLocations = new ArrayList<>();
-                            for (QueryDocumentSnapshot attendeeLocationDoc : attendeeLocationsSnapshot) {
-                                attendeeLocations.add(attendeeLocationDoc.getData());
+
+                        // Retrieve data asynchronously
+                        attendeeLocationsRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    QuerySnapshot attendeeLocationsSnapshot = task.getResult();
+                                    if (attendeeLocationsSnapshot != null && !attendeeLocationsSnapshot.isEmpty()) {
+                                        // Process attendee locations
+                                        ArrayList<Map<String, Object>> attendeeLocations = new ArrayList<>();
+                                        for (QueryDocumentSnapshot attendeeLocationDoc : attendeeLocationsSnapshot) {
+                                            attendeeLocations.add(attendeeLocationDoc.getData());
+                                        }
+                                        event.setAttendeeLocations(attendeeLocations);
+                                        Log.d("", "attendee locations added");
+                                    } else {
+                                        Log.d("", "AttendeeLocations subcollection is empty for event: " + event.getTitle());
+                                    }
+                                } else {
+                                    Log.e("Firestore", "Error getting attendee locations: ", task.getException());
+                                }
                             }
-                            event.setAttendeeLocations(attendeeLocations);
-                            Log.d("", "attendee locations added");
-                        } else {
-                            Log.d("", "AttendeeLocations subcollection is empty for event: " + event.getTitle());
-                        }
+                        });
                         eventDataList.add(event);
                     }
                     eventAdapter.notifyDataSetChanged();
