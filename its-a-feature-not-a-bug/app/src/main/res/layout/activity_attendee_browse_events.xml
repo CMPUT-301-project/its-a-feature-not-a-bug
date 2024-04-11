@@ -17,24 +17,28 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="3">
 
         <Button
             android:id="@+id/button_events"
-            android:layout_width="126dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="My Events" />
 
         <Button
             android:id="@+id/button_camera"
-            android:layout_width="126dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Camera" />
 
         <Button
             android:id="@+id/button_profile"
-            android:layout_width="126dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Profile" />
 
     </LinearLayout>

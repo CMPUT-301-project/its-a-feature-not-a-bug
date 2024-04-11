@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginTop="188dp"
-        android:text="Welcome to Its a Feature not a Bug!\nPlease enter your name"
+        android:text="Welcome to\nIt's A Feature Not A Bug!\nPlease enter your name below:"
         android:textAlignment="center"
         android:textColor="#368C6E"
         android:textSize="28sp"
