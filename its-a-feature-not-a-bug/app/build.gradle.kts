@@ -71,5 +71,4 @@ dependencies {
     androidTestImplementation("com.android.support.test:runner:1.0.2")
     androidTestImplementation("com.android.support.test:rules:1.0.2")
     androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0")
-
 }
