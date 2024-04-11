@@ -2,7 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="App">
+
+      <entry key="app">
+
+  
         <State>
           <runningDeviceTargetSelectedWithDropDown>
             <Target>
@@ -19,6 +22,7 @@
         </State>
       </entry>
       <entry key="MainActivityTest">
+
         <State />
       </entry>
     </value>

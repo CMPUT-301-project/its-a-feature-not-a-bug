@@ -22,7 +22,7 @@
                 <ImageView
                     android:id="@+id/eventImage"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
+                    android:layout_height="270dp"
                     android:scaleType="centerCrop" />
 
             </FrameLayout>
@@ -33,38 +33,116 @@
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                android:gravity="center"/>
 
 
-            <TextView
-                android:id="@+id/eventDate"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:layout_marginTop="8dp" />
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="16dp">
 
-            <TextView
-                android:id="@+id/eventHost"
+                <ImageView
+                    android:id="@+id/dateIcon"
+                    android:layout_width="37dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/calendar"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        android:id="@+id/dateLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DATE\n"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/eventDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:layout_marginTop="8dp" />
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="16dp">
+
+                <ImageView
+                    android:id="@+id/hostIcon"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/user"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="8dp">
+
+                    <TextView
+                        android:id="@+id/hostLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="HOST\n"
+                        android:textSize="20sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/eventHost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/eventDescriptionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DESCRIPTION:\n"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="20dp"/>
 
             <TextView
                 android:id="@+id/eventDescription"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
-                android:layout_marginTop="8dp" />
+                android:layout_below="@id/eventDescriptionLabel"
+                android:layout_marginStart="8dp" />
+
+            <TextView
+                android:id="@+id/announcementsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ANNOUNCEMENTS:\n"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="20dp"/>
 
             <TextView
                 android:id="@+id/text_view_event_announcement_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:layout_marginTop="8dp"
-                android:textAlignment="center"
-                android:text="Announcements"/>
+                android:textAlignment="center"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/announcementsRecyclerView"
@@ -73,20 +151,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/attendeesRecyclerView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
-
-<!--            <TextView-->
-<!--                android:id="@+id/text_view_event_signed_attendees_header"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:textSize="20sp"-->
-<!--                android:layout_marginTop="8dp"-->
-<!--                android:text="Signed Attendees"/>-->
-
-<!--            <androidx.recyclerview.widget.RecyclerView-->
-<!--                android:id="@+id/attendeesRecyclerView"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="16dp"/>-->
 
             <ImageView
                 android:id="@+id/qrCodeImageView"
@@ -104,9 +168,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sign Up"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"/>
 
 </RelativeLayout>

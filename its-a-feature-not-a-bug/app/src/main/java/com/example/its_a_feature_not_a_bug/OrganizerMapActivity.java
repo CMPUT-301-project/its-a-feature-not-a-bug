@@ -5,17 +5,22 @@ package com.example.its_a_feature_not_a_bug;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
+import android.text.Html;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -57,7 +62,6 @@ public class OrganizerMapActivity extends AppCompatActivity {
 
     private Event currentEvent;
 
-    private Button backButton;
 
     private ArrayList<User> checkedAttendees;
 
@@ -89,9 +93,18 @@ public class OrganizerMapActivity extends AppCompatActivity {
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE
         });
 
+        // Enable the action bar and display the back button
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.back_arrow);
+            ColorDrawable colorDrawable = new ColorDrawable(Color.parseColor("#368C6E"));
+            actionBar.setBackgroundDrawable(colorDrawable);
+            actionBar.setTitle(Html.fromHtml("<font color=\"#FFFFFF\"><b>" + "ATTENDEE CHECK-IN LOCATION" + "</b></font>"));
+        }
+
         // Initialize views
         mapView = findViewById(R.id.map);
-        backButton = findViewById(R.id.back_button_map);
 
         //map calibration
         mapView.setTileSource(TileSourceFactory.MAPNIK);
@@ -130,13 +143,6 @@ public class OrganizerMapActivity extends AppCompatActivity {
         rotationGestureOverlay.setEnabled(true);
         mapView.getOverlays().add(rotationGestureOverlay);
 
-
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
     }
 
     @Override
@@ -315,5 +321,20 @@ public class OrganizerMapActivity extends AppCompatActivity {
                     });
         }
 
+    }
+
+    /**
+     * This implements the back button functionality for the action bar.
+     * @param item The menu item that was selected
+     * @return whether the back button was selected
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

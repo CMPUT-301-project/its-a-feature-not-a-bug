@@ -91,7 +91,6 @@ public class AttendeesActivity extends AppCompatActivity {
         signedAttendeesRecyclerView.setAdapter(signedAttendeesAdapter);
 
         checkedAttendees = new ArrayList<>();
-        Log.d("Brayden", currentEvent.getCheckedInAttendees().toString());
         if (currentEvent.getNumberCheckIns() > 0) {
             populateCheckedAttendees();
         }
