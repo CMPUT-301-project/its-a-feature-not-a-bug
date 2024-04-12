@@ -4,6 +4,14 @@
 package com.example.its_a_feature_not_a_bug;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.content.Context;
+import androidx.core.content.FileProvider;
+import android.content.Intent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import android.util.Log;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -58,4 +66,41 @@ public class QRCodeGenerator {
         String content = "featurenotbug://checkin/" + event.getTitle(); // Adjust based on URL scheme
         return generateQR(content, size);
     }
+    /**
+     * Saves the generated QR code to a file and shares it via other applications.
+     *
+     * @param context The application context.
+     * @param bitmap The QR code bitmap to share.
+     * @param fileName The name of the file to save the bitmap to.
+     */
+    public static void shareQRCode(Context context, Bitmap bitmap, String fileName) {
+        try {
+            // Create a file in the external cache directory
+            File cachePath = new File(context.getExternalCacheDir(), "images");
+            cachePath.mkdirs();
+            File file = new File(cachePath, fileName + ".png");
+
+            // Save the bitmap to the file
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+
+            // Get URI for the file using FileProvider
+            Uri fileUri = FileProvider.getUriForFile(context, context.getPackageName() + ".provider", file);
+
+            // Create and fire the intent to share the file
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+            shareIntent.setType("image/png");
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            context.startActivity(Intent.createChooser(shareIntent, "Share QR Code"));
+
+
+        } catch (IOException e) {
+            Log.e("QRCodeGenerator", "Error sharing QR Code", e);
+        }
+    }
+
 }

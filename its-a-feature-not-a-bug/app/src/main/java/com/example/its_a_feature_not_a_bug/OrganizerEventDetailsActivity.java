@@ -4,6 +4,8 @@
 
 package com.example.its_a_feature_not_a_bug;
 
+import static com.example.its_a_feature_not_a_bug.QRCodeGenerator.shareQRCode;
+
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -100,6 +102,7 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
         eventDate = findViewById(R.id.eventDate);
         eventDescription = findViewById(R.id.eventDescription);
         qrCodeImageView = findViewById(R.id.qrCodeImageView);
+        Button buttonShareQR = findViewById(R.id.button_share_qr);
 
 
         ActionBar actionBar = getSupportActionBar();
@@ -157,6 +160,13 @@ public class OrganizerEventDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showQROptionsDialog();
+            }
+        });
+        buttonShareQR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bitmap qrCodeBitmap = QRCodeGenerator.generatePromotionalQRCode(currentEvent, 200);
+                shareQRCode(OrganizerEventDetailsActivity.this, qrCodeBitmap, "QRCode.png");
             }
         });
 
